@@ -13,18 +13,18 @@ export default function AdminDashboard() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-bold mb-2">📥 Imports</h3>
-          <p className="text-gray-600 mb-4">Upload products via CSV/JSON</p>
-          <a href="/admin/imports" className="text-victoriosa-primary hover:underline font-semibold">
-            Go to Imports →
+          <h3 className="text-lg font-bold mb-2">💰 Pricing</h3>
+          <p className="text-gray-600 mb-4">Manage margins and pricing</p>
+          <a href="/admin/pricing" className="text-victoriosa-primary hover:underline font-semibold">
+            Go to Pricing →
           </a>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-bold mb-2">📋 Orders</h3>
-          <p className="text-gray-600 mb-4">View and manage orders</p>
-          <a href="/admin/orders" className="text-victoriosa-primary hover:underline font-semibold">
-            Go to Orders →
+          <h3 className="text-lg font-bold mb-2">📥 Imports</h3>
+          <p className="text-gray-600 mb-4">Upload products via CSV/JSON</p>
+          <a href="/admin/imports" className="text-victoriosa-primary hover:underline font-semibold">
+            Go to Imports →
           </a>
         </div>
       </div>

@@ -43,11 +43,13 @@
 ---
 
 ## Phase 2: Commerce & Integration (Prompts 06-10)
-### Prompt 06: Pricing & Margins
-- Supplier cost input
-- Margin calculation (60-90% configurable)
-- Final price display
-- Bulk edit support
+### Prompt 06: Pricing & Margins ✅
+- Supplier cost input ✅
+- Margin calculation (60-90% configurable) ✅
+- Final price display ✅
+- Bulk edit support ✅
+- Margin presets ✅
+- Category-based bulk updates ✅
 
 ### Prompt 07: WhatsApp Integration
 - Connect to WhatsApp Business API

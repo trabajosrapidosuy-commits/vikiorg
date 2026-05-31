@@ -24,6 +24,12 @@ export default function AdminLayout({
             📦 Products
           </Link>
           <Link
+            href="/admin/pricing"
+            className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
+          >
+            💰 Pricing
+          </Link>
+          <Link
             href="/admin/imports"
             className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
           >
