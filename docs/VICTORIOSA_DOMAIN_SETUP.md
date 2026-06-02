@@ -14,6 +14,21 @@ Verified on `2026-06-02` without deploying or mutating Production:
 - TLS apex certificate: Let's Encrypt, `CN=victoriosa.click`, expires
   `2026-08-31`.
 
+## Custom-Domain Auth Smoke
+
+Completed on `2026-06-02` with reversible staging identities:
+
+- Apex and WWW signup redirect allowlist: PASS.
+- Apex and WWW recovery redirect allowlist: PASS.
+- Apex and WWW `/auth/callback` without code: PASS, fail-closed redirect to
+  login with a visible error.
+- Apex and WWW `/auth/reset-password`: PASS, HTTP `200`.
+- Signup confirmation OTP: PASS.
+- Recovery OTP, password update and login with the new password: PASS.
+- Apex and WWW browser login, account and logout: PASS.
+- Customer access to `/admin/autopilot` and `/owner/autopilot`: BLOCKED.
+- Temporary staging residue: ZERO users, products and candidates.
+
 The earlier `216.150.16.1` and `216.150.16.129` result is no longer the apex
 configuration. Those addresses may appear behind the Vercel WWW CNAME and must
 not be copied into apex A records.
