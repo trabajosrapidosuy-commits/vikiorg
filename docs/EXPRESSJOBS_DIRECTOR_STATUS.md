@@ -7,7 +7,7 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 
 ## Current Mode
 
-`VICTORIOSA_DOMAIN_SSL_DNS_RESCUE_AND_AUTH_URL_PREP`
+`VICTORIOSA_CUSTOM_DOMAIN_AUTH_URL_HUMAN_APPLY_AND_SMOKE`
 
 ## Status
 
@@ -32,7 +32,8 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 - Authenticated Autopilot staging smoke: PASS with reversible fixtures removed
 - Draft public visibility after import: ZERO
 - Custom domain DNS and SSL: PASS for apex and WWW
-- Supabase custom-domain Auth URLs: DOCUMENTED_PENDING_HUMAN_APPLY
+- Supabase custom-domain Auth URLs: APPLIED_AND_SMOKE_VERIFIED
+- Custom-domain Auth smoke: PASS, reversible fixtures removed
 
 ## Blockers
 

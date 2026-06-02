@@ -54,6 +54,18 @@ Never expose a service-role key to browser code.
 5. Verify a normal user cannot access `/admin`.
 6. Verify anonymous users are redirected from `/account` and `/wishlist`.
 
+## Custom-Domain Smoke Evidence
+
+Completed on `2026-06-02` with reversible staging fixtures:
+
+- Supabase accepted signup and recovery redirects for apex and WWW.
+- Signup confirmation and recovery password update passed through OTP
+  verification without exposing tokens.
+- Apex and WWW login, account and logout passed in a real browser.
+- Callback without a code fails closed to login on apex and WWW.
+- Customer remains blocked from Studio routes.
+- All temporary identities were deleted; remote residue is zero.
+
 ## External Blockers
 
 - `BLOCKED_EXTERNAL_CREDENTIALS`: positive admin browser smoke needs the

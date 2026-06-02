@@ -2,7 +2,7 @@
 
 ## Current Mode
 
-`VICTORIOSA_DOMAIN_SSL_DNS_RESCUE_AND_AUTH_URL_PREP`
+`VICTORIOSA_CUSTOM_DOMAIN_AUTH_URL_HUMAN_APPLY_AND_SMOKE`
 
 ## Result
 
@@ -183,7 +183,7 @@
 
 ## Next Mode
 
-`VICTORIOSA_CUSTOM_DOMAIN_AUTH_URL_HUMAN_APPLY_AND_SMOKE`
+`VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW`
 
 ## Custom Domain DNS and SSL
 
@@ -195,7 +195,18 @@
 - TLS apex: PASS, Let's Encrypt certificate through `2026-08-31`.
 - `openssl`: CHECK_NOT_AVAILABLE on this Windows host.
 - Public URL helper: IMPLEMENTED.
-- Supabase Auth custom-domain URL allowlist: DOCUMENTED_PENDING_HUMAN_APPLY.
+- Supabase Auth custom-domain URL allowlist: APPLIED_AND_SMOKE_VERIFIED.
+
+## Custom Domain Auth Smoke
+
+- Signup redirects apex and WWW: PASS.
+- Recovery redirects apex and WWW: PASS.
+- Signup OTP confirmation: PASS.
+- Reset-password recovery OTP, update and login: PASS.
+- Callback without code apex and WWW: PASS_FAIL_CLOSED.
+- Browser login, account and logout apex and WWW: PASS.
+- Customer Studio rejection: PASS.
+- Temporary residue after cleanup: ZERO.
 
 ## Supplier Intelligence Engine
 

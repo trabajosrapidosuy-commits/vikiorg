@@ -1,7 +1,7 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_DOMAIN_SSL_DNS_RESCUE_AND_AUTH_URL_PREP",
+  "mode": "VICTORIOSA_CUSTOM_DOMAIN_AUTH_URL_HUMAN_APPLY_AND_SMOKE",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-domain-ssl-dns-rescue",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
@@ -30,7 +30,8 @@
     ,"customDomainDns": "PASS_APEX_76_76_21_21_WWW_PROJECT_SPECIFIC_CNAME"
     ,"customDomainSsl": "PASS_LETS_ENCRYPT_HTTP_200_HSTS"
     ,"publicSiteUrlHelper": "IMPLEMENTED"
-    ,"supabaseAuthCustomDomainUrls": "DOCUMENTED_PENDING_HUMAN_APPLY"
+    ,"supabaseAuthCustomDomainUrls": "APPLIED_AND_SMOKE_VERIFIED"
+    ,"customDomainAuthSmoke": "PASS_APEX_WWW_REVERSIBLE_FIXTURES_REMOVED"
   },
   "checks": {
     "ci": "PASS",
@@ -59,5 +60,5 @@
     "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_CUSTOM_DOMAIN_AUTH_URL_HUMAN_APPLY_AND_SMOKE"
+  "nextMode": "VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW"
 }
