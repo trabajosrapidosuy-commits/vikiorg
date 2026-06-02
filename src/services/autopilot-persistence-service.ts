@@ -97,6 +97,29 @@ export async function rejectPersistentCandidate(supabase: SupabaseClient, id: st
   return updateCandidateReview(supabase, id, { status: "rejected", review_status: "rejected", rejection_reason: rejectionReason }, "rejected", rejectionReason);
 }
 
+export async function updatePersistentCandidateSuggestedPrice(supabase: SupabaseClient, id: string, rawPrice: unknown) {
+  const candidate = await getPersistentCandidate(supabase, id);
+  const suggestedPrice = z.coerce.number().positive().max(100000).parse(rawPrice);
+  const landedCost = Number(candidate.supplier_cost) + Number(candidate.estimated_shipping_cost);
+  const marginPercent = suggestedPrice <= 0 ? 0 : Math.round(((suggestedPrice - landedCost) / suggestedPrice) * 10000) / 100;
+  const { data, error } = await supabase.from("autopilot_product_candidates").update({
+    suggested_price: suggestedPrice,
+    margin_percent: marginPercent,
+    pricing: { ...(isRecord(candidate.pricing) ? candidate.pricing : {}), suggestedSalePrice: suggestedPrice, estimatedMarginPercent: marginPercent, priceEditedByAdmin: true },
+    updated_at: new Date().toISOString(),
+  }).eq("id", candidate.id).select("*").single();
+  if (error) throw new Error(error.message);
+  await logReviewEvent(supabase, {
+    candidateId: candidate.id,
+    eventType: "note_added",
+    previousStatus: candidate.review_status,
+    newStatus: candidate.review_status,
+    metadata: { field: "suggested_price", previousValue: candidate.suggested_price, newValue: suggestedPrice, marginPercent },
+  });
+  await logAutopilotEvent(supabase, { candidateId: candidate.id, level: "info", message: "Suggested price edited by admin. Candidate remains review-only." });
+  return data;
+}
+
 export async function markPersistentCandidateNeedsReview(supabase: SupabaseClient, id: string) {
   return updateCandidateReview(supabase, id, { status: "pending_admin_review", review_status: "pending_admin_review" }, "needs_review");
 }
@@ -119,6 +142,7 @@ export async function createPersistentManualCandidate(supabase: SupabaseClient, 
       brandFitScore: manual.score.brandFitScore, riskScore: manual.score.riskScore,
       contentQualityScore: manual.score.contentQualityScore, scoreBreakdown: manual.score.scoreBreakdown,
       strengths: manual.score.strengths, weaknesses: manual.score.weaknesses,
+      warnings: manual.score.warnings, blockers: manual.score.blockers, recommendation: manual.score.recommendation,
     },
     riskFlags: manual.score.riskFlags, status: "pending_admin_review",
   };
@@ -235,7 +259,13 @@ function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
     brand_fit_score: rawScore.brandFitScore ?? 0,
     risk_score: rawScore.riskScore ?? (candidate.riskFlags.length ? 70 : 0),
     content_quality_score: rawScore.contentQualityScore ?? 0,
-    score_breakdown: rawScore.scoreBreakdown ?? candidate.score,
+    score_breakdown: {
+      ...(rawScore.scoreBreakdown ?? candidate.score),
+      recommendation: rawScore.recommendation ?? "review",
+      warnings: rawScore.warnings ?? [],
+      blockers: rawScore.blockers ?? [],
+      estimatedDeliveryDays: candidate.estimatedDeliveryDays,
+    },
     strengths: rawScore.strengths ?? candidate.score.explanation,
     weaknesses: rawScore.weaknesses ?? candidate.riskFlags,
     currency: candidate.currency,
@@ -271,10 +301,19 @@ function mapRowToCandidate(row: Record<string, unknown>): ProductCandidate {
       supplier: Number(scoring.supplier ?? row.supplier_score ?? 0),
       total: Number(scoring.total ?? row.total_score ?? 0),
       explanation: Array.isArray(scoring.explanation) ? scoring.explanation.map(String) : [],
+      supplierReliability: Number(scoring.supplierReliability ?? scoring.supplier ?? row.supplier_score ?? 0),
+      complianceRisk: Number(scoring.complianceRisk ?? row.risk_score ?? 0),
+      shipping: Number(scoring.shipping ?? scoring.logistics ?? row.logistics_score ?? 0),
+      marketFit: Number(scoring.marketFit ?? row.brand_fit_score ?? 0),
+      recommendation: isRecommendation(scoring.recommendation) ? scoring.recommendation : "review",
     },
     riskFlags: Array.isArray(row.risk_flags) ? row.risk_flags.map(String) : [],
     status: row.status as ProductCandidate["status"],
   };
+}
+
+function isRecommendation(value: unknown): value is "reject" | "review" | "approve_candidate" {
+  return value === "reject" || value === "review" || value === "approve_candidate";
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

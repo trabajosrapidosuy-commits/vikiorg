@@ -1,14 +1,14 @@
 {
   "project": "Victoriosa Marketplace",
   "compatibility_contract": "ExpressJobs Director",
-  "current_mode": "VICTORIOSA_AUTOPILOT_STAGING_AUTHENTICATED_ADMIN_SMOKE",
+  "current_mode": "VICTORIOSA_AUTOPILOT_PRODUCT_INTELLIGENCE_AND_ADMIN_QUEUE_RESUME",
   "production_status": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-autopilot-core-engine",
+  "branch": "codex/victoriosa-autopilot-product-intelligence-resume",
   "local_checks": {
     "ci": "PASS",
     "founder_hero": "IMPLEMENTED_SOFIA_VICTORIA_ORIGINAL_EDITORIAL",
     "rls_static": "PASS_21_PUBLIC_TABLES",
-    "test": "PASS_45_TESTS",
+    "test": "PASS_50_TESTS",
     "build": "PASS_52_PAGES_AND_MIDDLEWARE",
     "git_diff_check": "PASS"
   },
@@ -21,13 +21,16 @@
     "authenticated_account_smoke": "PASS_REVERSIBLE_TEMP_USERS_REMOVED",
     "google_oauth_bootstrap": "CONFIGURED_PROVIDER_UI_INACTIVE_PENDING_REVIEW",
     "public_signup": "CHECK_NOT_RUN_COMPLETE_PROVIDER_EMAIL_RATE_LIMIT_HTTP_429",
-    "positive_admin_browser_smoke": "CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS"
+    "positive_admin_browser_smoke": "CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS",
+    "autopilot_commercial_scoring": "IMPLEMENTED",
+    "autopilot_admin_queue_filters": "IMPLEMENTED",
+    "autopilot_suggested_price_edit": "IMPLEMENTED_REVIEW_ONLY"
   },
   "blockers": [
     "BLOCKED_EXTERNAL_CREDENTIALS",
     "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "next_mode": "VICTORIOSA_AUTOPILOT_PROTECTED_PREVIEW_AUTHENTICATED_SMOKE",
+  "next_mode": "VICTORIOSA_AUTOPILOT_ADMIN_QUEUE_BROWSER_SMOKE",
   "canonical_status_file": "docs/VICTORIOSA_DIRECTOR_STATUS.md"
 }

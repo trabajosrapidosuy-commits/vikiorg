@@ -237,6 +237,25 @@
 - Authenticated protected Preview browser smoke:
   CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
 
+## Autopilot Product Intelligence Resume
+
+- Mode: `VICTORIOSA_AUTOPILOT_PRODUCT_INTELLIGENCE_AND_ADMIN_QUEUE_RESUME`.
+- Branch: `codex/victoriosa-autopilot-product-intelligence-resume`.
+- Base: `codex/victoriosa-autopilot-core-engine` at `f12a327`.
+- Business rules: IMPLEMENTED for Victoriosa priority categories, excluded
+  risky terms, slow shipping, weak supplier inventory and missing source URL.
+- Scoring: IMPLEMENTED for profitability, virality, supplier reliability,
+  compliance risk, shipping, market fit, total score, warnings, blockers and
+  recommendation.
+- Admin queue: IMPLEMENTED filters by recommendation, category, provider,
+  score, risk, status and sort mode.
+- Candidate detail: IMPLEMENTED score cards, source visibility, warnings,
+  blockers and suggested price edit.
+- Draft import: unchanged safe path; import remains `draft` and
+  `needs_review`.
+- Live providers, payments, outbound sends and automatic publication:
+  DISABLED.
+
 ## NEXT_CODEX_PROMPT
 
 Repo: `C:\victoriosa`

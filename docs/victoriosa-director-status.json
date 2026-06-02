@@ -1,9 +1,9 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_AUTOPILOT_STAGING_AUTHENTICATED_ADMIN_SMOKE",
+  "mode": "VICTORIOSA_AUTOPILOT_PRODUCT_INTELLIGENCE_AND_ADMIN_QUEUE_RESUME",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-autopilot-core-engine",
+  "branch": "codex/victoriosa-autopilot-product-intelligence-resume",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
   "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
   "roleEscalationGuardMigration": "PASS_APPLIED_AND_REMOTE_SMOKE_VERIFIED",
@@ -26,7 +26,10 @@
     "supplierIntelligenceEngine": "IMPLEMENTED_SUPPLIER_AGNOSTIC_CORE",
     "autopilotMockManualProviders": "IMPLEMENTED",
     "autopilotReviewAuditMigration": "PASS_APPLIED_TO_AUTHORIZED_STAGING",
-    "realPayments": "DISABLED"
+    "realPayments": "DISABLED",
+    "autopilotCommercialScoring": "IMPLEMENTED",
+    "autopilotAdminQueueFilters": "IMPLEMENTED",
+    "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY"
   },
   "checks": {
     "ci": "PASS",
@@ -36,7 +39,7 @@
     "rlsStatic": "PASS_21_TABLES",
     "lint": "PASS",
     "typecheck": "PASS",
-    "test": "PASS_45_TESTS",
+    "test": "PASS_50_TESTS",
     "build": "PASS_52_PAGES_AND_MIDDLEWARE",
     "smokeStructure": "PASS",
     "gitDiffCheck": "PASS",
@@ -55,5 +58,5 @@
     "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_AUTOPILOT_PROTECTED_PREVIEW_AUTHENTICATED_SMOKE"
+  "nextMode": "VICTORIOSA_AUTOPILOT_ADMIN_QUEUE_BROWSER_SMOKE"
 }

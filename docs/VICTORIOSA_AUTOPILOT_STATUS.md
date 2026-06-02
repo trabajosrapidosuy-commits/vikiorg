@@ -12,6 +12,10 @@
 - Structural RLS audit: PASS
 - REST RLS smoke: PASS, seven internal tables expose zero rows to anon
 - Outbound email, supplier calls and automatic publication: DISABLED
+- Commercial intelligence scoring: IMPLEMENTED
+- Admin queue commercial filters: IMPLEMENTED
+- Suggested price edit: IMPLEMENTED_REVIEW_ONLY
+- Live providers: DISABLED_NEEDS_CREDENTIALS
 
 ## Required Before Authenticated Smoke
 

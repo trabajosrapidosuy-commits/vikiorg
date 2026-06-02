@@ -7,7 +7,7 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_STAGING_AUTHENTICATED_ADMIN_SMOKE`
+`VICTORIOSA_AUTOPILOT_PRODUCT_INTELLIGENCE_AND_ADMIN_QUEUE_RESUME`
 
 ## Status
 
@@ -31,6 +31,10 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 - Core CI: PASS, 45 tests, 21 RLS tables, 52 pages plus Middleware
 - Authenticated Autopilot staging smoke: PASS with reversible fixtures removed
 - Draft public visibility after import: ZERO
+- Autopilot commercial scoring: IMPLEMENTED
+- Admin candidate queue filters: IMPLEMENTED
+- Suggested price edit: IMPLEMENTED_REVIEW_ONLY
+- Live providers, payments and automatic publication: DISABLED
 
 ## Blockers
 
