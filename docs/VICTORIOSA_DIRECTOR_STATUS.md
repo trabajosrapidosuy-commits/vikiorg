@@ -148,8 +148,8 @@
 
 ## Blockers
 
-- `BLOCKED_EXTERNAL_PROVIDER_RATE_LIMIT`: public signup email confirmation
-  delivery validation returned HTTP `429`; retry after provider cooldown.
+- `BLOCKED_EXTERNAL_CREDENTIALS`: public signup email confirmation delivery
+  validation returned HTTP `429`; retry after provider cooldown.
 - `BLOCKED_EXTERNAL_CREDENTIALS`: interactive Google and positive admin browser
   smoke require controlled identities loaded outside chat.
 - `BLOCKED_SUPABASE_ACCESS`: current Sofia Victoria Preview callback and reset

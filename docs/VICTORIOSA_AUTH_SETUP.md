@@ -53,5 +53,5 @@ Never expose a service-role key to browser code.
   staging-only Google identity.
 - `BLOCKED_SUPABASE_ACCESS`: add the current Sofia Victoria Preview callback
   and reset URLs before Preview OAuth smoke.
-- `BLOCKED_EXTERNAL_PROVIDER_RATE_LIMIT`: public signup reached Supabase but
-  email delivery validation returned HTTP `429`; retry after cooldown.
+- `BLOCKED_EXTERNAL_CREDENTIALS`: public signup reached Supabase but email
+  delivery validation returned HTTP `429`; retry after provider cooldown.
