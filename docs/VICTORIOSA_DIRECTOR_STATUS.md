@@ -2,7 +2,7 @@
 
 ## Current Mode
 
-`VICTORIOSA_VERCEL_PREVIEW_LINK_AFTER_BILLING_REACTIVATION`
+`VICTORIOSA_FINAL_MVP_SUPABASE_VERCEL_AUTONOMOUS`
 
 ## Result
 
@@ -32,12 +32,15 @@
 - Supabase staging migrations: foundation, autopilot foundation and admin
   boundary present.
 - Vercel project `victoriosa-marketplace`: CREATED_AND_LOCALLY_LINKED.
-- Vercel Git repository connection: BLOCKED_MISSING_ACCESS. The available
-  Vercel identity cannot connect
-  `trabajosrapidosuy-commits/Victoriosa-marketplace`.
-- Vercel environment variables: ZERO persisted. Preview variables were not
-  widened beyond the approved Git branch.
-- Vercel Preview deployment: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
+- Vercel Git repository connection: CONNECTED.
+- Vercel branch-scoped Preview variables: CONFIGURED with public URL and anon
+  key only.
+- Vercel deployed public smoke: PASS.
+- Production incident: a bare Vercel deploy command unexpectedly created a
+  Ready deployment with `target=production` and aliases. No production flag or
+  promote command was used. No rollback or alias mutation was executed.
+- Deployment URL:
+  `https://victoriosa-marketplace-ecru.vercel.app`
 
 ## Implemented
 
@@ -97,24 +100,30 @@
 
 ## Preview Smoke
 
-- Public Preview smoke: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
-- Public Preview API smoke: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
-- Authenticated admin Preview smoke: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
+- Public deployed smoke: PASS, home and `/productos` render.
+- Public deployed API smoke: PASS, `{"products":[]}`.
+- Legacy API smoke: PASS, product, order and import handlers remain deprecated.
+- Anonymous `/admin/marketplace`: PASS, redirects away from admin.
+- Authenticated admin deployed smoke:
+  CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
+- Browser embedded smoke: CHECK_NOT_RUN_BROWSER_HOST_ATTACH_TIMEOUT.
 - Local staging RLS smoke: PASS.
 
 ## Blockers
 
 - `BLOCKED_EXTERNAL_CREDENTIALS`: supplier and payment sandbox credentials
   remain absent.
-- `BLOCKED_MISSING_ACCESS`: Vercel Git integration cannot access the GitHub
-  repository. Connect it manually in Vercel or grant repository access to the
-  available Vercel identity.
+- `BLOCKED_PRODUCTION_RISK`: an accidental Vercel deployment has
+  `target=production`. Alias removal, rollback or deletion requires explicit
+  human approval.
+- `BLOCKED_EXTERNAL_CREDENTIALS`: authenticated deployed admin smoke requires
+  staging admin credentials loaded through a secure local mechanism.
 - `BLOCKED_PRODUCTION_RISK`: production remains prohibited until canonical
   orders, fulfillment, compliance and payment sandbox cycles are complete.
 
 ## Next Mode
 
-`VICTORIOSA_VERCEL_GIT_ACCESS_AND_PREVIEW_SMOKE`
+`VICTORIOSA_PRODUCTION_INCIDENT_HUMAN_REVIEW`
 
 ## NEXT_CODEX_PROMPT
 
@@ -122,10 +131,10 @@ Repo: `C:\victoriosa`
 
 Branch suggested: `codex/victoriosa-staging-foundation-publish`
 
-Objective: grant the Vercel project `victoriosa-marketplace` access to
-`trabajosrapidosuy-commits/Victoriosa-marketplace`, configure branch-scoped
-Preview variables for Supabase staging, deploy Preview only and execute public
-plus authenticated smoke.
+Objective: review the accidental Vercel Production deployment and choose
+whether to remove aliases, roll back or preserve it temporarily. Then execute
+an explicit Preview deployment through `npm run deploy:preview` and complete
+authenticated staging admin smoke.
 
 Rules: keep `PRODUCTION_STATUS=NO-GO_PRODUCTION`; do not deploy production; do
 not print secrets; do not weaken RLS; do not execute payments; do not buy from
@@ -134,16 +143,14 @@ unrelated worktree changes.
 
 Tasks:
 
-1. Connect the GitHub repository to the existing Vercel project manually or
-   grant Vercel repository access.
-2. Add branch-scoped Preview variables only for
-   `codex/victoriosa-staging-foundation-publish`.
-3. Use only Supabase staging URL and public anon key without printing values.
-4. Deploy Preview only and run public plus authenticated admin smoke.
-5. Keep Production variables and deployment disabled.
+1. Review the accidental Production deployment in Vercel.
+2. Obtain explicit human approval before rollback, alias mutation or deletion.
+3. Use only `npm run deploy:preview` for the next deployment.
+4. Confirm `target=preview` before route smoke.
+5. Complete authenticated staging admin smoke securely.
 
-GO criterion: Preview deploy is branch-scoped, linked to Supabase staging and
-authenticated smoke passes without production access.
+GO criterion: Production incident is resolved by human-approved action,
+explicit Preview deploy passes and authenticated smoke succeeds.
 
-NO-GO criterion: missing Vercel Git access, broad Preview variables,
-production access, secret exposure, payment execution or RLS weakening.
+NO-GO criterion: unauthorized Production mutation, secret exposure, payment
+execution or RLS weakening.

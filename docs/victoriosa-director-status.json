@@ -1,9 +1,9 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_VERCEL_PREVIEW_LINK_AFTER_BILLING_REACTIVATION",
+  "mode": "VICTORIOSA_FINAL_MVP_SUPABASE_VERCEL_AUTONOMOUS",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-autopilot-admin-boundary",
+  "branch": "codex/victoriosa-staging-foundation-publish",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
   "blockedRefUsed": false,
   "publicStorefrontCanonicalization": "IMPLEMENTED",
@@ -11,16 +11,20 @@
     "remote": "https://github.com/trabajosrapidosuy-commits/Victoriosa-marketplace",
     "branch": "codex/victoriosa-staging-foundation-publish",
     "status": "PUSHED_SAFE_SNAPSHOT",
-    "draftPr": "BLOCKED_MISSING_ACCESS"
+    "draftPr": "MERGED_PR_2"
   },
   "platformLink": {
     "supabaseProjectRef": "ngliugfcwydnfbpalkpb",
     "supabaseStatus": "ACTIVE_HEALTHY",
     "supabaseMigrations": "PASS_3_PRESENT",
     "vercelProjectLink": "CREATED_AND_LOCALLY_LINKED",
-    "vercelGitConnection": "BLOCKED_MISSING_ACCESS",
-    "vercelEnvironmentVariables": "ZERO_PERSISTED",
-    "vercelPreviewDeployment": "CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS"
+    "vercelGitConnection": "CONNECTED",
+    "vercelEnvironmentVariables": "BRANCH_SCOPED_PREVIEW_PUBLIC_KEYS_ONLY",
+    "vercelDeployment": "READY_TARGET_PRODUCTION_UNEXPECTED",
+    "deploymentUrl": "https://victoriosa-marketplace-ecru.vercel.app",
+    "publicRouteSmoke": "PASS",
+    "publicApiSmoke": "PASS_EMPTY_SAFE_RESPONSE",
+    "authenticatedAdminSmoke": "CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS"
   },
   "legacyVisitorRoutes": "REDIRECTED_TO_CANONICAL_SAFE_SURFACES",
   "adminUiBoundary": "REQUIRE_ADMIN_BEFORE_RENDER",
@@ -56,8 +60,8 @@
     "ciWrapper": "CHECK_NOT_RUN_COMPLETE_INNER_GATES_EXECUTED_SEQUENTIALLY"
   },
   "blockers": [
-    "BLOCKED_MISSING_ACCESS",
+    "BLOCKED_EXTERNAL_CREDENTIALS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_VERCEL_GIT_ACCESS_AND_PREVIEW_SMOKE"
+  "nextMode": "VICTORIOSA_PRODUCTION_INCIDENT_HUMAN_REVIEW"
 }
