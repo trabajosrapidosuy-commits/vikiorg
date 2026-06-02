@@ -11,7 +11,8 @@
     "remote": "https://github.com/trabajosrapidosuy-commits/Victoriosa-marketplace",
     "branch": "codex/victoriosa-staging-foundation-publish",
     "status": "PUSHED_SAFE_SNAPSHOT",
-    "draftPr": "MERGED_PR_2"
+    "draftPr": "MERGED_PR_2",
+    "mitigationPr": "BLOCKED_MISSING_ACCESS"
   },
   "platformLink": {
     "supabaseProjectRef": "ngliugfcwydnfbpalkpb",
@@ -60,6 +61,7 @@
     "ciWrapper": "CHECK_NOT_RUN_COMPLETE_INNER_GATES_EXECUTED_SEQUENTIALLY"
   },
   "blockers": [
+    "BLOCKED_MISSING_ACCESS",
     "BLOCKED_EXTERNAL_CREDENTIALS",
     "BLOCKED_PRODUCTION_RISK"
   ],

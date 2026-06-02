@@ -24,6 +24,8 @@
   commit contained a Supabase credential under `credenciales/`.
 - Published branch was rebuilt from `origin/main` with the validated safe tree.
 - PR `#2`: MERGED into `main`.
+- Mitigation PR for the latest guardrail commit: BLOCKED_MISSING_ACCESS. Open
+  manually from the published branch.
 
 ## Platform Link
 
@@ -111,6 +113,8 @@
 
 ## Blockers
 
+- `BLOCKED_MISSING_ACCESS`: the authenticated GitHub account can push the
+  branch but cannot create the mitigation PR.
 - `BLOCKED_EXTERNAL_CREDENTIALS`: supplier and payment sandbox credentials
   remain absent.
 - `BLOCKED_PRODUCTION_RISK`: an accidental Vercel deployment has

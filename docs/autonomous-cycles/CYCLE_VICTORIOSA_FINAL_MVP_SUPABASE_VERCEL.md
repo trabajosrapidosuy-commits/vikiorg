@@ -14,6 +14,7 @@ Fecha: 2026-06-02
 - Anonymous admin boundary: PASS, redirect away from admin.
 - Authenticated deployed admin smoke: CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
 - Browser embedded smoke: CHECK_NOT_RUN_BROWSER_HOST_ATTACH_TIMEOUT.
+- Mitigation PR creation: BLOCKED_MISSING_ACCESS.
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`.
 
 ## Production Incident
