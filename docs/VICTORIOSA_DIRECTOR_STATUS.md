@@ -143,6 +143,9 @@
   shell because `.env.rls` retains empty staging smoke values.
 - Google OAuth remains disabled. A local OAuth credential file is ignored and
   was not read, committed or activated.
+- Explicit Preview deployment: PASS, `target=preview`, `Ready`,
+  `https://victoriosa-marketplace-ntcbh4o5p-akuma424-projects.vercel.app`.
+- Protected Preview anonymous boundary: PASS, HTTP `401`.
 
 - `BLOCKED_MISSING_ACCESS`: the authenticated GitHub account can push the
   branch but cannot create the mitigation PR.

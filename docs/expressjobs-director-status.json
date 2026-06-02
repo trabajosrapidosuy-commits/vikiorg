@@ -14,6 +14,7 @@
   "external_checks": {
     "confirmed_victoriosa_project_ref": "ngliugfcwydnfbpalkpb",
     "staging_migration_apply": "PASS_FOUR_REVIEWED_MIGRATIONS",
+    "preview_deploy": "PASS_READY_TARGET_PREVIEW_PROTECTED_HTTP_401",
     "staging_check": "CHECK_NOT_RUN_EMPTY_SECURE_LOCAL_VALUES",
     "rls_smoke": "CHECK_NOT_RUN_EMPTY_SECURE_LOCAL_VALUES",
     "authenticated_account_smoke": "CHECK_NOT_RUN_DEDICATED_STAGING_IDENTITY_REQUIRED"

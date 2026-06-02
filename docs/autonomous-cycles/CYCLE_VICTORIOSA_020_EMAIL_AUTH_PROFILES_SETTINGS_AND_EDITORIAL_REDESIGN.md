@@ -10,6 +10,9 @@
 - Added email/password auth routes, SSR session refresh and private account UI.
 - Extended profiles safely and added `user_settings` with RLS and auth trigger.
 - Preserved `requireAdmin`, anonymous denial and role-escalation prevention.
+- Published explicit protected Preview:
+  `https://victoriosa-marketplace-ntcbh4o5p-akuma424-projects.vercel.app`.
+- Confirmed deployment `target=preview`, `Ready`, anonymous HTTP `401`.
 
 ## Safety
 

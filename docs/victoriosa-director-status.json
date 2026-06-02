@@ -6,6 +6,13 @@
   "branch": "codex/victoriosa-email-auth-profiles-settings",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
   "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
+  "previewDeployment": {
+    "url": "https://victoriosa-marketplace-ntcbh4o5p-akuma424-projects.vercel.app",
+    "id": "dpl_4t7WJUukvDvpwAR12NF3z9xdKzzv",
+    "target": "preview",
+    "status": "READY",
+    "anonymousBoundary": "PASS_HTTP_401"
+  },
   "features": {
     "editorialRedesign": "IMPLEMENTED_ORIGINAL_HERO_AND_PREMIUM_NAV",
     "emailAuth": "IMPLEMENTED_REGISTER_LOGIN_LOGOUT_RESET_CALLBACK",
