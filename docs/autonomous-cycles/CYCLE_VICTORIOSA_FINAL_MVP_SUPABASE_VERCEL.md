@@ -7,6 +7,12 @@ Fecha: 2026-06-02
 - Supabase staging `ngliugfcwydnfbpalkpb`: validated.
 - Vercel project `victoriosa-marketplace`: linked.
 - Preview branch variables: configured with public URL and anon key only.
+- Explicit Preview deployment: READY, `target=preview`.
+- Preview URL:
+  `https://victoriosa-marketplace-e6anpnzsf-akuma424-projects.vercel.app`.
+- Preview Deployment Protection: PASS, anonymous requests return HTTP `401`.
+- Project-specific Preview automation bypass:
+  CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
 - Public deployed smoke: PASS.
 - Deployed URL: `https://victoriosa-marketplace-ecru.vercel.app`.
 - Public catalog API: PASS, empty safe response.

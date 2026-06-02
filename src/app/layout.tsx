@@ -11,6 +11,7 @@ const nav = [
   ["Productos", "/productos"],
   ["Kits", "/kits"],
   ["Evaluacion online", "/evaluacion-online"],
+  ["Carrito", "/carrito"],
   ["Contacto", "/evaluacion-online"],
 ];
 

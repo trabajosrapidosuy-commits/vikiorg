@@ -12,7 +12,8 @@ Use only:
 npm run deploy:preview
 ```
 
-The script expands to an explicit Preview target with domain aliasing disabled.
+The script expands to an explicit Preview target. Vercel rejects
+`--skip-domain` for Preview deployments, so the wrapper does not include it.
 Do not run a bare Vercel deploy command. Do not use production flags, promote,
 rollback or alias mutation without explicit human approval.
 
@@ -51,3 +52,14 @@ After a safe Preview deployment:
 4. Verify anonymous `/admin/marketplace` redirects away from admin.
 5. Execute authenticated admin smoke using staging credentials loaded through
    a secure local mechanism.
+
+## Current Preview
+
+- URL:
+  `https://victoriosa-marketplace-i9nqyd117-akuma424-projects.vercel.app`
+- Target: `preview`
+- Status: `Ready`
+- Deployment Protection: enabled. Anonymous requests return HTTP `401`.
+- Existing local automation bypass: not valid for this project.
+- Preview-only `VICTORIOSA_DEMO_MODE=true`: enabled for controlled product,
+  cart and manual checkout demonstration. Do not add it to Production.

@@ -38,6 +38,11 @@
 - Vercel branch-scoped Preview variables: CONFIGURED with public URL and anon
   key only.
 - Vercel deployed public smoke: PASS.
+- Vercel Preview:
+  `https://victoriosa-marketplace-i9nqyd117-akuma424-projects.vercel.app`
+- Vercel Preview status: READY_TARGET_PREVIEW_PROTECTED.
+- Preview-only `VICTORIOSA_DEMO_MODE=true`: CONFIGURED.
+- Local functional demo: `http://localhost:3101/productos`.
 - Production incident: a bare Vercel deploy command unexpectedly created a
   Ready deployment with `target=production` and aliases. No production flag or
   promote command was used. No rollback or alias mutation was executed.
@@ -102,6 +107,11 @@
 
 ## Preview Smoke
 
+- Explicit Preview deployment: PASS, `target=preview`.
+- Protected Preview anonymous boundary: PASS, HTTP `401`.
+- Protected Preview route smoke:
+  CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS because no project-specific
+  automation bypass is available.
 - Public deployed smoke: PASS, home and `/productos` render.
 - Public deployed API smoke: PASS, `{"products":[]}`.
 - Legacy API smoke: PASS, product, order and import handlers remain deprecated.
@@ -110,6 +120,17 @@
   CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
 - Browser embedded smoke: CHECK_NOT_RUN_BROWSER_HOST_ATTACH_TIMEOUT.
 - Local staging RLS smoke: PASS.
+
+## Functional Demo
+
+- Catalog demo notice: PASS.
+- Catalog sample cards: PASS.
+- Product detail: PASS.
+- Add-to-cart control: PASS.
+- Persistent local cart route: PASS.
+- Manual checkout route: PASS.
+- Real payment execution: DISABLED.
+- Demo products: explicitly labeled and never persisted as published records.
 
 ## Blockers
 
@@ -122,6 +143,8 @@
   human approval.
 - `BLOCKED_EXTERNAL_CREDENTIALS`: authenticated deployed admin smoke requires
   staging admin credentials loaded through a secure local mechanism.
+- `BLOCKED_EXTERNAL_CREDENTIALS`: protected Preview route smoke requires a
+  project-specific Vercel automation bypass loaded securely.
 - `BLOCKED_PRODUCTION_RISK`: production remains prohibited until canonical
   orders, fulfillment, compliance and payment sandbox cycles are complete.
 

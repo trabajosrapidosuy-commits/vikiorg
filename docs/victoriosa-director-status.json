@@ -21,6 +21,10 @@
     "vercelProjectLink": "CREATED_AND_LOCALLY_LINKED",
     "vercelGitConnection": "CONNECTED",
     "vercelEnvironmentVariables": "BRANCH_SCOPED_PREVIEW_PUBLIC_KEYS_ONLY",
+    "vercelPreviewDeployment": "READY_TARGET_PREVIEW_PROTECTED",
+    "vercelPreviewUrl": "https://victoriosa-marketplace-i9nqyd117-akuma424-projects.vercel.app",
+    "vercelPreviewAnonymousBoundary": "PASS_HTTP_401",
+    "vercelPreviewDemoMode": "ENABLED_BRANCH_SCOPED",
     "vercelDeployment": "READY_TARGET_PRODUCTION_UNEXPECTED",
     "deploymentUrl": "https://victoriosa-marketplace-ecru.vercel.app",
     "publicRouteSmoke": "PASS",
@@ -29,6 +33,14 @@
   },
   "legacyVisitorRoutes": "REDIRECTED_TO_CANONICAL_SAFE_SURFACES",
   "adminUiBoundary": "REQUIRE_ADMIN_BEFORE_RENDER",
+  "functionalDemo": {
+    "localUrl": "http://localhost:3101/productos",
+    "catalog": "PASS_EXPLICIT_DEMO_NOTICE",
+    "productDetail": "PASS",
+    "localPersistentCart": "PASS",
+    "manualCheckout": "PASS",
+    "realPayments": "DISABLED"
+  },
   "stagingSmoke": {
     "publicCatalogVisibleRows": 0,
     "anonDraftVisibility": 0,
