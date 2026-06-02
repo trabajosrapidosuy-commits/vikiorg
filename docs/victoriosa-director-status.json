@@ -8,8 +8,8 @@
   "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
   "roleEscalationGuardMigration": "PASS_APPLIED_AND_REMOTE_SMOKE_VERIFIED",
   "previewDeployment": {
-    "url": "https://victoriosa-marketplace-3id8vyhgs-akuma424-projects.vercel.app",
-    "id": "dpl_5LHW3HG9rZbT7b9hfae1kPb6Fzcz",
+    "url": "https://victoriosa-marketplace-70wtw9qlb-akuma424-projects.vercel.app",
+    "id": "dpl_HWwdqJqrHj2v2agtBXQ2UKW9aXWR",
     "target": "preview",
     "status": "READY",
     "anonymousBoundary": "PASS_HTTP_401"

@@ -28,6 +28,9 @@ Selected progressive separation inside the current Next.js app.
 - Temporary admin sees `Victoriosa Studio`, no storefront header.
 - Temporary admin `/owner/autopilot`: redirects to `/admin/autopilot`.
 - Temporary staging fixtures deleted.
+- Explicit protected Preview:
+  `https://victoriosa-marketplace-70wtw9qlb-akuma424-projects.vercel.app`.
+- Preview metadata: `target=preview`, `Ready`, anonymous HTTP `401`.
 
 ## Checks
 

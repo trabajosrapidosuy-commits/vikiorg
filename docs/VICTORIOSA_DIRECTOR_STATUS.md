@@ -185,6 +185,14 @@
 
 `VICTORIOSA_PRIVATE_ADMIN_PREVIEW_AND_CONTROLLED_RELEASE_REVIEW`
 
+## Private Admin Separation Preview
+
+- URL: `https://victoriosa-marketplace-70wtw9qlb-akuma424-projects.vercel.app`
+- Deployment: `dpl_HWwdqJqrHj2v2agtBXQ2UKW9aXWR`
+- `target=preview`, `Ready`, protected anonymous HTTP `401`.
+- Authenticated protected Preview browser smoke:
+  CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
+
 ## NEXT_CODEX_PROMPT
 
 Repo: `C:\victoriosa`

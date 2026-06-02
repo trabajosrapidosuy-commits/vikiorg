@@ -62,3 +62,11 @@ security controls.
 When staging flows stabilize, move owner routes and services to a separate
 private Vercel project or owner subdomain. Preserve the existing helpers,
 admin-only APIs and RLS policies during that extraction.
+
+## Protected Preview
+
+- URL: `https://victoriosa-marketplace-70wtw9qlb-akuma424-projects.vercel.app`
+- Deployment: `dpl_HWwdqJqrHj2v2agtBXQ2UKW9aXWR`
+- Target: `preview`
+- Status: `Ready`
+- Anonymous boundary: HTTP `401`
