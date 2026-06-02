@@ -1,7 +1,7 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_SAFE_REPOSITORY_PUBLISH_AND_PLATFORM_LINK",
+  "mode": "VICTORIOSA_VERCEL_PREVIEW_LINK_AFTER_BILLING_REACTIVATION",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-admin-boundary",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
@@ -17,7 +17,10 @@
     "supabaseProjectRef": "ngliugfcwydnfbpalkpb",
     "supabaseStatus": "ACTIVE_HEALTHY",
     "supabaseMigrations": "PASS_3_PRESENT",
-    "vercelProjectLink": "BLOCKED_PAYMENT_PROVIDER_HTTP_402"
+    "vercelProjectLink": "CREATED_AND_LOCALLY_LINKED",
+    "vercelGitConnection": "BLOCKED_MISSING_ACCESS",
+    "vercelEnvironmentVariables": "ZERO_PERSISTED",
+    "vercelPreviewDeployment": "CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS"
   },
   "legacyVisitorRoutes": "REDIRECTED_TO_CANONICAL_SAFE_SURFACES",
   "adminUiBoundary": "REQUIRE_ADMIN_BEFORE_RENDER",
@@ -54,8 +57,7 @@
   },
   "blockers": [
     "BLOCKED_MISSING_ACCESS",
-    "BLOCKED_PAYMENT_PROVIDER",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_VERCEL_PREVIEW_LINK_AFTER_BILLING_REACTIVATION"
+  "nextMode": "VICTORIOSA_VERCEL_GIT_ACCESS_AND_PREVIEW_SMOKE"
 }

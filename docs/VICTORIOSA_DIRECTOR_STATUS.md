@@ -2,12 +2,12 @@
 
 ## Current Mode
 
-`VICTORIOSA_SAFE_REPOSITORY_PUBLISH_AND_PLATFORM_LINK`
+`VICTORIOSA_VERCEL_PREVIEW_LINK_AFTER_BILLING_REACTIVATION`
 
 ## Result
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Branch: `codex/victoriosa-autopilot-admin-boundary`
+- Branch: `codex/victoriosa-staging-foundation-publish`
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`
 - Blocked ref not used: `dpwassnykcrgjwrruckz`
 - Public storefront canonicalization: IMPLEMENTED
@@ -23,8 +23,7 @@
 - GitHub Push Protection rejected the inherited local history because an older
   commit contained a Supabase credential under `credenciales/`.
 - Published branch was rebuilt from `origin/main` with the validated safe tree.
-- Draft PR creation: BLOCKED_MISSING_ACCESS because the authenticated GitHub
-  account is not allowed to create pull requests for the repository.
+- PR `#2`: MERGED into `main`.
 
 ## Platform Link
 
@@ -32,8 +31,13 @@
   ACTIVE_HEALTHY through the authenticated MCP connector.
 - Supabase staging migrations: foundation, autopilot foundation and admin
   boundary present.
-- Vercel project link: BLOCKED_PAYMENT_PROVIDER. Team `akuma424-projects`
-  returned HTTP 402 because billing must be reactivated.
+- Vercel project `victoriosa-marketplace`: CREATED_AND_LOCALLY_LINKED.
+- Vercel Git repository connection: BLOCKED_MISSING_ACCESS. The available
+  Vercel identity cannot connect
+  `trabajosrapidosuy-commits/Victoriosa-marketplace`.
+- Vercel environment variables: ZERO persisted. Preview variables were not
+  widened beyond the approved Git branch.
+- Vercel Preview deployment: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
 
 ## Implemented
 
@@ -91,16 +95,26 @@
 - `npm run ci`: CHECK_NOT_RUN_COMPLETE, gates executed sequentially to avoid
   the previously observed wrapper hang.
 
+## Preview Smoke
+
+- Public Preview smoke: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
+- Public Preview API smoke: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
+- Authenticated admin Preview smoke: CHECK_NOT_RUN_BLOCKED_MISSING_ACCESS.
+- Local staging RLS smoke: PASS.
+
 ## Blockers
 
 - `BLOCKED_EXTERNAL_CREDENTIALS`: supplier and payment sandbox credentials
   remain absent.
+- `BLOCKED_MISSING_ACCESS`: Vercel Git integration cannot access the GitHub
+  repository. Connect it manually in Vercel or grant repository access to the
+  available Vercel identity.
 - `BLOCKED_PRODUCTION_RISK`: production remains prohibited until canonical
   orders, fulfillment, compliance and payment sandbox cycles are complete.
 
 ## Next Mode
 
-`VICTORIOSA_VERCEL_PREVIEW_LINK_AFTER_BILLING_REACTIVATION`
+`VICTORIOSA_VERCEL_GIT_ACCESS_AND_PREVIEW_SMOKE`
 
 ## NEXT_CODEX_PROMPT
 
@@ -108,10 +122,10 @@ Repo: `C:\victoriosa`
 
 Branch suggested: `codex/victoriosa-staging-foundation-publish`
 
-Objective: after Vercel billing is reactivated outside chat, link a separate
-`victoriosa-marketplace` Vercel project, configure preview-only Supabase
-staging variables through the secure Vercel UI or CLI input flow, and execute
-an authenticated preview smoke without production deployment.
+Objective: grant the Vercel project `victoriosa-marketplace` access to
+`trabajosrapidosuy-commits/Victoriosa-marketplace`, configure branch-scoped
+Preview variables for Supabase staging, deploy Preview only and execute public
+plus authenticated smoke.
 
 Rules: keep `PRODUCTION_STATUS=NO-GO_PRODUCTION`; do not deploy production; do
 not print secrets; do not weaken RLS; do not execute payments; do not buy from
@@ -120,14 +134,16 @@ unrelated worktree changes.
 
 Tasks:
 
-1. Confirm Vercel billing reactivation outside chat.
-2. Link preview project `victoriosa-marketplace`.
-3. Add preview-only Supabase URL and publishable key without printing values.
-4. Deploy preview only and run public plus authenticated admin smoke.
-5. Keep production disabled and document the resulting preview URL.
+1. Connect the GitHub repository to the existing Vercel project manually or
+   grant Vercel repository access.
+2. Add branch-scoped Preview variables only for
+   `codex/victoriosa-staging-foundation-publish`.
+3. Use only Supabase staging URL and public anon key without printing values.
+4. Deploy Preview only and run public plus authenticated admin smoke.
+5. Keep Production variables and deployment disabled.
 
-GO criterion: preview deploy is linked to Supabase staging and authenticated
-smoke passes without production access.
+GO criterion: Preview deploy is branch-scoped, linked to Supabase staging and
+authenticated smoke passes without production access.
 
-NO-GO criterion: Vercel billing remains suspended, production access, secret
-exposure, payment execution or RLS weakening.
+NO-GO criterion: missing Vercel Git access, broad Preview variables,
+production access, secret exposure, payment execution or RLS weakening.
