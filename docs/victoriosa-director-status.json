@@ -1,40 +1,17 @@
 {
   "project": "Victoriosa Marketplace",
-  "date": "2026-06-02",
+  "date": "2026-06-03",
   "mode": "VICTORIOSA_PREMIUM_ZEN_UI_FROM_REFERENCE_MOCKUP",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-premium-zen-ui-reference-polish",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
-  "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
-  "roleEscalationGuardMigration": "PASS_APPLIED_AND_REMOTE_SMOKE_VERIFIED",
-  "previewDeployment": {
-    "url": "https://victoriosa-marketplace-70wtw9qlb-akuma424-projects.vercel.app",
-    "id": "dpl_HWwdqJqrHj2v2agtBXQ2UKW9aXWR",
-    "target": "preview",
-    "status": "READY",
-    "anonymousBoundary": "PASS_HTTP_401"
-  },
   "features": {
-    "editorialRedesign": "IMPLEMENTED_ORIGINAL_HERO_AND_PREMIUM_NAV",
-    "founderHero": "IMPLEMENTED_SOFIA_VICTORIA_ORIGINAL_EDITORIAL",
-    "emailAuth": "IMPLEMENTED_REGISTER_LOGIN_LOGOUT_RESET_CALLBACK",
-    "ssrSessionRefresh": "IMPLEMENTED",
-    "privateAccount": "IMPLEMENTED_PROFILE_SETTINGS_ORDERS_FAVORITES",
-    "googleOauth": "CONFIGURED_PROVIDER_UI_INACTIVE_PENDING_REVIEW",
-    "privateAdminStudio": "IMPLEMENTED_PROGRESSIVE_SEPARATION",
-    "middlewareBoundary": "IMPLEMENTED_SRC_MIDDLEWARE_COMPILED",
-    "supplierIntelligenceEngine": "IMPLEMENTED_SUPPLIER_AGNOSTIC_CORE",
-    "autopilotMockManualProviders": "IMPLEMENTED",
-    "autopilotReviewAuditMigration": "PASS_APPLIED_TO_AUTHORIZED_STAGING",
- codex/victoriosa-zen-visual-redesign
+    "publicStorefrontCanonicalization": "IMPLEMENTED",
+    "sofiaHeroResolver": "IMPLEMENTED_BRAND_RESOLVER_FALLBACK_LEGACY_APPROVED_ASSET",
+    "premiumZenReferencePolish": "IMPLEMENTED_GLASS_HEADER_REFERENCE_HERO",
+    "premiumReferenceMockupRefresh": "IMPLEMENTED_CENTERED_HERO_AND_EDITORIAL_SPACING",
     "realPayments": "DISABLED",
-    "autopilotCommercialScoring": "IMPLEMENTED",
-    "autopilotAdminQueueFilters": "IMPLEMENTED",
-    "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY",
-    "autopilotAdminControlCenter": "IMPLEMENTED_PRIVATE_MENU_REVIEW_DRAFTS_SECURITY"
-    "zenVisualRedesign": "IMPLEMENTED",
-    "sofiaHeroAsset": "IMPLEMENTED_BRAND_RESOLVER_FALLBACK_LEGACY_APPROVED_ASSET",
-    "premiumZenReferencePolish": "IMPLEMENTED_GLASS_HEADER_REFERENCE_HERO"
+    "liveProviders": "DISABLED"
   },
   "checks": {
     "ci": "PASS",
@@ -44,27 +21,23 @@
     "rlsStatic": "PASS_21_TABLES",
     "lint": "PASS",
     "typecheck": "PASS",
- codex/victoriosa-zen-visual-redesign
-    "test": "PASS_50_TESTS",
-
-    "test": "PASS_48_TESTS",
- main
+    "test": "PASS_53_TESTS",
     "build": "PASS_52_PAGES_AND_MIDDLEWARE",
     "smokeStructure": "PASS",
-    "gitDiffCheck": "PASS",
-    "stagingCheck": "PASS_SECURE_SUBSHELL_FROM_LOCAL_ENV",
-    "rlsSmoke": "PASS_ANON_BOUNDARY_9_INTERNAL_TABLES",
-    "authenticatedAccountSmoke": "PASS_REVERSIBLE_TEMP_USERS_REMOVED",
-    "googleOauthBootstrap": "CONFIGURED_PROVIDER_UI_INACTIVE_PENDING_REVIEW",
-    "publicSignup": "CHECK_NOT_RUN_COMPLETE_PROVIDER_EMAIL_RATE_LIMIT_HTTP_429",
-    "positiveAdminBrowserSmoke": "CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS"
-    ,"autopilotAuthenticatedStagingSmoke": "PASS_REVERSIBLE_FIXTURES_REMOVED"
-    ,"autopilotDraftPublicVisibility": "PASS_ZERO_VISIBLE_DRAFTS"
-    ,"autopilotServerActionUiSmoke": "PASS_MOCK_DISCOVERY_AND_MANUAL_PROVIDER"
+    "gitDiffCheck": "PASS"
+  },
+  "browserSmoke": {
+    "desktop": "PASS",
+    "mobile": "PASS",
+    "heroTitle": "PASS",
+    "brandLockup": "PASS",
+    "ctaHierarchy": "PASS"
+  },
+  "artifacts": {
+    "desktopScreenshot": "C:/victoriosa-premium-zen-ui-reference-polish/docs/screenshots/victoriosa-reference-home-desktop.png",
+    "mobileScreenshot": "C:/victoriosa-premium-zen-ui-reference-polish/docs/screenshots/victoriosa-reference-home-mobile.png"
   },
   "blockers": [
-    "BLOCKED_EXTERNAL_CREDENTIALS",
-    "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
   "nextMode": "VICTORIOSA_PREMIUM_ZEN_UI_PREVIEW_REVIEW"
