@@ -1,9 +1,9 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_AUTOPILOT_ADMIN_EXCLUSIVE_MENU_AND_CONTROL_CENTER",
+  "mode": "VICTORIOSA_PREMIUM_ZEN_UI_FROM_REFERENCE_MOCKUP",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-autopilot-admin-control-center",
+  "branch": "codex/victoriosa-premium-zen-ui-reference-polish",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
   "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
   "roleEscalationGuardMigration": "PASS_APPLIED_AND_REMOTE_SMOKE_VERIFIED",
@@ -33,15 +33,8 @@
     "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY",
     "autopilotAdminControlCenter": "IMPLEMENTED_PRIVATE_MENU_REVIEW_DRAFTS_SECURITY"
     "zenVisualRedesign": "IMPLEMENTED",
-    "sofiaHeroAsset": "IMPLEMENTED_EXISTING_APPROVED_ASSET"
-
-    "realPayments": "DISABLED"
-    ,"customDomainDns": "PASS_APEX_76_76_21_21_WWW_PROJECT_SPECIFIC_CNAME"
-    ,"customDomainSsl": "PASS_LETS_ENCRYPT_HTTP_200_HSTS"
-    ,"publicSiteUrlHelper": "IMPLEMENTED"
-    ,"supabaseAuthCustomDomainUrls": "APPLIED_AND_SMOKE_VERIFIED"
-    ,"customDomainAuthSmoke": "PASS_APEX_WWW_REVERSIBLE_FIXTURES_REMOVED"
- main
+    "sofiaHeroAsset": "IMPLEMENTED_BRAND_RESOLVER_FALLBACK_LEGACY_APPROVED_ASSET",
+    "premiumZenReferencePolish": "IMPLEMENTED_GLASS_HEADER_REFERENCE_HERO"
   },
   "checks": {
     "ci": "PASS",
@@ -74,5 +67,5 @@
     "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_AUTOPILOT_ADMIN_PROTECTED_BROWSER_SMOKE"
+  "nextMode": "VICTORIOSA_PREMIUM_ZEN_UI_PREVIEW_REVIEW"
 }

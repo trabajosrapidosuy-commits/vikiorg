@@ -2,18 +2,19 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_ADMIN_EXCLUSIVE_MENU_AND_CONTROL_CENTER`
+`VICTORIOSA_PREMIUM_ZEN_UI_FROM_REFERENCE_MOCKUP`
 
 ## Result
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Branch: `codex/victoriosa-autopilot-admin-control-center`
+- Branch: `codex/victoriosa-premium-zen-ui-reference-polish`
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`
 - Blocked ref not used: `dpwassnykcrgjwrruckz`
 - Public storefront canonicalization: IMPLEMENTED
-- Autopilot admin-exclusive menu: IMPLEMENTED
-- Autopilot review/drafts/security routes: IMPLEMENTED
-- Autopilot automatic publication: DISABLED
+- Sofia hero brand-asset resolver: IMPLEMENTED
+- Sofia final brand assets in `public/brand`: PENDING_UPLOAD
+- Current approved hero fallback: `public/victoriosa-hero-editorial.png`
+- Premium zen reference header and hero polish: IMPLEMENTED
 - Automatic publication, outbound email, supplier purchase and payments:
   NOT_EXECUTED
 
