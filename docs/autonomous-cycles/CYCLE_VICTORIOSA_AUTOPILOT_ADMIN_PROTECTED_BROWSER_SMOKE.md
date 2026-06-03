@@ -42,9 +42,9 @@ staging sessions while preserving `NO-GO_PRODUCTION`, RLS and zero residue.
 
 `PRODUCTION_STATUS=NO-GO_PRODUCTION`
 
-- No `vercel --prod`
-- No `vercel promote`
-- No Production env mutation
+- No deploy productivo directo por CLI
+- No promote manual de Vercel
+- No mutacion de variables Production
 - No public OAuth activation
 - No live payments
 - No live providers
@@ -60,7 +60,7 @@ staging sessions while preserving `NO-GO_PRODUCTION`, RLS and zero residue.
 
 ## Checks
 
-- `npm run ci`: PASS
+- `npm run ci`: PASS, rerun now green with 19 files and 62 tests
 - `npm run staging:check`: PASS
 - `npm run rls:smoke`: PASS
 - `git diff --check`: PASS
@@ -69,6 +69,17 @@ staging sessions while preserving `NO-GO_PRODUCTION`, RLS and zero residue.
 
 - `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-dashboard.png`
 - `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security.png`
+- `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-dashboard-rerun.png`
+- `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security-rerun.png`
+
+## Revalidation
+
+- Same-day rerun repeated the authenticated browser smoke with fresh reversible
+  fixtures.
+- Anonymous routes stayed redirected to `/auth/login`.
+- Customer routes stayed redirected to `/`.
+- Admin routes stayed visible with active `Autopilot` menu state.
+- Cleanup repeated with zero users, zero profiles and zero settings residue.
 
 ## Next
 

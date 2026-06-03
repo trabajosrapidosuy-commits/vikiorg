@@ -16,7 +16,7 @@
     "liveProviders": "DISABLED"
   },
   "checks": {
-    "ci": "PASS_17_FILES_56_TESTS",
+    "ci": "PASS_19_FILES_62_TESTS",
     "stagingCheck": "PASS_SECURE_SUBSHELL_FROM_LOCAL_ENV",
     "rlsSmoke": "PASS_ANON_BOUNDARY_9_INTERNAL_TABLES_ZERO_VISIBLE_ROWS",
     "gitDiffCheck": "PASS"
@@ -36,7 +36,9 @@
   },
   "artifacts": {
     "dashboardScreenshot": "C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-dashboard.png",
-    "securityScreenshot": "C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security.png"
+    "securityScreenshot": "C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security.png",
+    "dashboardScreenshotRerun": "C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-dashboard-rerun.png",
+    "securityScreenshotRerun": "C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security-rerun.png"
   },
   "blockers": [],
   "nextMode": "VICTORIOSA_AUTOPILOT_PREVIEW_RELEASE_REVIEW"

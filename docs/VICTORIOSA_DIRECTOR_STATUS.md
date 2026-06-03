@@ -24,6 +24,8 @@
 - Protected Preview browser attach was not required for this cycle because the
   branch validation ran against the staging-backed local app with the same Auth
   and RLS boundary.
+- Revalidation rerun on the same branch: PASS, same access boundary and safety
+  flags confirmed again with fresh reversible fixtures.
 
 ## Result
 
@@ -114,7 +116,7 @@
 
 ## Checks
 
-- `npm run ci`: PASS, 17 files and 56 tests
+- `npm run ci`: PASS, 19 files and 62 tests
 - `npm run staging:check`: PASS
 - `npm run rls:smoke`: PASS
 - `npm run secret:scan`: PASS
@@ -153,6 +155,10 @@
   `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-dashboard.png`
   and
   `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security.png`.
+- Revalidation screenshots:
+  `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-dashboard-rerun.png`
+  and
+  `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security-rerun.png`.
 - Protected Preview route smoke:
   CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS because no project-specific
   automation bypass is available.
