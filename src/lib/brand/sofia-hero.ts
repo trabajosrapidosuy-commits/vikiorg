@@ -31,7 +31,7 @@ export function getSofiaHeroAsset(repoRoot = process.cwd()): SofiaHeroAsset {
   if (exists(repoRoot, BRAND_DESKTOP_FILE)) {
     return {
       alt: "Sofía Victoria, fundadora de Victoriosa, en un ritual de belleza consciente",
-      caption: "Sofia Victoria - ritual de belleza consciente",
+      caption: "Sofía Victoria - ritual de belleza consciente",
       desktopSrc: toPublicSrc(BRAND_DESKTOP_FILE),
       mobileSrc: exists(repoRoot, BRAND_MOBILE_FILE)
         ? toPublicSrc(BRAND_MOBILE_FILE)
@@ -43,7 +43,7 @@ export function getSofiaHeroAsset(repoRoot = process.cwd()): SofiaHeroAsset {
   if (exists(repoRoot, LEGACY_APPROVED_FILE)) {
     return {
       alt: "Sofía Victoria, fundadora de Victoriosa, en un ritual de belleza consciente",
-      caption: "Sofia Victoria - retrato editorial aprobado de la marca",
+      caption: "Sofía Victoria - retrato editorial aprobado de la marca",
       desktopSrc: toPublicSrc(LEGACY_APPROVED_FILE),
       mobileSrc: toPublicSrc(LEGACY_APPROVED_FILE),
       mode: "approved_legacy_asset",
@@ -52,7 +52,7 @@ export function getSofiaHeroAsset(repoRoot = process.cwd()): SofiaHeroAsset {
 
   return {
     alt: "Ritual de belleza consciente Victoriosa en una escena editorial wellness",
-    caption: "Placeholder temporal. Subir foto aprobada de Sofia Victoria a public/brand.",
+    caption: "Placeholder temporal. Subir foto aprobada de Sofía Victoria a public/brand.",
     desktopSrc: toPublicSrc(PLACEHOLDER_FILE),
     mobileSrc: toPublicSrc(PLACEHOLDER_FILE),
     mode: "placeholder_pending_real_asset",

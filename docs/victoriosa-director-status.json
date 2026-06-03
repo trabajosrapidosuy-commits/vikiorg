@@ -1,9 +1,9 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_SOFIA_HERO_IMAGE_IMPLEMENTATION",
+  "mode": "VICTORIOSA_PREMIUM_ZEN_UI_FROM_REFERENCE_MOCKUP",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-zen-visual-redesign",
+  "branch": "codex/victoriosa-premium-zen-ui-reference-polish",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
   "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
   "roleEscalationGuardMigration": "PASS_APPLIED_AND_REMOTE_SMOKE_VERIFIED",
@@ -31,7 +31,8 @@
     "autopilotAdminQueueFilters": "IMPLEMENTED",
     "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY",
     "zenVisualRedesign": "IMPLEMENTED",
-    "sofiaHeroAsset": "IMPLEMENTED_BRAND_RESOLVER_FALLBACK_LEGACY_APPROVED_ASSET"
+    "sofiaHeroAsset": "IMPLEMENTED_BRAND_RESOLVER_FALLBACK_LEGACY_APPROVED_ASSET",
+    "premiumZenReferencePolish": "IMPLEMENTED_GLASS_HEADER_REFERENCE_HERO"
   },
   "checks": {
     "ci": "PASS",
@@ -60,5 +61,5 @@
     "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_ZEN_REDESIGN_REVIEW_AND_PR"
+  "nextMode": "VICTORIOSA_PREMIUM_ZEN_UI_PREVIEW_REVIEW"
 }

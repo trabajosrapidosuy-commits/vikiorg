@@ -2,18 +2,19 @@
 
 ## Current Mode
 
-`VICTORIOSA_SOFIA_HERO_IMAGE_IMPLEMENTATION`
+`VICTORIOSA_PREMIUM_ZEN_UI_FROM_REFERENCE_MOCKUP`
 
 ## Result
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Branch: `codex/victoriosa-zen-visual-redesign`
+- Branch: `codex/victoriosa-premium-zen-ui-reference-polish`
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`
 - Blocked ref not used: `dpwassnykcrgjwrruckz`
 - Public storefront canonicalization: IMPLEMENTED
 - Sofia hero brand-asset resolver: IMPLEMENTED
 - Sofia final brand assets in `public/brand`: PENDING_UPLOAD
 - Current approved hero fallback: `public/victoriosa-hero-editorial.png`
+- Premium zen reference header and hero polish: IMPLEMENTED
 - Automatic publication, outbound email, supplier purchase and payments:
   NOT_EXECUTED
 
