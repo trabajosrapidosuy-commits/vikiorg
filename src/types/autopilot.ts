@@ -27,6 +27,10 @@ export interface CandidateScore {
   compliance: number;
   logistics: number;
   supplier: number;
+  supplierReliability?: number;
+  complianceRisk?: number;
+  shipping?: number;
+  marketFit?: number;
   total: number;
   explanation: string[];
   brandFitScore?: number;
@@ -35,6 +39,9 @@ export interface CandidateScore {
   scoreBreakdown?: Record<string, number>;
   strengths?: string[];
   weaknesses?: string[];
+  warnings?: string[];
+  blockers?: string[];
+  recommendation?: "reject" | "review" | "approve_candidate";
 }
 
 export interface ProductCandidate {

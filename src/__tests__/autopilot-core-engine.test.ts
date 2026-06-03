@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { scoreBrandFit } from "@/lib/autopilot/core/brand-fit";
+import { evaluateBusinessRules, matchesPriorityCategory } from "@/lib/autopilot/core/business-rules";
 import { createDraftProductRow } from "@/lib/autopilot/core/import-draft";
 import { calculateSuggestedPrice } from "@/lib/autopilot/core/pricing";
 import { detectProductRisks } from "@/lib/autopilot/core/risk";
@@ -31,6 +32,30 @@ describe("supplier agnostic autopilot core", () => {
 
   it("scores profitable beauty inventory above low inventory", () => {
     expect(scoreCandidate(beautyProduct).finalScore).toBeGreaterThan(scoreCandidate({ ...beautyProduct, inventoryTotal: 1, verifiedInventory: 0 }).finalScore);
+  });
+
+  it("returns commercial intelligence aliases and recommendation", () => {
+    const score = scoreCandidate(beautyProduct);
+    expect(score.supplierReliabilityScore).toBe(score.inventoryScore);
+    expect(score.complianceRiskScore).toBe(score.riskScore);
+    expect(score.shippingScore).toBe(score.logisticsScore);
+    expect(score.marketFitScore).toBe(score.brandFitScore);
+    expect(score.recommendation).toBe("approve_candidate");
+    expect(score.blockers).toEqual([]);
+  });
+
+  it("keeps risky or excluded products out of auto-approval", () => {
+    const score = scoreCandidate({ ...beautyProduct, title: "Replica medicamento milagro", description: "Suplemento que cura enfermedad" });
+    expect(score.recommendation).toBe("reject");
+    expect(score.blockers.length).toBeGreaterThan(0);
+  });
+
+  it("documents Victoriosa category boosts and warnings", () => {
+    expect(matchesPriorityCategory(beautyProduct)).toBe(true);
+    const evaluation = evaluateBusinessRules({ ...beautyProduct, deliveryEstimateDays: 45, verifiedInventory: 0 });
+    expect(evaluation.boosts).toContain("Categoria prioritaria para Victoriosa.");
+    expect(evaluation.warnings).toContain("Envio lento para validacion comercial inicial.");
+    expect(evaluation.warnings).toContain("Proveedor con inventario verificado debil o insuficiente.");
   });
 
   it("detects medical and ingestible risks", () => {

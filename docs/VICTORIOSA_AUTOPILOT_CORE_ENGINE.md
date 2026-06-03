@@ -22,7 +22,11 @@ No candidate is published automatically. Import creates only
   `reject` recommendation.
 - `brand-fit.ts`: Victoriosa beauty and self-care affinity.
 - `viral.ts`: visual, demonstrable and demand heuristics without paid AI.
-- `scoring.ts`: explainable 0-100 composite score.
+- `business-rules.ts`: initial Victoriosa category, compliance, supplier and
+  shipping rules.
+- `scoring.ts`: explainable 0-100 composite score with profitability,
+  virality, supplier reliability, compliance risk, shipping, market fit,
+  warnings, blockers and recommendation.
 - `import-draft.ts`: draft-only marketplace row constructor.
 
 ## Providers
@@ -62,3 +66,16 @@ cleanup.
 
 Optional empty form fields are normalized before Zod validation so blank
 filters and optional manual URLs do not break Server Actions.
+
+## Product Intelligence Resume
+
+- Candidate queue now filters by status, recommendation, category, provider,
+  minimum score, maximum risk and sort mode.
+- Candidate detail shows recommendation, source availability, commercial score
+  cards, warnings, blockers, strengths and weaknesses.
+- Admin can edit suggested price; the service recalculates margin and writes a
+  review event. It does not publish.
+- Scoring returns `approve_candidate`, `review` or `reject`; risky/excluded
+  products never auto-approve.
+- No live provider credentials, scraping, payments or automatic publication
+  were enabled.

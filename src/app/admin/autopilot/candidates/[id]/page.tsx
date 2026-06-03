@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { generateCommercialDraft } from "@/services/autopilot-marketing-service";
 import { getPersistentCandidate } from "@/services/autopilot-persistence-service";
-import { approveProductCandidateAction, generateAiDraftForCandidateAction, importCandidateToDraftProductAction, markProductCandidateNeedsReviewAction, rejectProductCandidateAction } from "../../actions";
+import { approveProductCandidateAction, generateAiDraftForCandidateAction, importCandidateToDraftProductAction, markProductCandidateNeedsReviewAction, rejectProductCandidateAction, updateCandidateSuggestedPriceAction } from "../../actions";
 
 export default async function CandidateDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,6 +25,11 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
     suggestedSalePrice: candidate.suggestedSalePrice, estimatedMarginPercent: candidate.estimatedMarginPercent,
     score: candidate.scoring, riskFlags: candidate.riskFlags, status: candidate.status,
   });
+  const scoring = isRecord(candidate.scoring) ? candidate.scoring : {};
+  const scoreBreakdown = isRecord(candidate.score_breakdown) ? candidate.score_breakdown : {};
+  const recommendation = getRecommendation(scoring, scoreBreakdown, Number(candidate.risk_score ?? 0));
+  const warnings = listFrom(scoring.warnings ?? scoreBreakdown.warnings);
+  const blockers = listFrom(scoring.blockers ?? scoreBreakdown.blockers);
 
   return (
     <main className="space-y-5">
@@ -34,20 +39,35 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         <p className="mt-2">{candidate.description}</p>
         <dl className="mt-4 grid gap-3 text-sm md:grid-cols-3">
           <Info label="Proveedor" value={candidate.supplier_name} />
+          <Info label="Fuente" value={candidate.source_url ? "URL disponible" : "Sin URL fuente"} />
           <Info label="Categoria" value={candidate.category} />
           <Info label="Entrega estimada" value={`${Number(candidate.raw_payload?.estimatedDeliveryDays ?? 0)} dias`} />
           <Info label="Costo total" value={`USD ${(candidate.supplierCost + candidate.shippingCost).toFixed(2)}`} />
           <Info label="Precio sugerido" value={`USD ${candidate.suggestedSalePrice.toFixed(2)}`} />
           <Info label="Margen estimado" value={`${candidate.estimatedMarginPercent.toFixed(1)}%`} />
+          <Info label="Recomendacion" value={recommendation} />
         </dl>
+        {candidate.source_url && <p className="mt-3 text-sm"><a className="underline" href={candidate.source_url} rel="noreferrer" target="_blank">Abrir fuente sandbox/autorizada</a></p>}
       </section>
       <section className="grid gap-5 md:grid-cols-2">
         <div className="card"><h3 className="font-bold">Scoring explicable</h3><ul className="mt-3 list-disc pl-5 text-sm">{candidate.scoring.explanation.map((line: string) => <li key={line}>{line}</li>)}</ul></div>
         <div className="card"><h3 className="font-bold">Riesgos detectados</h3><p className="mt-3 text-sm">{candidate.riskFlags.join(", ") || "Sin alertas automaticas. Requiere revision humana igualmente."}</p></div>
       </section>
+      <section className="grid gap-5 md:grid-cols-3">
+        <ScoreCard label="Rentabilidad" value={Number(scoring.profitability ?? candidate.profitability_score ?? 0)} />
+        <ScoreCard label="Viralidad" value={Number(scoring.viral ?? candidate.viral_score ?? 0)} />
+        <ScoreCard label="Proveedor" value={Number(scoring.supplierReliability ?? scoring.supplier ?? candidate.supplier_score ?? 0)} />
+        <ScoreCard label="Riesgo compliance" value={Number(scoring.complianceRisk ?? candidate.risk_score ?? 0)} />
+        <ScoreCard label="Envio" value={Number(scoring.shipping ?? scoring.logistics ?? candidate.logistics_score ?? 0)} />
+        <ScoreCard label="Marca/Mercado" value={Number(scoring.marketFit ?? candidate.brand_fit_score ?? 0)} />
+      </section>
       <section className="grid gap-5 md:grid-cols-2">
         <ListCard title="Fortalezas" values={candidate.strengths ?? []} />
         <ListCard title="Debilidades" values={candidate.weaknesses ?? []} />
+      </section>
+      <section className="grid gap-5 md:grid-cols-2">
+        <ListCard title="Advertencias compliance" values={warnings} />
+        <ListCard title="Bloqueos" values={blockers} />
       </section>
       <section className="card">
         <h3 className="font-bold">Acciones controladas</h3>
@@ -63,6 +83,12 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
             <button className="btn btn-secondary" type="submit">Rechazar</button>
           </form>
         </div>
+        <form action={updateCandidateSuggestedPriceAction} className="mt-4 flex flex-wrap gap-2 text-sm">
+          <input name="id" type="hidden" value={candidate.id} />
+          <input className="rounded border p-2" name="suggestedPrice" min="0.01" step="0.01" type="number" defaultValue={candidate.suggestedSalePrice} />
+          <button className="btn btn-secondary" type="submit">Guardar precio sugerido</button>
+          <span className="self-center text-gray-600">No cambia publicacion; solo recalcula margen interno.</span>
+        </form>
       </section>
       <section className="card">
         <h3 className="font-bold">Borrador comercial local</h3>
@@ -87,4 +113,21 @@ function ListCard({ title, values }: { title: string; values: string[] }) {
 
 function ActionForm({ action, id, label }: { action: (formData: FormData) => Promise<void>; id: string; label: string }) {
   return <form action={action}><input name="id" type="hidden" value={id} /><button className="btn btn-secondary" type="submit">{label}</button></form>;
+}
+
+function ScoreCard({ label, value }: { label: string; value: number }) {
+  return <div className="card"><p className="text-sm text-gray-600">{label}</p><p className="mt-1 text-2xl font-bold">{Math.round(value)}</p></div>;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function listFrom(value: unknown) {
+  return Array.isArray(value) ? value.map(String) : [];
+}
+
+function getRecommendation(scoring: Record<string, unknown>, breakdown: Record<string, unknown>, riskScore: number) {
+  const value = scoring.recommendation ?? breakdown.recommendation;
+  return value === "approve_candidate" || value === "reject" || value === "review" ? value : riskScore >= 70 ? "reject" : "review";
 }

@@ -260,6 +260,50 @@
 - Authenticated protected Preview browser smoke:
   CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
 
+## Autopilot Product Intelligence Resume
+
+- Mode: `VICTORIOSA_AUTOPILOT_PRODUCT_INTELLIGENCE_AND_ADMIN_QUEUE_RESUME`.
+- Branch: `codex/victoriosa-autopilot-product-intelligence-resume`.
+- Base: `codex/victoriosa-autopilot-core-engine` at `f12a327`.
+- Business rules: IMPLEMENTED for Victoriosa priority categories, excluded
+  risky terms, slow shipping, weak supplier inventory and missing source URL.
+- Scoring: IMPLEMENTED for profitability, virality, supplier reliability,
+  compliance risk, shipping, market fit, total score, warnings, blockers and
+  recommendation.
+- Admin queue: IMPLEMENTED filters by recommendation, category, provider,
+  score, risk, status and sort mode.
+- Candidate detail: IMPLEMENTED score cards, source visibility, warnings,
+  blockers and suggested price edit.
+- Draft import: unchanged safe path; import remains `draft` and
+  `needs_review`.
+- Live providers, payments, outbound sends and automatic publication:
+  DISABLED.
+
+## Master Zen Visual Redesign
+
+- Mode: `VICTORIOSA_MASTER_ZEN_REDESIGN_WITH_SOFIA_HERO`.
+- Branch: `codex/victoriosa-zen-visual-redesign`.
+- Worktree used: `C:\victoriosa-zen-visual-redesign` to preserve unrelated
+  dirty ChatGPT app changes in `C:\victoriosa`.
+- Home visual system: IMPLEMENTED with warm ivory, sand, muted rose, sage and
+  espresso palette.
+- Hero: IMPLEMENTED with `Tu belleza, en calma.`, trust pills and Sofia
+  Victoria founder line.
+- Sofia hero image: IMPLEMENTED using existing approved/documented asset
+  `public/victoriosa-hero-editorial.png`.
+- Future replacement path: upload an approved real Sofia asset to
+  `public/brand/sofia-victoria-hero.jpg` and update the hero `src`.
+- Header/nav: REFINED with lighter editorial spacing, softer utility line and
+  mobile scrollbar hidden.
+- Product cards: REFINED with editorial media, subtle badges, quieter CTA and
+  confirmation copy.
+- Trust, rituals, guidance and footer sections: IMPLEMENTED.
+- Desktop browser smoke: PASS, hero/Sofia/trust rendered on `localhost:3102`.
+- Mobile viewport smoke: PASS at 390x844, hero and CTA rendered.
+- Claims safety: PASS, no medical outcome claim, no payments/live providers
+  implied.
+- Production action: NOT_EXECUTED.
+
 ## NEXT_CODEX_PROMPT
 
 Repo: `C:\victoriosa`

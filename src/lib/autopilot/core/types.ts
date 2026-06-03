@@ -48,6 +48,10 @@ export interface RiskAssessment {
 
 export interface CandidateScoreResult {
   profitabilityScore: number;
+  supplierReliabilityScore: number;
+  complianceRiskScore: number;
+  shippingScore: number;
+  marketFitScore: number;
   inventoryScore: number;
   viralSignal: number;
   brandFitScore: number;
@@ -58,7 +62,10 @@ export interface CandidateScoreResult {
   scoreBreakdown: Record<string, number>;
   strengths: string[];
   weaknesses: string[];
+  warnings: string[];
+  blockers: string[];
   riskFlags: string[];
   recommendedAction: RiskAssessment["recommendedAction"];
+  recommendation: "reject" | "review" | "approve_candidate";
   pricing: PricingResult;
 }
