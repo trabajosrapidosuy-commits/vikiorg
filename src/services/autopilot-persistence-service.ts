@@ -77,6 +77,28 @@ export async function listPersistentDiscoveryRuns(supabase: SupabaseClient) {
   return data ?? [];
 }
 
+export async function listPersistentDraftImports(supabase: SupabaseClient) {
+  const { data, error } = await supabase
+    .from("autopilot_product_candidates")
+    .select("id,title,category,provider,supplier_name,suggested_price,margin_percent,review_status,imported_product_id,created_at,updated_at")
+    .eq("review_status", "imported_to_products")
+    .order("updated_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function listPersistentCandidateEvents(supabase: SupabaseClient, candidateId: string) {
+  const id = z.string().uuid().parse(candidateId);
+  const { data, error } = await supabase
+    .from("autopilot_review_events")
+    .select("*")
+    .eq("candidate_id", id)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
 export async function getPersistentCandidate(supabase: SupabaseClient, id: string) {
   const candidateId = z.string().uuid().parse(id);
   const { data, error } = await supabase.from("autopilot_product_candidates").select("*").eq("id", candidateId).single();
@@ -122,6 +144,22 @@ export async function updatePersistentCandidateSuggestedPrice(supabase: Supabase
 
 export async function markPersistentCandidateNeedsReview(supabase: SupabaseClient, id: string) {
   return updateCandidateReview(supabase, id, { status: "pending_admin_review", review_status: "pending_admin_review" }, "needs_review");
+}
+
+export async function addPersistentCandidateAdminNote(supabase: SupabaseClient, id: string, reason: string, actorId?: string) {
+  const candidate = await getPersistentCandidate(supabase, id);
+  const note = z.string().trim().min(3).max(1000).parse(reason);
+  await logReviewEvent(supabase, {
+    candidateId: candidate.id,
+    actorId,
+    eventType: "note_added",
+    previousStatus: candidate.review_status,
+    newStatus: candidate.review_status,
+    reason: note,
+    metadata: { note },
+  });
+  await logAutopilotEvent(supabase, { candidateId: candidate.id, level: "info", message: "Admin note added to candidate audit history." });
+  return candidate;
 }
 
 export async function createPersistentManualCandidate(supabase: SupabaseClient, rawInput: unknown) {

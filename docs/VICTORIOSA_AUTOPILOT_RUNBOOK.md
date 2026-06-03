@@ -29,14 +29,16 @@ Forbidden:
 
 1. Run Discovery under `/admin/autopilot/discovery`.
 2. Review `/admin/autopilot/candidates`.
-3. Filter by recommendation, category, provider, score, risk and status.
-4. Open candidate detail.
-5. Review profitability, viral, supplier, compliance, shipping and market fit
+3. Use `/admin/autopilot/review` for the decision-only queue.
+4. Filter by recommendation, category, provider, score, risk and status.
+5. Open candidate detail.
+6. Review profitability, viral, supplier, compliance, shipping and market fit
    scores.
-6. Read strengths, weaknesses, warnings and blockers.
-7. Optionally adjust suggested price; this only updates internal margin and
+7. Read strengths, weaknesses, warnings, blockers and audit history.
+8. Optionally adjust suggested price; this only updates internal margin and
    writes an audit event.
-8. Approve for draft, reject with reason or keep in review.
+9. Add admin notes when human context is needed.
+10. Approve for draft, reject with reason or keep in review.
 
 ## Draft Import
 
@@ -49,6 +51,13 @@ Only candidates in `approved_for_draft` may be imported. Import creates a
 
 Drafts are not visible in the public catalog until a separate human review and
 publication gate approves them.
+
+Operational surfaces:
+
+- `/admin/autopilot/drafts`
+- `/admin/autopilot/runs`
+- `/admin/autopilot/settings`
+- `/admin/autopilot/security`
 
 ## Security
 

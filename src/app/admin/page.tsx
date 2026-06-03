@@ -1,7 +1,9 @@
 import Link from "next/link";
 
 const modules = [
-  ["/admin/autopilot", "Autopilot", "Discovery, scoring y borradores con revision humana."],
+  ["/admin/autopilot", "Autopilot", "Dashboard privado con scoring comercial, riesgos y actividad review-only."],
+  ["/admin/autopilot/review", "Revision", "Cola de decision humana para aprobar, rechazar o volver a revisar."],
+  ["/admin/autopilot/drafts", "Drafts", "Productos importados como borrador sin publicacion automatica."],
   ["/admin/marketplace/products/review", "Cola de revision", "Aprobar o rechazar productos antes de cualquier publicacion."],
   ["/admin/marketplace/products/import", "Importar drafts", "Ingresar catalogos controlados sin publicacion automatica."],
   ["/admin/marketplace/orders", "Pedidos", "Consultar ordenes y tareas manuales de fulfillment."],

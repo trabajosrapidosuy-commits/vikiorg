@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { AutopilotCandidateTable } from "@/components/autopilot/AutopilotCandidateTable";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { listPersistentCandidates } from "@/services/autopilot-persistence-service";
 
@@ -34,27 +34,12 @@ export default async function CandidatesPage({ searchParams }: { searchParams: P
         <select className="rounded border p-2" defaultValue={params.sort ?? "score"} name="sort"><option value="score">Ordenar score</option><option value="margin">Ordenar margen</option><option value="risk">Ordenar riesgo</option><option value="shipping">Ordenar envio</option></select>
         <button className="btn btn-secondary" type="submit">Aplicar filtros</button>
       </form>
-      <table className="mt-4 w-full min-w-[980px] text-left text-sm">
-        <thead><tr className="border-b"><th className="p-2">Producto</th><th className="p-2">Proveedor</th><th className="p-2">Costo</th><th className="p-2">Shipping</th><th className="p-2">Precio sugerido</th><th className="p-2">Margen</th><th className="p-2">Score</th><th className="p-2">Riesgo</th><th className="p-2">Recomendacion</th><th className="p-2">Estado</th><th className="p-2">Accion</th></tr></thead>
-        <tbody>
-          {candidates.map((candidate) => (
-            <tr className="border-b align-top" key={candidate.id}>
-              <td className="p-2"><strong>{candidate.title}</strong><br /><span className="text-gray-600">{candidate.category}</span></td>
-              <td className="p-2">{candidate.provider ?? candidate.supplier_name}</td>
-              <td className="p-2">USD {Number(candidate.supplier_cost).toFixed(2)}</td>
-              <td className="p-2">USD {Number(candidate.estimated_shipping_cost).toFixed(2)}</td>
-              <td className="p-2">USD {Number(candidate.suggested_price).toFixed(2)}</td>
-              <td className="p-2">{Number(candidate.margin_percent).toFixed(1)}%</td>
-              <td className="p-2 font-bold">{candidate.total_score}</td>
-              <td className="p-2">{Number(candidate.risk_score ?? 0)}</td>
-              <td className="p-2"><span className="badge">{getRecommendation(candidate)}</span></td>
-              <td className="p-2"><span className="badge">{candidate.review_status}</span></td>
-              <td className="p-2"><Link className="font-bold underline" href={`/admin/autopilot/candidates/${candidate.id}`}>Ver detalle</Link></td>
-            </tr>
-          ))}
-          {candidates.length === 0 && <tr><td className="p-4 text-gray-600" colSpan={11}>No hay candidatos persistidos. Ejecuta Discovery para crear la primera cola.</td></tr>}
-        </tbody>
-      </table>
+      <div className="mt-4">
+        <AutopilotCandidateTable
+          candidates={candidates}
+          emptyMessage="No hay candidatos persistidos. Ejecuta Discovery para crear la primera cola."
+        />
+      </div>
     </main>
   );
 }

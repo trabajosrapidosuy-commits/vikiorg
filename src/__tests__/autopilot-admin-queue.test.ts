@@ -22,4 +22,12 @@ describe("autopilot admin queue UX", () => {
     expect(detail).toContain("No cambia publicacion");
     expect(actions).toContain("updatePersistentCandidateSuggestedPrice");
   });
+
+  it("adds review and drafts surfaces without publishing controls", () => {
+    const reviewPage = read("src/app/admin/autopilot/review/page.tsx");
+    const draftsPage = read("src/app/admin/autopilot/drafts/page.tsx");
+    expect(reviewPage).toContain("Revision humana");
+    expect(draftsPage).toContain("draft + needs_review");
+    expect(draftsPage).not.toContain("published");
+  });
 });

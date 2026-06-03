@@ -1,15 +1,9 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
- codex/victoriosa-zen-visual-redesign
-  "mode": "VICTORIOSA_MASTER_ZEN_REDESIGN_WITH_SOFIA_HERO",
+  "mode": "VICTORIOSA_AUTOPILOT_ADMIN_EXCLUSIVE_MENU_AND_CONTROL_CENTER",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-zen-visual-redesign",
-
-  "mode": "VICTORIOSA_CUSTOM_DOMAIN_AUTH_URL_HUMAN_APPLY_AND_SMOKE",
-  "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-domain-ssl-dns-rescue",
- main
+  "branch": "codex/victoriosa-autopilot-admin-control-center",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
   "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
   "roleEscalationGuardMigration": "PASS_APPLIED_AND_REMOTE_SMOKE_VERIFIED",
@@ -37,6 +31,7 @@
     "autopilotCommercialScoring": "IMPLEMENTED",
     "autopilotAdminQueueFilters": "IMPLEMENTED",
     "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY",
+    "autopilotAdminControlCenter": "IMPLEMENTED_PRIVATE_MENU_REVIEW_DRAFTS_SECURITY"
     "zenVisualRedesign": "IMPLEMENTED",
     "sofiaHeroAsset": "IMPLEMENTED_EXISTING_APPROVED_ASSET"
 
@@ -79,9 +74,5 @@
     "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
- codex/victoriosa-zen-visual-redesign
-  "nextMode": "VICTORIOSA_ZEN_REDESIGN_REVIEW_AND_PR"
-
-  "nextMode": "VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW"
- main
+  "nextMode": "VICTORIOSA_AUTOPILOT_ADMIN_PROTECTED_BROWSER_SMOKE"
 }
