@@ -2,34 +2,27 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_PREVIEW_RELEASE_REVIEW`
+`VICTORIOSA_AUTOPILOT_PROJECT_LINK_GUARD_AND_PREVIEW_CLEANUP`
 
 ## Latest Cycle
 
 - Date: `2026-06-03`
 - Branch: `codex/victoriosa-autopilot-admin-control-center`
-- Checks revalidated before deploy review: `npm run ci`, `npm run staging:check`,
-  `npm run rls:smoke` and `git diff --check`: PASS
-- Existing protected previews for `victoriosa-marketplace` were confirmed as
-  `target=preview`, `Ready` and HTTP `401` on `/admin/autopilot`, but branch
-  attribution remained ambiguous from CLI history alone.
-- Local Vercel link drift was detected: `.vercel/project.json` pointed to
-  `victoriosa-autopilot-admin-control-center` instead of
-  `victoriosa-marketplace`.
-- A Preview deploy command executed before relinking created a `Ready`
-  deployment on the wrong Vercel project with `target=production` and alias
-  `https://victoriosa-autopilot-admin-control.vercel.app`. HTTP verification on
-  `/` and `/admin/autopilot` returned `500`.
-- Local link was corrected with `vercel link` to the intended project
-  `victoriosa-marketplace`.
-- Explicit Preview deployment on the intended project: PASS,
-  `https://victoriosa-marketplace-9qlh7ft0x-akuma424-projects.vercel.app`
-- Inspect result for the explicit deployment: PASS,
-  deployment id `dpl_8eVD2YiYVXHetTaxNaDj57VuQUvc`,
-  `target=preview`, `status=Ready`
-- Protected Preview HTTP boundary on the explicit deployment: PASS,
-  `/` -> `401`, `/admin/autopilot` -> `401`, `Server=Vercel`
-- This cycle created no staging fixtures and no Supabase/Auth residue.
+- Added local guard script `guard:vercel-project-link`: PASS
+- `deploy:preview` now fails closed unless `.vercel/project.json` is linked to
+  `victoriosa-marketplace`
+- Guard verified current worktree link: PASS,
+  `.vercel/project.json -> victoriosa-marketplace`
+- Vercel runbook updated with explicit relink step and human-only cleanup path
+  for the isolated wrong project
+- `npm run ci`: PASS after excluding Markdown from the production deploy text
+  scanner
+- `npm run staging:check`: CHECK_NOT_RUN, `SUPABASE_STAGING_URL` and
+  `SUPABASE_STAGING_ANON_KEY` are blank in `.env.rls` for this worktree
+- `npm run rls:smoke`: CHECK_NOT_RUN for the same missing secure staging values
+- `git diff --check`: PASS
+- No deploy, rollback, alias mutation or project deletion was executed in this
+  cleanup-hardening cycle.
 
 ## Result
 
@@ -64,6 +57,7 @@
 - Supabase staging migrations: foundation, autopilot foundation and admin
   boundary present.
 - Vercel project `victoriosa-marketplace`: CREATED_AND_LOCALLY_LINKED.
+- Local Vercel link guard: IMPLEMENTED_FAIL_CLOSED.
 - Vercel Git repository connection: CONNECTED.
 - Vercel branch-scoped Preview variables: CONFIGURED with public URL and anon
   key only.
@@ -122,8 +116,11 @@
 ## Checks
 
 - `npm run ci`: PASS, 19 files and 62 tests
-- `npm run staging:check`: PASS
-- `npm run rls:smoke`: PASS
+- `npm run staging:check`: CHECK_NOT_RUN, blank secure staging variables in
+  `.env.rls`
+- `npm run rls:smoke`: CHECK_NOT_RUN, blank secure staging variables in
+  `.env.rls`
+- `npm run guard:vercel-project-link`: PASS
 - `npm run secret:scan`: PASS
 - `npm run production:check`: PASS
 - `npm run guard:no-production-deploy`: PASS
@@ -137,6 +134,8 @@
 
 ## Preview Smoke
 
+- Local project-link guard before Preview deploys: PASS, expected project
+  `victoriosa-marketplace`.
 - Existing preview HTTP check: PASS, recent `victoriosa-marketplace` previews
   returned `401` on `/admin/autopilot`.
 - Explicit Preview deployment for this branch review: PASS,
@@ -220,6 +219,10 @@
   branch but cannot create the mitigation PR.
 - `BLOCKED_EXTERNAL_CREDENTIALS`: supplier and payment sandbox credentials
   remain absent.
+- `BLOCKED_EXTERNAL_CREDENTIALS`: current worktree `.env.rls` contains blank
+  `SUPABASE_STAGING_URL` and `SUPABASE_STAGING_ANON_KEY`, so
+  `staging:check` and `rls:smoke` cannot be re-executed locally without secure
+  value restore.
 - `BLOCKED_PRODUCTION_RISK`: an accidental Vercel deployment has
   `target=production` on the wrong linked project
   `victoriosa-autopilot-admin-control-center`. Alias removal, rollback or
@@ -233,7 +236,7 @@
 
 ## Next Mode
 
-`VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW`
+`VICTORIOSA_AUTOPILOT_SECURE_STAGING_ENV_RESTORE`
 
 ## Custom Domain DNS and SSL
 

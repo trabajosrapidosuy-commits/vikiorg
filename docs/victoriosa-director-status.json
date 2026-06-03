@@ -1,7 +1,7 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-03",
-  "mode": "VICTORIOSA_AUTOPILOT_PREVIEW_RELEASE_REVIEW",
+  "mode": "VICTORIOSA_AUTOPILOT_PROJECT_LINK_GUARD_AND_PREVIEW_CLEANUP",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-admin-control-center",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
@@ -17,9 +17,16 @@
   },
   "checks": {
     "ci": "PASS_19_FILES_62_TESTS",
-    "stagingCheck": "PASS_SECURE_SUBSHELL_FROM_LOCAL_ENV",
-    "rlsSmoke": "PASS_ANON_BOUNDARY_9_INTERNAL_TABLES_ZERO_VISIBLE_ROWS",
+    "stagingCheck": "CHECK_NOT_RUN_BLANK_SUPABASE_STAGING_VALUES_IN_ENV_RLS",
+    "rlsSmoke": "CHECK_NOT_RUN_BLANK_SUPABASE_STAGING_VALUES_IN_ENV_RLS",
+    "vercelProjectLinkGuard": "PASS_EXPECTED_VICTORIOSA_MARKETPLACE",
     "gitDiffCheck": "PASS"
+  },
+  "deploySafety": {
+    "guardScript": "IMPLEMENTED",
+    "deployPreviewWrapped": "PASS_FAIL_CLOSED_BEFORE_VERCEL_DEPLOY",
+    "expectedVercelProject": "victoriosa-marketplace",
+    "wrongProjectCleanupRunbook": "DOCUMENTED_HUMAN_ONLY"
   },
   "previewReview": {
     "existingProtectedPreview": "PASS_RECENT_PREVIEWS_READY_HTTP_401",
@@ -62,7 +69,8 @@
     "securityScreenshotRerun": "C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security-rerun.png"
   },
   "blockers": [
+    "BLOCKED_EXTERNAL_CREDENTIALS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_AUTOPILOT_PROJECT_LINK_GUARD_AND_PREVIEW_CLEANUP"
+  "nextMode": "VICTORIOSA_AUTOPILOT_SECURE_STAGING_ENV_RESTORE"
 }
