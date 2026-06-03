@@ -26,10 +26,12 @@
     "supplierIntelligenceEngine": "IMPLEMENTED_SUPPLIER_AGNOSTIC_CORE",
     "autopilotMockManualProviders": "IMPLEMENTED",
     "autopilotReviewAuditMigration": "PASS_APPLIED_TO_AUTHORIZED_STAGING",
+ codex/victoriosa-zen-visual-redesign
     "realPayments": "DISABLED",
     "autopilotCommercialScoring": "IMPLEMENTED",
     "autopilotAdminQueueFilters": "IMPLEMENTED",
     "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY",
+    "autopilotAdminControlCenter": "IMPLEMENTED_PRIVATE_MENU_REVIEW_DRAFTS_SECURITY"
     "zenVisualRedesign": "IMPLEMENTED",
     "sofiaHeroAsset": "IMPLEMENTED_BRAND_RESOLVER_FALLBACK_LEGACY_APPROVED_ASSET",
     "premiumZenReferencePolish": "IMPLEMENTED_GLASS_HEADER_REFERENCE_HERO"
@@ -42,12 +44,16 @@
     "rlsStatic": "PASS_21_TABLES",
     "lint": "PASS",
     "typecheck": "PASS",
+ codex/victoriosa-zen-visual-redesign
     "test": "PASS_50_TESTS",
+
+    "test": "PASS_48_TESTS",
+ main
     "build": "PASS_52_PAGES_AND_MIDDLEWARE",
     "smokeStructure": "PASS",
     "gitDiffCheck": "PASS",
     "stagingCheck": "PASS_SECURE_SUBSHELL_FROM_LOCAL_ENV",
-    "rlsSmoke": "PASS_ANON_BOUNDARY_7_INTERNAL_TABLES",
+    "rlsSmoke": "PASS_ANON_BOUNDARY_9_INTERNAL_TABLES",
     "authenticatedAccountSmoke": "PASS_REVERSIBLE_TEMP_USERS_REMOVED",
     "googleOauthBootstrap": "CONFIGURED_PROVIDER_UI_INACTIVE_PENDING_REVIEW",
     "publicSignup": "CHECK_NOT_RUN_COMPLETE_PROVIDER_EMAIL_RATE_LIMIT_HTTP_429",
