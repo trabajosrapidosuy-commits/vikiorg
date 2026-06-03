@@ -2,7 +2,28 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_ADMIN_EXCLUSIVE_MENU_AND_CONTROL_CENTER`
+`VICTORIOSA_AUTOPILOT_ADMIN_PROTECTED_BROWSER_SMOKE`
+
+## Latest Cycle
+
+- Date: `2026-06-03`
+- Branch: `codex/victoriosa-autopilot-admin-control-center`
+- Target: local app on `http://127.0.0.1:3101` backed by authorized staging ref
+  `ngliugfcwydnfbpalkpb`
+- Temporary masked users created only for this smoke:
+  `victoriosa.customer.***@example.invalid` and
+  `victoriosa.admin.***@example.invalid`
+- Anonymous `/admin/autopilot*` routes: PASS, redirect to `/auth/login`
+- Customer `/admin/autopilot*` routes: PASS, redirect to `/`
+- Admin `/admin/autopilot`, `/candidates`, `/review`, `/drafts`,
+  `/security`: PASS, menu group visible and active-state confirmed
+- Security banner and control flags: PASS,
+  `publicacion automatica=OFF`, `proveedores live=OFF`,
+  `revision humana obligatoria=ON`
+- Temporary staging residue after cleanup: ZERO users, profiles and settings
+- Protected Preview browser attach was not required for this cycle because the
+  branch validation ran against the staging-backed local app with the same Auth
+  and RLS boundary.
 
 ## Result
 
@@ -93,20 +114,19 @@
 
 ## Checks
 
+- `npm run ci`: PASS, 17 files and 56 tests
 - `npm run staging:check`: PASS
 - `npm run rls:smoke`: PASS
 - `npm run secret:scan`: PASS
 - `npm run production:check`: PASS
 - `npm run guard:no-production-deploy`: PASS
-- `npm run test:rls:static`: PASS, 18 public tables
+- `npm run test:rls:static`: PASS, 21 public tables
 - `npm run lint`: PASS
 - `npm run typecheck`: PASS
-- `npm run test`: PASS, 26 tests
-- `npm run build`: PASS
+- `npm run test`: PASS, 56 tests
+- `npm run build`: PASS, 52 routes plus Middleware
 - `npm run smoke:structure`: PASS
 - `git diff --check`: PASS
-- `npm run ci`: CHECK_NOT_RUN_COMPLETE, gates executed sequentially to avoid
-  the previously observed wrapper hang.
 
 ## Preview Smoke
 
@@ -126,6 +146,13 @@
   limit HTTP `429`; no temporary auth residue remained.
 - Positive admin browser smoke: CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
   One staging admin profile exists, but its credential is not loaded locally.
+- Autopilot protected browser smoke: PASS with reversible temporary staging
+  users created through the local server-side admin client and removed after
+  verification.
+- Browser screenshots:
+  `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-dashboard.png`
+  and
+  `C:/Users/micahael/AppData/Local/Temp/victoriosa-smoke-shots/admin-autopilot-security.png`.
 - Protected Preview route smoke:
   CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS because no project-specific
   automation bypass is available.
