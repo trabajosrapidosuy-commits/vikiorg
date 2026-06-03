@@ -6,10 +6,14 @@ const root = process.cwd();
 const read = (file: string) => fs.readFileSync(path.join(root, file), "utf8");
 
 describe("Victoriosa zen visual redesign", () => {
-  it("keeps Sofia Victoria as the hero identity and uses the approved local asset", () => {
+  it("prefers approved Sofia hero assets without replacing her identity", () => {
     const home = read("src/app/page.tsx");
-    expect(home).toContain("Sofia Victoria");
-    expect(home).toContain("/victoriosa-hero-editorial.png");
+    const heroAsset = read("src/lib/brand/sofia-hero.ts");
+    expect(home).toContain("getSofiaHeroAsset");
+    expect(heroAsset).toContain("public/brand/sofia-victoria-hero.jpg");
+    expect(heroAsset).toContain("public/brand/sofia-victoria-hero-mobile.jpg");
+    expect(heroAsset).toContain("public/victoriosa-hero-editorial.png");
+    expect(heroAsset).toContain("Sofía Victoria, fundadora de Victoriosa, en un ritual de belleza consciente");
     expect(home).not.toContain("stock");
     expect(home).not.toContain("modelo generica");
   });

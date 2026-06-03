@@ -2,17 +2,20 @@ import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { EMPTY_CATALOG_MESSAGE } from "@/domain/public-catalog";
+import { getSofiaHeroAsset } from "@/lib/brand/sofia-hero";
 import { getPublicCatalog } from "@/services/public-catalog-service";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const featured = (await getPublicCatalog()).slice(0, 8);
+  const heroAsset = getSofiaHeroAsset();
   const rituals = [
     ["Rostro en calma", "Cuidado facial", "Texturas suaves, limpieza y luminosidad cotidiana."],
     ["Cuerpo consciente", "Cuidado corporal", "Rituales simples para volver al cuerpo con presencia."],
     ["Belleza preparada", "Accesorios", "Organizadores y herramientas para una rutina serena."],
   ];
+
   return (
     <main>
       <section className="editorial-hero">
@@ -32,8 +35,25 @@ export default async function HomePage() {
           </div>
         </div>
         <div className="hero-portrait-shell">
-          <Image alt="Sofia Victoria, fundadora de Victoriosa" className="hero-image" height={1024} priority src="/victoriosa-hero-editorial.png" width={1792} />
-          <div className="hero-image-caption">Sofia Victoria · estetica profesional y rituales de autocuidado</div>
+          <Image
+            alt={heroAsset.alt}
+            className="hero-image hero-image-desktop"
+            height={1024}
+            priority
+            sizes="(max-width: 820px) 100vw, 56vw"
+            src={heroAsset.desktopSrc}
+            width={1792}
+          />
+          <Image
+            alt={heroAsset.alt}
+            className="hero-image hero-image-mobile"
+            height={1024}
+            priority
+            sizes="100vw"
+            src={heroAsset.mobileSrc}
+            width={1792}
+          />
+          <div className="hero-image-caption">{heroAsset.caption}</div>
         </div>
       </section>
       <section className="trust-band" aria-label="Confianza Victoriosa">

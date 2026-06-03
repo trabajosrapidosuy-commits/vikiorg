@@ -2,15 +2,18 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_STAGING_AUTHENTICATED_ADMIN_SMOKE`
+`VICTORIOSA_SOFIA_HERO_IMAGE_IMPLEMENTATION`
 
 ## Result
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Branch: `codex/victoriosa-autopilot-core-engine`
+- Branch: `codex/victoriosa-zen-visual-redesign`
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`
 - Blocked ref not used: `dpwassnykcrgjwrruckz`
 - Public storefront canonicalization: IMPLEMENTED
+- Sofia hero brand-asset resolver: IMPLEMENTED
+- Sofia final brand assets in `public/brand`: PENDING_UPLOAD
+- Current approved hero fallback: `public/victoriosa-hero-editorial.png`
 - Automatic publication, outbound email, supplier purchase and payments:
   NOT_EXECUTED
 

@@ -1,7 +1,7 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_MASTER_ZEN_REDESIGN_WITH_SOFIA_HERO",
+  "mode": "VICTORIOSA_SOFIA_HERO_IMAGE_IMPLEMENTATION",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-zen-visual-redesign",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
@@ -31,7 +31,7 @@
     "autopilotAdminQueueFilters": "IMPLEMENTED",
     "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY",
     "zenVisualRedesign": "IMPLEMENTED",
-    "sofiaHeroAsset": "IMPLEMENTED_EXISTING_APPROVED_ASSET"
+    "sofiaHeroAsset": "IMPLEMENTED_BRAND_RESOLVER_FALLBACK_LEGACY_APPROVED_ASSET"
   },
   "checks": {
     "ci": "PASS",
