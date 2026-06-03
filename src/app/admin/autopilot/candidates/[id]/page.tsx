@@ -1,14 +1,16 @@
+import { AutopilotAuditTimeline } from "@/components/autopilot/AutopilotAuditTimeline";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { generateCommercialDraft } from "@/services/autopilot-marketing-service";
-import { getPersistentCandidate } from "@/services/autopilot-persistence-service";
-import { approveProductCandidateAction, generateAiDraftForCandidateAction, importCandidateToDraftProductAction, markProductCandidateNeedsReviewAction, rejectProductCandidateAction, updateCandidateSuggestedPriceAction } from "../../actions";
+import { getPersistentCandidate, listPersistentCandidateEvents } from "@/services/autopilot-persistence-service";
+import { addCandidateAdminNoteAction, approveProductCandidateAction, generateAiDraftForCandidateAction, importCandidateToDraftProductAction, markProductCandidateNeedsReviewAction, rejectProductCandidateAction, updateCandidateSuggestedPriceAction } from "../../actions";
 
 export default async function CandidateDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { supabase } = await requireAdmin();
   const row = await getPersistentCandidate(supabase, id).catch(() => null);
   if (!row) notFound();
+  const events = await listPersistentCandidateEvents(supabase, id);
   const candidate = {
     ...row,
     supplierCost: Number(row.supplier_cost),
@@ -89,6 +91,13 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
           <button className="btn btn-secondary" type="submit">Guardar precio sugerido</button>
           <span className="self-center text-gray-600">No cambia publicacion; solo recalcula margen interno.</span>
         </form>
+        <form action={addCandidateAdminNoteAction} className="mt-4 grid gap-2 text-sm">
+          <input name="id" type="hidden" value={candidate.id} />
+          <textarea className="rounded border p-2" name="note" minLength={3} placeholder="Agregar nota admin para auditoria" required />
+          <div>
+            <button className="btn btn-secondary" type="submit">Agregar nota admin</button>
+          </div>
+        </form>
       </section>
       <section className="card">
         <h3 className="font-bold">Borrador comercial local</h3>
@@ -99,6 +108,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         <p className="mt-1 text-sm">{draft.emailBody}</p>
         <p className="mt-3 text-sm font-bold">{draft.safetyNotice}</p>
       </section>
+      <AutopilotAuditTimeline events={events} />
     </main>
   );
 }

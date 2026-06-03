@@ -1,9 +1,9 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-02",
-  "mode": "VICTORIOSA_AUTOPILOT_PRODUCT_INTELLIGENCE_AND_ADMIN_QUEUE_RESUME",
+  "mode": "VICTORIOSA_AUTOPILOT_ADMIN_EXCLUSIVE_MENU_AND_CONTROL_CENTER",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-autopilot-product-intelligence-resume",
+  "branch": "codex/victoriosa-autopilot-admin-control-center",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
   "remoteMigration": "PASS_VICTORIOSA_EMAIL_AUTH_PROFILES_SETTINGS_LISTED",
   "roleEscalationGuardMigration": "PASS_APPLIED_AND_REMOTE_SMOKE_VERIFIED",
@@ -29,7 +29,8 @@
     "realPayments": "DISABLED",
     "autopilotCommercialScoring": "IMPLEMENTED",
     "autopilotAdminQueueFilters": "IMPLEMENTED",
-    "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY"
+    "autopilotSuggestedPriceEdit": "IMPLEMENTED_REVIEW_ONLY",
+    "autopilotAdminControlCenter": "IMPLEMENTED_PRIVATE_MENU_REVIEW_DRAFTS_SECURITY"
   },
   "checks": {
     "ci": "PASS",
@@ -58,5 +59,5 @@
     "BLOCKED_SUPABASE_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_AUTOPILOT_ADMIN_QUEUE_BROWSER_SMOKE"
+  "nextMode": "VICTORIOSA_AUTOPILOT_ADMIN_PROTECTED_BROWSER_SMOKE"
 }

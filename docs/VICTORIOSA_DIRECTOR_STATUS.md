@@ -2,15 +2,18 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_STAGING_AUTHENTICATED_ADMIN_SMOKE`
+`VICTORIOSA_AUTOPILOT_ADMIN_EXCLUSIVE_MENU_AND_CONTROL_CENTER`
 
 ## Result
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Branch: `codex/victoriosa-autopilot-core-engine`
+- Branch: `codex/victoriosa-autopilot-admin-control-center`
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`
 - Blocked ref not used: `dpwassnykcrgjwrruckz`
 - Public storefront canonicalization: IMPLEMENTED
+- Autopilot admin-exclusive menu: IMPLEMENTED
+- Autopilot review/drafts/security routes: IMPLEMENTED
+- Autopilot automatic publication: DISABLED
 - Automatic publication, outbound email, supplier purchase and payments:
   NOT_EXECUTED
 

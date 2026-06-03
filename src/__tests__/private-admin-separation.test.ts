@@ -24,10 +24,17 @@ describe("private admin separation", () => {
 
   it("uses a private noindex studio layout and owner aliases", () => {
     const adminLayout = read("src/app/admin/layout.tsx");
+    const adminSidebar = read("src/components/admin/AdminSidebarNav.tsx");
+    const menuConfig = read("src/lib/autopilot/admin/control-center.ts");
     const ownerEntry = read("src/app/owner/page.tsx");
     expect(adminLayout).toContain("await requireAdmin()");
     expect(adminLayout).toContain('title: "Victoriosa Studio"');
     expect(adminLayout).toContain("robots: { index: false, follow: false }");
+    expect(adminLayout).toContain("AdminSidebarNav");
+    expect(adminSidebar).toContain('title="Autopilot"');
+    expect(menuConfig).toContain('href: "/admin/autopilot/review"');
+    expect(menuConfig).toContain('href: "/admin/autopilot/drafts"');
+    expect(menuConfig).toContain('href: "/admin/autopilot/security"');
     expect(ownerEntry).toContain("await requireAdmin()");
     expect(ownerEntry).toContain('error.status === 401 ? "/auth/login" : "/"');
     expect(ownerEntry).toContain('redirect("/admin")');
