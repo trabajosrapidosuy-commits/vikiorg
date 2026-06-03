@@ -2,27 +2,29 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_PROJECT_LINK_GUARD_AND_PREVIEW_CLEANUP`
+`VICTORIOSA_AUTOPILOT_SECURE_STAGING_ENV_RESTORE`
 
 ## Latest Cycle
 
 - Date: `2026-06-03`
 - Branch: `codex/victoriosa-autopilot-admin-control-center`
-- Added local guard script `guard:vercel-project-link`: PASS
-- `deploy:preview` now fails closed unless `.vercel/project.json` is linked to
-  `victoriosa-marketplace`
-- Guard verified current worktree link: PASS,
-  `.vercel/project.json -> victoriosa-marketplace`
-- Vercel runbook updated with explicit relink step and human-only cleanup path
-  for the isolated wrong project
-- `npm run ci`: PASS after excluding Markdown from the production deploy text
-  scanner
-- `npm run staging:check`: CHECK_NOT_RUN, `SUPABASE_STAGING_URL` and
-  `SUPABASE_STAGING_ANON_KEY` are blank in `.env.rls` for this worktree
-- `npm run rls:smoke`: CHECK_NOT_RUN for the same missing secure staging values
+- Worktree confirmed: `C:\victoriosa-autopilot-admin-control-center`
+- Git status at start: CLEAN
+- `npm run guard:vercel-project-link`: PASS,
+  linked project `victoriosa-marketplace`
+- Secure env restore sources checked without printing values:
+  Process, User and Machine environment -> `SUPABASE_STAGING_URL=MISSING`,
+  `SUPABASE_STAGING_ANON_KEY=MISSING`
+- Local `.env.rls` contains both `SUPABASE_STAGING_*` keys but both are blank
+- Local `.env.local` and local `SUPABASE_*` values were rejected as restore
+  source because they do not verify to the authorized staging ref
+  `ngliugfcwydnfbpalkpb`
+- `npm run staging:check`: CHECK_NOT_RUN, secure staging values unavailable
+- `npm run rls:smoke`: CHECK_NOT_RUN, secure staging values unavailable
+- `npm run ci`: PASS
 - `git diff --check`: PASS
-- No deploy, rollback, alias mutation or project deletion was executed in this
-  cleanup-hardening cycle.
+- No deploy, rollback, alias mutation, fixture creation or project deletion was
+  executed in this cycle.
 
 ## Result
 

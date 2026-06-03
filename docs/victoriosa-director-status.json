@@ -1,7 +1,7 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-03",
-  "mode": "VICTORIOSA_AUTOPILOT_PROJECT_LINK_GUARD_AND_PREVIEW_CLEANUP",
+  "mode": "VICTORIOSA_AUTOPILOT_SECURE_STAGING_ENV_RESTORE",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-admin-control-center",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
@@ -17,10 +17,17 @@
   },
   "checks": {
     "ci": "PASS_19_FILES_62_TESTS",
-    "stagingCheck": "CHECK_NOT_RUN_BLANK_SUPABASE_STAGING_VALUES_IN_ENV_RLS",
-    "rlsSmoke": "CHECK_NOT_RUN_BLANK_SUPABASE_STAGING_VALUES_IN_ENV_RLS",
+    "stagingCheck": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE",
+    "rlsSmoke": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE",
     "vercelProjectLinkGuard": "PASS_EXPECTED_VICTORIOSA_MARKETPLACE",
     "gitDiffCheck": "PASS"
+  },
+  "stagingEnvRestore": {
+    "processEnv": "MISSING",
+    "userEnv": "MISSING",
+    "machineEnv": "MISSING",
+    "envRls": "PRESENT_BUT_BLANK",
+    "localFallbackReuse": "REJECTED_TARGET_MISMATCH"
   },
   "deploySafety": {
     "guardScript": "IMPLEMENTED",
@@ -72,5 +79,5 @@
     "BLOCKED_EXTERNAL_CREDENTIALS",
     "BLOCKED_PRODUCTION_RISK"
   ],
-  "nextMode": "VICTORIOSA_AUTOPILOT_SECURE_STAGING_ENV_RESTORE"
+  "nextMode": "VICTORIOSA_AUTOPILOT_PREVIEW_BROWSER_AUTH_BYPASS_REVIEW"
 }
