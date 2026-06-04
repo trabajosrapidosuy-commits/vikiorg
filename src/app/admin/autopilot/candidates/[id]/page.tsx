@@ -2,7 +2,7 @@ import { AutopilotAuditTimeline } from "@/components/autopilot/AutopilotAuditTim
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { generateCommercialDraft } from "@/services/autopilot-marketing-service";
-import { getPersistentCandidate, listPersistentCandidateEvents } from "@/services/autopilot-persistence-service";
+import { getPersistentCandidate, listPersistentCandidateEvents, mapPersistentCandidateRowToCandidate } from "@/services/autopilot-persistence-service";
 import { addCandidateAdminNoteAction, approveProductCandidateAction, generateAiDraftForCandidateAction, importCandidateToDraftProductAction, markProductCandidateNeedsReviewAction, rejectProductCandidateAction, updateCandidateSuggestedPriceAction } from "../../actions";
 
 export default async function CandidateDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -19,14 +19,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
     estimatedMarginPercent: Number(row.margin_percent),
     riskFlags: row.risk_flags ?? [],
   };
-  const draft = generateCommercialDraft({
-    id: candidate.id, connectorId: candidate.connector_id ?? "mock", supplierName: candidate.supplier_name,
-    title: candidate.title, description: candidate.description ?? "", category: candidate.category ?? "Sin categoria",
-    sourceUrl: candidate.source_url ?? "", supplierCost: candidate.supplierCost, shippingCost: candidate.shippingCost,
-    currency: candidate.currency === "UYU" ? "UYU" : "USD", estimatedDeliveryDays: Number(candidate.raw_payload?.estimatedDeliveryDays ?? 0),
-    suggestedSalePrice: candidate.suggestedSalePrice, estimatedMarginPercent: candidate.estimatedMarginPercent,
-    score: candidate.scoring, riskFlags: candidate.riskFlags, status: candidate.status,
-  });
+  const draft = generateCommercialDraft(mapPersistentCandidateRowToCandidate(candidate));
   const scoring = isRecord(candidate.scoring) ? candidate.scoring : {};
   const scoreBreakdown = isRecord(candidate.score_breakdown) ? candidate.score_breakdown : {};
   const recommendation = getRecommendation(scoring, scoreBreakdown, Number(candidate.risk_score ?? 0));

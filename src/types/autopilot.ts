@@ -1,11 +1,14 @@
 import type {
   AIDraft,
+  AssetRightsStatus,
   AutopilotConnectorStatus,
   AutopilotRecommendation,
   ComplianceDecision,
+  DiscoveryPayloadFormat,
   ProductCandidate as CoreProductCandidate,
   DiscoveryInput,
   DiscoveryRun,
+  DiscoveryProvenance,
   PricingDecision,
   ProductCandidateStatus,
   ReviewEvent,
@@ -13,7 +16,7 @@ import type {
   SupplierConnector,
 } from "@/lib/autopilot/core/types";
 
-export type { AIDraft, AutopilotConnectorStatus, AutopilotRecommendation, ComplianceDecision, DiscoveryInput, DiscoveryRun, PricingDecision, ProductCandidateStatus, ReviewEvent, ScoringDecision };
+export type { AIDraft, AssetRightsStatus, AutopilotConnectorStatus, AutopilotRecommendation, ComplianceDecision, DiscoveryInput, DiscoveryPayloadFormat, DiscoveryProvenance, DiscoveryRun, PricingDecision, ProductCandidateStatus, ReviewEvent, ScoringDecision };
 
 export type AutopilotConnector = SupplierConnector;
 

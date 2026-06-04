@@ -32,7 +32,7 @@ export default async function AutopilotPage() {
         <div className="card">
           <h2 className="text-xl font-bold">Estado operativo</h2>
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
-            <li>Discovery mock, scoring y persistencia admin-only disponibles.</li>
+            <li>Discovery mock, manual y csv-json con scoring y persistencia admin-only disponibles.</li>
             <li>Todo candidato entra en review-only y queda sujeto a decision humana.</li>
             <li>Conectores reales informan needs_credentials hasta tener acceso seguro y terminos validados.</li>
             <li>Email marketing, publicacion y acciones con proveedores live permanecen deshabilitados.</li>

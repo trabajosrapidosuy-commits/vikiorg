@@ -3,6 +3,8 @@ export type AutopilotRecommendation = "approve_candidate" | "review" | "reject";
 export type AutopilotConnectorStatus = "sandbox" | "enabled" | "disabled" | "needs_credentials";
 export type ProductCandidateStatus = "pending_admin_review" | "approved" | "rejected" | "imported_to_draft" | "archived";
 export type DiscoveryTargetMarket = "Uruguay" | "LATAM" | "global";
+export type DiscoveryPayloadFormat = "csv" | "json";
+export type AssetRightsStatus = "unknown" | "allowed" | "restricted";
 export type ReviewEventType =
   | "discovered"
   | "scored"
@@ -19,6 +21,7 @@ export interface NormalizedSupplierProduct {
   providerProductId?: string;
   providerVariantId?: string;
   sku?: string;
+  supplierName?: string;
   sourceUrl?: string;
   title: string;
   description: string;
@@ -35,6 +38,8 @@ export interface NormalizedSupplierProduct {
   listedCount?: number;
   rating?: number;
   reviewsCount?: number;
+  imageRightsStatus?: AssetRightsStatus;
+  resaleRightsStatus?: AssetRightsStatus;
   hasVideo?: boolean;
   freeShipping?: boolean;
   deliveryEstimateDays?: number;
@@ -42,6 +47,20 @@ export interface NormalizedSupplierProduct {
   dimensions?: string;
   tags: string[];
   raw: Record<string, unknown>;
+}
+
+export interface DiscoveryProvenance {
+  rawPayload: Record<string, unknown>;
+  sourceUrl?: string;
+  externalId?: string;
+  provider: string;
+  supplier: string;
+  price: number;
+  shipping: number;
+  stock: number;
+  rating?: number;
+  imageRights: AssetRightsStatus;
+  resaleRights: AssetRightsStatus;
 }
 
 export interface PricingResult {
@@ -109,11 +128,27 @@ export interface DiscoveryInput {
   targetMarket?: DiscoveryTargetMarket;
   maximumShippingDays?: number;
   maximumResults?: number;
+  title?: string;
+  description?: string;
+  supplierName?: string;
+  sourceUrl?: string;
+  imageUrl?: string;
+  buyPrice?: number;
+  shippingCost?: number;
+  inventoryTotal?: number;
+  verifiedInventory?: number;
+  rating?: number;
+  imageRightsStatus?: AssetRightsStatus;
+  resaleRightsStatus?: AssetRightsStatus;
+  payloadText?: string;
+  payloadFormat?: DiscoveryPayloadFormat;
 }
 
 export interface ProductCandidate {
   id: string;
   connectorId: string;
+  provider: string;
+  externalId?: string;
   supplierName: string;
   title: string;
   description: string;
@@ -123,9 +158,16 @@ export interface ProductCandidate {
   supplierCost: number;
   shippingCost: number;
   currency: SupplierCurrency;
+  inventoryTotal?: number;
+  verifiedInventory?: number;
   estimatedDeliveryDays: number;
   suggestedSalePrice: number;
   estimatedMarginPercent: number;
+  rating?: number;
+  imageRightsStatus: AssetRightsStatus;
+  resaleRightsStatus: AssetRightsStatus;
+  rawPayload: Record<string, unknown>;
+  provenance: DiscoveryProvenance;
   score: ScoringDecision;
   riskFlags: string[];
   status: ProductCandidateStatus;
