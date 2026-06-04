@@ -1,5 +1,8 @@
 import { scoreCandidate } from "@/lib/autopilot/core/scoring";
+import type { DiscoveryProvenance, NormalizedSupplierProduct } from "@/lib/autopilot/core/types";
 import { AUTOPILOT_FLAGS } from "@/lib/autopilot/config";
+import { parseCsvJsonDiscoveryInput } from "@/lib/autopilot/providers/csv-json-provider";
+import { createManualCandidate } from "@/lib/autopilot/providers/manual-provider";
 import { listMockSupplierProducts } from "@/lib/autopilot/providers/mock-provider";
 import type {
   AutopilotConnector,
@@ -11,6 +14,7 @@ import type {
 
 const baseConnectors: AutopilotConnector[] = [
   { id: "mock", name: "Mock Connector", type: "mock", status: "sandbox", capabilities: ["product_search", "price_sync_simulation"], requiredEnvVars: [] },
+  { id: "manual", name: "Manual Intake", type: "manual", status: "enabled", capabilities: ["product_search", "manual_review_queue"], requiredEnvVars: [] },
   { id: "csv-json", name: "CSV/JSON Import", type: "file_import", status: "enabled", capabilities: ["product_search", "batch_import"], requiredEnvVars: [] },
   { id: "cj", name: "CJdropshipping", type: "api", status: "needs_credentials", capabilities: ["product_search", "inventory_sync", "price_sync", "order_fulfillment", "tracking_sync"], requiredEnvVars: ["CJ_DROPSHIPPING_API_KEY"] },
   { id: "aliexpress", name: "AliExpress", type: "api", status: "needs_credentials", capabilities: ["product_search", "inventory_sync", "price_sync"], requiredEnvVars: ["ALIEXPRESS_API_KEY"] },
@@ -41,10 +45,10 @@ export function runProductDiscovery(input: DiscoveryInput): DiscoveryResult {
   }
 
   const maximumResults = Math.max(1, Math.min(input.maximumResults ?? 10, 50));
-  const normalizedKeyword = input.keyword?.trim().toLowerCase();
-  const candidates = listMockSupplierProducts()
+  const products = getDiscoveryProducts(connector.id, input);
+  const candidates = products
     .filter((item) => !input.category || item.category === input.category)
-    .filter((item) => !normalizedKeyword || `${item.title} ${item.description}`.toLowerCase().includes(normalizedKeyword))
+    .filter((item) => !normalizeKeyword(input.keyword) || `${item.title} ${item.description}`.toLowerCase().includes(normalizeKeyword(input.keyword)!))
     .filter((item) => item.buyPrice <= (input.maximumSupplierPrice ?? Number.POSITIVE_INFINITY))
     .filter((item) => (item.deliveryEstimateDays ?? 0) <= (input.maximumShippingDays ?? Number.POSITIVE_INFINITY))
     .map((item, index) => createCandidate(item, index, connector.id))
@@ -88,23 +92,44 @@ export function calculateCandidateScore(input: {
   };
 }
 
-function createCandidate(item: ReturnType<typeof listMockSupplierProducts>[number], index: number, connectorId: string): ProductCandidate {
+function getDiscoveryProducts(connectorId: string, input: DiscoveryInput): NormalizedSupplierProduct[] {
+  if (connectorId === "manual") {
+    return [createManualCandidate(input).product];
+  }
+  if (connectorId === "csv-json") {
+    return parseCsvJsonDiscoveryInput(input);
+  }
+  return listMockSupplierProducts();
+}
+
+function createCandidate(item: NormalizedSupplierProduct, index: number, connectorId: string): ProductCandidate {
   const intelligence = scoreCandidate(item);
+  const externalId = item.providerProductId ?? `${connectorId}-${index + 1}`;
+  const provenance = createDiscoveryProvenance(item);
   return {
-    id: `candidate-mock-${index + 1}`,
+    id: `${connectorId}-candidate-${externalId}`.slice(0, 120),
     connectorId,
-    supplierName: "Proveedor sandbox Victoriosa",
+    provider: item.provider,
+    externalId,
+    supplierName: item.supplierName ?? supplierFallback(connectorId),
     title: item.title,
     description: item.description,
     category: item.category,
-    sourceUrl: "https://example.invalid/sandbox-product",
+    sourceUrl: item.sourceUrl ?? "",
     imageUrl: item.images[0],
     supplierCost: item.buyPrice,
     shippingCost: item.shippingCost,
-    currency: "USD",
+    currency: item.currency,
+    inventoryTotal: item.inventoryTotal,
+    verifiedInventory: item.verifiedInventory,
     estimatedDeliveryDays: item.deliveryEstimateDays ?? 0,
     suggestedSalePrice: intelligence.pricing.estimatedSellPrice,
     estimatedMarginPercent: intelligence.pricing.estimatedMarginPercent,
+    rating: item.rating,
+    imageRightsStatus: item.imageRightsStatus ?? "unknown",
+    resaleRightsStatus: item.resaleRightsStatus ?? "unknown",
+    rawPayload: { ...item.raw },
+    provenance,
     score: {
       profitability: intelligence.profitabilityScore,
       viral: intelligence.viralSignal,
@@ -130,6 +155,33 @@ function createCandidate(item: ReturnType<typeof listMockSupplierProducts>[numbe
     riskFlags: intelligence.riskFlags,
     status: "pending_admin_review",
   };
+}
+
+function createDiscoveryProvenance(item: NormalizedSupplierProduct): DiscoveryProvenance {
+  return {
+    rawPayload: { ...item.raw },
+    sourceUrl: item.sourceUrl,
+    externalId: item.providerProductId,
+    provider: item.provider,
+    supplier: item.supplierName ?? "Proveedor no especificado",
+    price: item.buyPrice,
+    shipping: item.shippingCost,
+    stock: item.verifiedInventory || item.inventoryTotal,
+    rating: item.rating,
+    imageRights: item.imageRightsStatus ?? "unknown",
+    resaleRights: item.resaleRightsStatus ?? "unknown",
+  };
+}
+
+function supplierFallback(connectorId: string): string {
+  if (connectorId === "csv-json") return "Importacion CSV/JSON Victoriosa";
+  if (connectorId === "manual") return "Carga manual Victoriosa";
+  return "Proveedor sandbox Victoriosa";
+}
+
+function normalizeKeyword(keyword: string | undefined): string | undefined {
+  const normalized = keyword?.trim().toLowerCase();
+  return normalized && normalized.length > 0 ? normalized : undefined;
 }
 
 function clamp(value: number): number {

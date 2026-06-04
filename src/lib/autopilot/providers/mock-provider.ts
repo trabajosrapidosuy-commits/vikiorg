@@ -13,10 +13,11 @@ export function listMockSupplierProducts(): NormalizedSupplierProduct[] {
 
 function mock(id: string, title: string, description: string, category: string, buyPrice: number, shippingCost: number, inventoryTotal: number, hasVideo: boolean): NormalizedSupplierProduct {
   return {
-    provider: "mock", providerProductId: id, sourceUrl: `https://example.invalid/${id}`,
+    provider: "mock", providerProductId: id, supplierName: "Proveedor sandbox Victoriosa", sourceUrl: `https://example.invalid/${id}`,
     title, description, images: [`https://example.invalid/${id}.jpg`], category, niche: "beauty",
     targetCountry: "UY", currency: "USD", buyPrice, shippingCost, inventoryTotal,
-    verifiedInventory: inventoryTotal, listedCount: inventoryTotal * 4, reviewsCount: inventoryTotal,
-    hasVideo, freeShipping: shippingCost === 0, deliveryEstimateDays: 18, tags: ["beauty"], raw: { sandbox: true },
+    verifiedInventory: inventoryTotal, listedCount: inventoryTotal * 4, rating: hasVideo ? 4.6 : 3.2, reviewsCount: inventoryTotal,
+    imageRightsStatus: "allowed", resaleRightsStatus: "unknown",
+    hasVideo, freeShipping: shippingCost === 0, deliveryEstimateDays: 18, tags: ["beauty"], raw: { sandbox: true, mockId: id },
   };
 }

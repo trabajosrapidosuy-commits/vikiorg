@@ -3,7 +3,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { generateCommercialDraft } from "./autopilot-marketing-service";
 import { createDraftProductRow } from "@/lib/autopilot/core/import-draft";
-import { createManualCandidate } from "@/lib/autopilot/providers/manual-provider";
 import { normalizeSlug } from "./marketplace-product-service";
 import { runProductDiscovery } from "./autopilot-service";
 import type { DiscoveryInput, ProductCandidate } from "@/types/autopilot";
@@ -17,6 +16,20 @@ export const discoveryInputSchema = z.object({
   targetMarket: z.enum(["Uruguay", "LATAM", "global"]).default("Uruguay"),
   maximumShippingDays: z.coerce.number().int().positive().max(120).default(45),
   maximumResults: z.coerce.number().int().positive().max(50).default(10),
+  title: emptyToUndefined(z.string().trim().min(3).max(180).optional()),
+  description: emptyToUndefined(z.string().trim().min(3).max(5000).optional()),
+  supplierName: emptyToUndefined(z.string().trim().min(2).max(160).optional()),
+  sourceUrl: emptyToUndefined(z.string().url().optional()),
+  imageUrl: emptyToUndefined(z.string().url().optional()),
+  buyPrice: emptyToUndefined(z.coerce.number().min(0).optional()),
+  shippingCost: emptyToUndefined(z.coerce.number().min(0).optional()),
+  inventoryTotal: emptyToUndefined(z.coerce.number().int().min(0).optional()),
+  verifiedInventory: emptyToUndefined(z.coerce.number().int().min(0).optional()),
+  rating: emptyToUndefined(z.coerce.number().min(0).max(5).optional()),
+  imageRightsStatus: z.enum(["unknown", "allowed", "restricted"]).default("unknown"),
+  resaleRightsStatus: z.enum(["unknown", "allowed", "restricted"]).default("unknown"),
+  payloadText: emptyToUndefined(z.string().trim().min(2).optional()),
+  payloadFormat: z.enum(["csv", "json"]).default("json"),
 });
 
 function emptyToUndefined<T extends z.ZodTypeAny>(schema: T) {
@@ -49,7 +62,7 @@ export async function runPersistentProductDiscovery(supabase: SupabaseClient, us
     return { runId: run.id, ...result };
   }
 
-  const rows = result.candidates.map((candidate) => mapCandidateToRow(run.id, candidate));
+  const rows = result.candidates.map((candidate) => createAutopilotCandidateRow(run.id, candidate));
   const { error: candidatesError } = await supabase.from("autopilot_product_candidates").insert(rows);
   if (candidatesError) {
     await supabase.from("autopilot_discovery_runs").update({ status: "failed", error_message: candidatesError.message, completed_at: new Date().toISOString() }).eq("id", run.id);
@@ -163,28 +176,12 @@ export async function addPersistentCandidateAdminNote(supabase: SupabaseClient, 
 }
 
 export async function createPersistentManualCandidate(supabase: SupabaseClient, rawInput: unknown) {
-  const manual = createManualCandidate(rawInput);
-  const candidate: ProductCandidate = {
-    id: `manual-${crypto.randomUUID()}`, connectorId: "manual", supplierName: "Carga manual Victoriosa",
-    title: manual.product.title, description: manual.product.description, category: manual.product.category,
-    sourceUrl: manual.product.sourceUrl ?? "", imageUrl: manual.product.images[0], supplierCost: manual.product.buyPrice,
-    shippingCost: manual.product.shippingCost, currency: manual.product.currency,
-    estimatedDeliveryDays: manual.product.deliveryEstimateDays ?? 0,
-    suggestedSalePrice: manual.score.pricing.estimatedSellPrice,
-    estimatedMarginPercent: manual.score.pricing.estimatedMarginPercent,
-    score: {
-      profitability: manual.score.profitabilityScore, viral: manual.score.viralSignal,
-      compliance: 100 - manual.score.riskScore, logistics: manual.score.logisticsScore,
-      supplier: manual.score.inventoryScore, total: manual.score.finalScore,
-      explanation: [...manual.score.strengths, ...manual.score.weaknesses],
-      brandFitScore: manual.score.brandFitScore, riskScore: manual.score.riskScore,
-      contentQualityScore: manual.score.contentQualityScore, scoreBreakdown: manual.score.scoreBreakdown,
-      strengths: manual.score.strengths, weaknesses: manual.score.weaknesses,
-      warnings: manual.score.warnings, blockers: manual.score.blockers, recommendation: manual.score.recommendation,
-    },
-    riskFlags: manual.score.riskFlags, status: "pending_admin_review",
-  };
-  const row = mapCandidateToRow("", candidate);
+  const result = runProductDiscovery({ connectorId: "manual", ...(isRecord(rawInput) ? rawInput : {}) });
+  if (result.status !== "completed" || result.candidates.length === 0) {
+    throw new Error(result.message || "Manual candidate could not be normalized");
+  }
+  const candidate = result.candidates[0] as ProductCandidate;
+  const row = createAutopilotCandidateRow("", candidate);
   delete (row as { discovery_run_id?: string }).discovery_run_id;
   const { data, error } = await supabase.from("autopilot_product_candidates").insert(row).select("*").single();
   if (error) throw new Error(error.message);
@@ -194,7 +191,7 @@ export async function createPersistentManualCandidate(supabase: SupabaseClient, 
 
 export async function generatePersistentAiDraft(supabase: SupabaseClient, id: string) {
   const candidate = await getPersistentCandidate(supabase, id);
-  const draft = generateCommercialDraft(mapRowToCandidate(candidate));
+  const draft = generateCommercialDraft(mapPersistentCandidateRowToCandidate(candidate));
   const { data, error } = await supabase.from("autopilot_ai_product_drafts").insert({
     product_candidate_id: candidate.id,
     generated_title: draft.title,
@@ -264,10 +261,29 @@ async function logAutopilotEvent(supabase: SupabaseClient, input: { runId?: stri
   if (error) throw new Error(error.message);
 }
 
-function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
+export function createAutopilotCandidateRow(runId: string, candidate: ProductCandidate) {
   const rawScore = candidate.score as ProductCandidate["score"] & {
     brandFitScore?: number; riskScore?: number; contentQualityScore?: number;
     scoreBreakdown?: Record<string, number>; strengths?: string[]; weaknesses?: string[];
+  };
+  const rawPayload = {
+    ...candidate.rawPayload,
+    estimatedDeliveryDays: candidate.estimatedDeliveryDays,
+    provenance: candidate.provenance,
+    normalized_candidate: {
+      connectorId: candidate.connectorId,
+      provider: candidate.provider,
+      externalId: candidate.externalId,
+      sourceUrl: candidate.sourceUrl,
+      supplierName: candidate.supplierName,
+      supplierCost: candidate.supplierCost,
+      shippingCost: candidate.shippingCost,
+      inventoryTotal: candidate.inventoryTotal ?? 0,
+      verifiedInventory: candidate.verifiedInventory ?? 0,
+      rating: candidate.rating ?? null,
+      imageRightsStatus: candidate.imageRightsStatus,
+      resaleRightsStatus: candidate.resaleRightsStatus,
+    },
   };
   return {
     discovery_run_id: runId,
@@ -276,7 +292,7 @@ function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
     description: candidate.description,
     category: candidate.category,
     source_url: candidate.sourceUrl,
-    raw_payload: candidate,
+    raw_payload: rawPayload,
     pricing: { suggestedSalePrice: candidate.suggestedSalePrice, estimatedMarginPercent: candidate.estimatedMarginPercent },
     scoring: candidate.score,
     risk_flags: candidate.riskFlags,
@@ -290,8 +306,8 @@ function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
     logistics_score: candidate.score.logistics,
     supplier_score: candidate.score.supplier,
     total_score: candidate.score.total,
-    provider: candidate.connectorId,
-    external_id: candidate.id,
+    provider: candidate.provider,
+    external_id: candidate.externalId ?? candidate.id,
     image_url: candidate.imageUrl,
     landed_cost: candidate.supplierCost + candidate.shippingCost,
     brand_fit_score: rawScore.brandFitScore ?? 0,
@@ -313,12 +329,16 @@ function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
   };
 }
 
-function mapRowToCandidate(row: Record<string, unknown>): ProductCandidate {
+export function mapPersistentCandidateRowToCandidate(row: Record<string, unknown>): ProductCandidate {
   const rawPayload = isRecord(row.raw_payload) ? row.raw_payload : {};
+  const provenance = isRecord(rawPayload.provenance) ? rawPayload.provenance : {};
+  const normalizedCandidate = isRecord(rawPayload.normalized_candidate) ? rawPayload.normalized_candidate : {};
   const scoring = isRecord(row.scoring) ? row.scoring : {};
   return {
     id: String(row.id),
-    connectorId: String(row.connector_id ?? "mock"),
+    connectorId: String(normalizedCandidate.connectorId ?? row.provider ?? "mock"),
+    provider: String(row.provider ?? normalizedCandidate.provider ?? "mock"),
+    externalId: stringOrUndefined(row.external_id ?? normalizedCandidate.externalId),
     supplierName: String(row.supplier_name),
     title: String(row.title),
     description: String(row.description ?? ""),
@@ -328,9 +348,28 @@ function mapRowToCandidate(row: Record<string, unknown>): ProductCandidate {
     supplierCost: Number(row.supplier_cost),
     shippingCost: Number(row.estimated_shipping_cost),
     currency: row.currency === "UYU" ? "UYU" : "USD",
+    inventoryTotal: numberOrUndefined(normalizedCandidate.inventoryTotal),
+    verifiedInventory: numberOrUndefined(normalizedCandidate.verifiedInventory),
     estimatedDeliveryDays: Number(rawPayload.estimatedDeliveryDays ?? 0),
     suggestedSalePrice: Number(row.suggested_price),
     estimatedMarginPercent: Number(row.margin_percent),
+    rating: numberOrUndefined(normalizedCandidate.rating ?? provenance.rating),
+    imageRightsStatus: isRightsStatus(normalizedCandidate.imageRightsStatus) ? normalizedCandidate.imageRightsStatus : isRightsStatus(provenance.imageRights) ? provenance.imageRights : "unknown",
+    resaleRightsStatus: isRightsStatus(normalizedCandidate.resaleRightsStatus) ? normalizedCandidate.resaleRightsStatus : isRightsStatus(provenance.resaleRights) ? provenance.resaleRights : "unknown",
+    rawPayload,
+    provenance: {
+      rawPayload: isRecord(provenance.rawPayload) ? provenance.rawPayload : rawPayload,
+      sourceUrl: stringOrUndefined(provenance.sourceUrl ?? row.source_url),
+      externalId: stringOrUndefined(provenance.externalId ?? row.external_id),
+      provider: String(provenance.provider ?? row.provider ?? "mock"),
+      supplier: String(provenance.supplier ?? row.supplier_name ?? "Proveedor no especificado"),
+      price: numberOrZero(provenance.price ?? row.supplier_cost),
+      shipping: numberOrZero(provenance.shipping ?? row.estimated_shipping_cost),
+      stock: numberOrZero(provenance.stock ?? normalizedCandidate.verifiedInventory ?? normalizedCandidate.inventoryTotal),
+      rating: numberOrUndefined(provenance.rating),
+      imageRights: isRightsStatus(provenance.imageRights) ? provenance.imageRights : "unknown",
+      resaleRights: isRightsStatus(provenance.resaleRights) ? provenance.resaleRights : "unknown",
+    },
     score: {
       profitability: Number(scoring.profitability ?? row.profitability_score ?? 0),
       viral: Number(scoring.viral ?? row.viral_score ?? 0),
@@ -354,6 +393,23 @@ function isRecommendation(value: unknown): value is "reject" | "review" | "appro
   return value === "reject" || value === "review" || value === "approve_candidate";
 }
 
+function isRightsStatus(value: unknown): value is "unknown" | "allowed" | "restricted" {
+  return value === "unknown" || value === "allowed" || value === "restricted";
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function stringOrUndefined(value: unknown): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function numberOrUndefined(value: unknown): number | undefined {
+  const number = typeof value === "number" ? value : typeof value === "string" && value.trim().length > 0 ? Number(value) : Number.NaN;
+  return Number.isFinite(number) ? number : undefined;
+}
+
+function numberOrZero(value: unknown): number {
+  return numberOrUndefined(value) ?? 0;
 }
