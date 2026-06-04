@@ -1,58 +1,36 @@
 {
   "project": "Victoriosa Marketplace",
   "date": "2026-06-04",
-  "mode": "VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DISCOVERY_SAFE_PHASE",
+  "mode": "VICTORIOSA_REALTIME_FUNCTION_EXECUTE_HARDENING",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-autopilot-admin-control-center",
+  "branch": "codex/victoriosa-autopilot-decision-engine",
   "worktree": "C:\\victoriosa-autopilot-admin-control-center",
-  "baseCommit": "5674dfc",
+  "baseCommit": "1c6f572",
   "features": {
-    "autopilotSafeDiscovery": "IMPLEMENTED_MOCK_MANUAL_CSV_JSON",
-    "autopilotProvenancePersistence": "IMPLEMENTED_RAW_PAYLOAD_NORMALIZED",
+    "realtimeFunctionExecuteHardening": "READY_LOCAL_ONLY",
     "autopilotAutomaticPublication": "DISABLED_BY_FLAG",
-    "autopilotAiDraftMode": "MOCK_SAFE_ONLY",
-    "autopilotRealFulfillment": "DISABLED_BY_FLAG",
-    "autopilotSupplierPurchase": "DISABLED_BY_FLAG",
-    "autopilotOutboundEmail": "DISABLED_BY_FLAG",
     "liveProviders": "DISABLED_BY_FLAG"
   },
   "checks": {
     "secretScan": "PASS",
     "productionCheck": "PASS",
-    "guardNoProductionDeploy": "PASS",
     "staticRlsCheck": "PASS_21_PUBLIC_TABLES",
     "lint": "PASS",
     "typecheck": "PASS",
-    "test": "PASS_21_FILES_71_TESTS",
+    "test": "PASS",
     "build": "PASS",
-    "smokeStructure": "PASS",
-    "gitDiffCheck": "PASS",
-    "stagingCheck": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE",
-    "rlsSmoke": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE"
+    "gitDiffCheck": "PASS"
   },
-  "connectors": {
-    "safe": ["mock", "manual", "csv-json"],
-    "externalBlocked": ["cj", "aliexpress", "alibaba", "zendrop", "dropi", "autods", "dsers"]
-  },
-  "provenanceFields": [
-    "raw_payload",
-    "source_url",
-    "external_id",
-    "provider",
-    "supplier",
-    "price",
-    "shipping",
-    "stock",
-    "rating",
-    "image_rights",
-    "resale_rights"
-  ],
   "migration": {
-    "localPrepared": "NOT_REQUIRED",
+    "localPrepared": "20260604000100_victoriosa_realtime_function_execute_hardening.sql",
     "remoteApplied": "NOT_EXECUTED"
   },
+  "realtimeFunctions": [
+    "public.autopilot_discovery_runs_realtime_broadcast",
+    "public.marketplace_orders_realtime_broadcast",
+    "public.marketplace_products_realtime_broadcast"
+  ],
   "blockers": [
-    "BLOCKED_EXTERNAL_CREDENTIALS",
     "BLOCKED_PRODUCTION_RISK"
   ],
   "nextMode": "VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DECISION_ENGINE_PHASE"
