@@ -1,7 +1,7 @@
 {
   "project": "Victoriosa Marketplace",
-  "date": "2026-06-03",
-  "mode": "VICTORIOSA_AUTOPILOT_PREVIEW_BROWSER_AUTH_BYPASS_REVIEW",
+  "date": "2026-06-04",
+  "mode": "VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_TOKEN_EFFICIENT_SAFE",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-admin-control-center",
   "authorizedStagingRef": "ngliugfcwydnfbpalkpb",
@@ -11,28 +11,31 @@
     "privateAdminStudio": "IMPLEMENTED",
     "supplierIntelligenceEngine": "IMPLEMENTED",
     "autopilotAdminControlCenter": "IMPLEMENTED_PRIVATE_MENU_REVIEW_DRAFTS_SECURITY",
-    "autopilotAutomaticPublication": "DISABLED",
+    "autopilotAutomaticPublication": "DISABLED_BY_FLAG",
+    "autopilotAiDraftMode": "MOCK_SAFE_ONLY",
+    "autopilotRealFulfillment": "DISABLED_BY_FLAG",
+    "autopilotSupplierPurchase": "DISABLED_BY_FLAG",
+    "autopilotOutboundEmail": "DISABLED_BY_FLAG",
     "realPayments": "DISABLED",
-    "liveProviders": "DISABLED"
+    "liveProviders": "DISABLED_BY_FLAG"
   },
   "checks": {
-    "ci": "PASS_19_FILES_62_TESTS",
+    "ci": "PASS_20_FILES_66_TESTS",
     "stagingCheck": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE",
     "rlsSmoke": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE",
     "vercelProjectLinkGuard": "PASS_EXPECTED_VICTORIOSA_MARKETPLACE",
-    "previewBypassPresence": "PASS_HOST_VARIABLE_SET",
-    "previewBypassEffectiveness": "FAIL_HTTP_401_ON_PROTECTED_PREVIEW",
+    "phase0WorktreeRecovery": "PASS",
+    "phase1AutopilotSafety": "PASS",
     "gitDiffCheck": "PASS"
   },
-  "previewAuthBypassReview": {
-    "vercelAutomationBypassSecret": {
-      "processEnv": "SET",
-      "userEnv": "SET",
-      "machineEnv": "MISSING"
-    },
-    "otherBypassVariables": "MISSING",
-    "previewAdminCredentials": "MISSING",
-    "authorizedBrowserAuthPath": "NOT_AVAILABLE"
+  "autopilotFlags": {
+    "enabled": true,
+    "aiEnabled": false,
+    "liveConnectorsEnabled": false,
+    "autoPublishEnabled": false,
+    "realFulfillmentEnabled": false,
+    "supplierPurchaseEnabled": false,
+    "outboundEmailEnabled": false
   },
   "stagingEnvRestore": {
     "processEnv": "MISSING",
@@ -89,7 +92,6 @@
   },
   "blockers": [
     "BLOCKED_EXTERNAL_CREDENTIALS",
-    "BLOCKED_MISSING_ACCESS",
     "BLOCKED_PRODUCTION_RISK"
   ],
   "nextMode": "VICTORIOSA_AUTOPILOT_PREVIEW_AUTH_READY_STATE_DOCUMENTATION"

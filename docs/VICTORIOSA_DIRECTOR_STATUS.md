@@ -2,30 +2,36 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTOPILOT_PREVIEW_BROWSER_AUTH_BYPASS_REVIEW`
+`VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_TOKEN_EFFICIENT_SAFE`
 
 ## Latest Cycle
 
-- Date: `2026-06-03`
+- Date: `2026-06-04`
 - Branch: `codex/victoriosa-autopilot-admin-control-center`
 - Worktree confirmed: `C:\victoriosa-autopilot-admin-control-center`
 - Git status at start: CLEAN
-- `npm run guard:vercel-project-link`: PASS,
-  linked project `victoriosa-marketplace`
+- Fase 0: worktree `prunable` recovered and reused on the intended branch
+- Fase 1: central server-safe `AUTOPILOT_*` config introduced
+- Fase 1: hardcoded Autopilot safety flags replaced by config-backed values in
+  dashboard, security, settings and safety banner
+- Fase 1: base contracts consolidated between `src/lib/autopilot/core/types.ts`
+  and `src/types/autopilot.ts`
+- Fase 1 flags:
+  `AUTOPILOT_ENABLED=true`,
+  `AUTOPILOT_AI_ENABLED=false`,
+  `AUTOPILOT_LIVE_CONNECTORS_ENABLED=false`,
+  `AUTOPILOT_AUTO_PUBLISH_ENABLED=false`,
+  `AUTOPILOT_REAL_FULFILLMENT_ENABLED=false`,
+  `AUTOPILOT_SUPPLIER_PURCHASE_ENABLED=false`,
+  `AUTOPILOT_OUTBOUND_EMAIL_ENABLED=false`
+- Fase 1: external live connectors remain non-executable through safety flags
+- Fase 1: draft import remains `draft + needs_review` and no-low-risk by
+  default
+- `npm run guard:vercel-project-link`: PASS
 - `npm run ci`: PASS
-- Preview bypass audit:
-  `VERCEL_AUTOMATION_BYPASS_SECRET=SET` in Process and User environment
-- Other preview bypass variables checked: MISSING
-- Official Vercel bypass mechanism reviewed and tested with
-  `x-vercel-protection-bypass` and `x-vercel-set-bypass-cookie: true`
-- Protected Preview HTTP checks with the loaded bypass secret still returned
-  `401` on `/` and `/auth/login`
-- Preview/staging admin identity variables checked for browser login: MISSING
-- Result: no project-valid authorized access path is loaded for protected
-  Preview browser auth smoke
 - `git diff --check`: PASS
-- No deploy, rollback, alias mutation, fixture creation or project deletion was
-  executed in this cycle.
+- No deploy, rollback, alias mutation, fixture creation, remote migration or
+  project deletion was executed in this cycle.
 
 ## Result
 
@@ -119,6 +125,8 @@
 ## Checks
 
 - `npm run ci`: PASS, 19 files and 62 tests
+- Fase 0 worktree isolation: PASS
+- Fase 1 Autopilot safety tests: PASS
 - `npm run staging:check`: CHECK_NOT_RUN, blank secure staging variables in
   `.env.rls`
 - `npm run rls:smoke`: CHECK_NOT_RUN, blank secure staging variables in
