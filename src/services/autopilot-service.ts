@@ -1,4 +1,4 @@
-import { scoreCandidate } from "@/lib/autopilot/core/scoring";
+import { evaluateDecisionEngine } from "@/lib/autopilot/core/pipeline";
 import type { DiscoveryProvenance, NormalizedSupplierProduct } from "@/lib/autopilot/core/types";
 import { AUTOPILOT_FLAGS } from "@/lib/autopilot/config";
 import { parseCsvJsonDiscoveryInput } from "@/lib/autopilot/providers/csv-json-provider";
@@ -103,7 +103,7 @@ function getDiscoveryProducts(connectorId: string, input: DiscoveryInput): Norma
 }
 
 function createCandidate(item: NormalizedSupplierProduct, index: number, connectorId: string): ProductCandidate {
-  const intelligence = scoreCandidate(item);
+  const decision = evaluateDecisionEngine(item);
   const externalId = item.providerProductId ?? `${connectorId}-${index + 1}`;
   const provenance = createDiscoveryProvenance(item);
   return {
@@ -123,37 +123,39 @@ function createCandidate(item: NormalizedSupplierProduct, index: number, connect
     inventoryTotal: item.inventoryTotal,
     verifiedInventory: item.verifiedInventory,
     estimatedDeliveryDays: item.deliveryEstimateDays ?? 0,
-    suggestedSalePrice: intelligence.pricing.estimatedSellPrice,
-    estimatedMarginPercent: intelligence.pricing.estimatedMarginPercent,
+    suggestedSalePrice: decision.pricing.estimatedSellPrice,
+    estimatedMarginPercent: decision.pricing.estimatedMarginPercent,
     rating: item.rating,
     imageRightsStatus: item.imageRightsStatus ?? "unknown",
     resaleRightsStatus: item.resaleRightsStatus ?? "unknown",
     rawPayload: { ...item.raw },
     provenance,
     score: {
-      profitability: intelligence.profitabilityScore,
-      viral: intelligence.viralSignal,
-      compliance: 100 - intelligence.riskScore,
-      logistics: intelligence.logisticsScore,
-      supplier: intelligence.inventoryScore,
-      supplierReliability: intelligence.supplierReliabilityScore,
-      complianceRisk: intelligence.complianceRiskScore,
-      shipping: intelligence.shippingScore,
-      marketFit: intelligence.marketFitScore,
-      total: intelligence.finalScore,
-      explanation: [...intelligence.strengths, ...intelligence.weaknesses],
-      brandFitScore: intelligence.brandFitScore,
-      riskScore: intelligence.riskScore,
-      contentQualityScore: intelligence.contentQualityScore,
-      scoreBreakdown: intelligence.scoreBreakdown,
-      strengths: intelligence.strengths,
-      weaknesses: intelligence.weaknesses,
-      warnings: intelligence.warnings,
-      blockers: intelligence.blockers,
-      recommendation: intelligence.recommendation,
+      profitability: decision.scoring.profitabilityScore,
+      viral: decision.scoring.viralSignal,
+      compliance: 100 - decision.scoring.riskScore,
+      logistics: decision.scoring.logisticsScore,
+      supplier: decision.scoring.inventoryScore,
+      supplierReliability: decision.scoring.supplierReliabilityScore,
+      complianceRisk: decision.scoring.complianceRiskScore,
+      shipping: decision.scoring.shippingScore,
+      marketFit: decision.scoring.marketFitScore,
+      total: decision.scoring.finalScore,
+      explanation: [...decision.scoring.strengths, ...decision.scoring.weaknesses],
+      brandFitScore: decision.scoring.brandFitScore,
+      riskScore: decision.scoring.riskScore,
+      contentQualityScore: decision.scoring.contentQualityScore,
+      scoreBreakdown: decision.scoring.scoreBreakdown,
+      strengths: decision.scoring.strengths,
+      weaknesses: decision.scoring.weaknesses,
+      warnings: decision.scoring.warnings,
+      blockers: decision.scoring.blockers,
+      recommendation: decision.recommendation,
+      complianceDecision: decision.compliance,
+      pricing: decision.pricing,
     },
-    riskFlags: intelligence.riskFlags,
-    status: "pending_admin_review",
+    riskFlags: decision.scoring.riskFlags,
+    status: decision.reviewStatus,
   };
 }
 

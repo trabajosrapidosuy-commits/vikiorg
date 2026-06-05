@@ -29,6 +29,10 @@
 - Supplier purchase: DISABLED_BY_FLAG
 - Outbound email: DISABLED_BY_FLAG
 - Alerts, sync, tracking and fulfillment sandbox: NOT_IMPLEMENTED_IN_THIS_PHASE
+- Realtime function execute hardening: READY_LOCAL_ONLY
+- Decision engine explicit pipeline: IMPLEMENTED_LOCAL
+- Admin web panel `/admin/autopilot`: IMPLEMENTED_LOCAL_PREVIEW_READY
+- Supabase admin web fallback: IMPLEMENTED_SAFE_MESSAGE
 
 ## Phase 1 Flags
 
@@ -76,6 +80,55 @@ Legacy bridge maintained in this phase:
   `raw_payload`, `provider`, `external_id`, `source_url` and supplier/pricing
   columns.
 
+## Decision Engine
+
+- Explicit pipeline implemented:
+  - `normalize`
+  - `compliance gate`
+  - `pricing`
+  - `scoring`
+  - `recommendation`
+  - `review`
+- Consolidated outputs:
+  - `ComplianceDecision`
+  - `PricingDecision`
+  - `ScoringDecision`
+- Recommendation values limited to:
+  - `approve_candidate`
+  - `review`
+  - `reject`
+- Compliance veto behavior:
+  - medical or regulatory blockers => `reject`
+  - incomplete provenance or ambiguous rights/source => `review`
+  - safe products can reach `approve_candidate`
+- Import behavior unchanged:
+  - `draft + needs_review`
+  - never auto-publishes
+
+## Admin Web Preview Surface
+
+- Private admin route:
+  - `/admin/autopilot`
+- Candidate queue routes:
+  - `/admin/autopilot/candidates`
+  - `/admin/autopilot/review`
+- Server-side data source:
+  - Supabase SSR client through existing admin guard
+- Connected state:
+  - real persisted candidates render with
+    - `recommendation`
+    - `complianceDecision`
+    - `blockers`
+    - `warnings`
+    - `score/risk`
+    - `updatedAt/createdAt`
+- Fallback state:
+  - `Supabase Autopilot data unavailable in this environment`
+- Safety badge:
+  - `draft + needs_review`
+- Publication:
+  - never auto-publishes from web surface
+
 ## Required Before Authenticated Smoke
 
 1. Create a dedicated non-production admin identity through the secure manual
@@ -86,3 +139,16 @@ Legacy bridge maintained in this phase:
 ## Safety Boundary
 
 `PRODUCTION_STATUS=NO-GO_PRODUCTION`
+
+## Realtime Hardening Pending Apply
+
+- Local migration prepared:
+  - `20260604000100_victoriosa_realtime_function_execute_hardening.sql`
+- Purpose:
+  - revoke public `EXECUTE` on exposed realtime broadcast helpers detected by
+    Supabase Advisor
+- Target functions:
+  - `public.autopilot_discovery_runs_realtime_broadcast()`
+  - `public.marketplace_orders_realtime_broadcast()`
+  - `public.marketplace_products_realtime_broadcast()`
+- Remote apply: NOT_EXECUTED without explicit authorization

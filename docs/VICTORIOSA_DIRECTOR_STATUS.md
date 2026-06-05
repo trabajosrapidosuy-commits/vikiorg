@@ -2,50 +2,44 @@
 
 ## Current Mode
 
-`VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DISCOVERY_SAFE_PHASE`
+`VICTORIOSA_AUTOPILOT_ADMIN_MENU_WEB_SUPABASE_PREVIEW`
 
 ## Latest Cycle
 
-- Date: `2026-06-04`
-- Branch: `codex/victoriosa-autopilot-admin-control-center`
+- Date: `2026-06-05`
+- Branch: `codex/victoriosa-autopilot-decision-engine`
 - Worktree: `C:\victoriosa-autopilot-admin-control-center`
-- Base commit: `5674dfc feat(autopilot): harden phase 1 safety contracts`
-- Scope executed: `Fase 2` only
-- Safe discovery connectors implemented:
-  - `mock`
-  - `manual`
-  - `csv-json`
-- External connectors remain `needs_credentials` or `disabled`:
-  - `cj`
-  - `aliexpress`
-  - `alibaba`
-  - `zendrop`
-  - `dropi`
-  - `autods`
-  - `dsers`
-- Provenance normalized and persisted through:
-  - `raw_payload`
-  - `source_url`
-  - `external_id`
-  - `provider`
-  - `supplier`
-  - `price`
-  - `shipping`
-  - `stock`
-  - `rating`
-  - `image_rights`
-  - `resale_rights`
-- Local migration for provenance: `NOT_REQUIRED`
+- Base commit: `532632b feat(autopilot): explicit decision engine pipeline`
+- Scope executed: admin web Supabase preview surface only
+- Route ready:
+  - `/admin/autopilot`
+- Route behavior:
+  - server-side admin guard preserved via `requireAdmin()`
+  - real Supabase data if available
+  - safe fallback if query fails:
+    - `Supabase Autopilot data unavailable in this environment`
+- Candidate web fields:
+  - `status`
+  - `recommendation`
+  - `complianceDecision`
+  - `blockers`
+  - `warnings`
+  - `score/risk`
+  - `updatedAt/createdAt`
+- Safety badge:
+  - `draft + needs_review`
 
 ## Result
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
+- Remote apply: `NOT_EXECUTED`
+- Realtime hardening migration: `READY_LOCAL_ONLY`
+- Decision engine: `IMPLEMENTED_LOCAL`
+- Admin web panel: `IMPLEMENTED_LOCAL_PREVIEW_READY`
+- Supabase web fallback: `IMPLEMENTED_SAFE_MESSAGE`
 - Automatic publication: `DISABLED_BY_FLAG`
 - Live providers: `DISABLED_BY_FLAG`
-- AI drafts: `MOCK_SAFE_ONLY`
-- Real fulfillment: `DISABLED_BY_FLAG`
-- Supplier purchase: `DISABLED_BY_FLAG`
-- Outbound email: `DISABLED_BY_FLAG`
+- Import path: `draft + needs_review`
 
 ## Checks
 
@@ -55,18 +49,15 @@
 - `npm run test:rls:static`: PASS
 - `npm run lint`: PASS
 - `npm run typecheck`: PASS
-- `npm run test`: PASS, 21 files / 71 tests
+- `npm run test`: PASS, 24 files / 86 tests
 - `npm run build`: PASS
 - `npm run smoke:structure`: PASS
 - `git diff --check`: PASS
-- `npm run staging:check`: CHECK_NOT_RUN, secure staging values unavailable in this worktree
-- `npm run rls:smoke`: CHECK_NOT_RUN, secure staging values unavailable in this worktree
 
 ## Blockers
 
-- `BLOCKED_EXTERNAL_CREDENTIALS`: `SUPABASE_STAGING_URL` and `SUPABASE_STAGING_ANON_KEY` remain unavailable for local staging smoke reruns
-- `BLOCKED_PRODUCTION_RISK`: production stays prohibited; no production or remote mutation was executed in this cycle
+- `BLOCKED_PRODUCTION_RISK`: remote apply intentionally withheld pending explicit authorization
 
 ## Next Mode
 
-`VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DECISION_ENGINE_PHASE`
+`VICTORIOSA_AUTOPILOT_PREVIEW_BROWSER_VISUAL_SMOKE`

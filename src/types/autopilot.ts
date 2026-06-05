@@ -41,6 +41,8 @@ export interface CandidateScore {
   warnings?: string[];
   blockers?: string[];
   recommendation?: AutopilotRecommendation;
+  complianceDecision?: ComplianceDecision;
+  pricing?: PricingDecision;
 }
 
 export interface ProductCandidate extends Omit<CoreProductCandidate, "score"> {
