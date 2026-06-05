@@ -30,6 +30,7 @@
 - Outbound email: DISABLED_BY_FLAG
 - Alerts, sync, tracking and fulfillment sandbox: NOT_IMPLEMENTED_IN_THIS_PHASE
 - Realtime function execute hardening: READY_LOCAL_ONLY
+- Decision engine explicit pipeline: IMPLEMENTED_LOCAL
 
 ## Phase 1 Flags
 
@@ -76,6 +77,31 @@ Legacy bridge maintained in this phase:
 - Local migration for provenance: NOT_REQUIRED. Existing schema was reused via
   `raw_payload`, `provider`, `external_id`, `source_url` and supplier/pricing
   columns.
+
+## Decision Engine
+
+- Explicit pipeline implemented:
+  - `normalize`
+  - `compliance gate`
+  - `pricing`
+  - `scoring`
+  - `recommendation`
+  - `review`
+- Consolidated outputs:
+  - `ComplianceDecision`
+  - `PricingDecision`
+  - `ScoringDecision`
+- Recommendation values limited to:
+  - `approve_candidate`
+  - `review`
+  - `reject`
+- Compliance veto behavior:
+  - medical or regulatory blockers => `reject`
+  - incomplete provenance or ambiguous rights/source => `review`
+  - safe products can reach `approve_candidate`
+- Import behavior unchanged:
+  - `draft + needs_review`
+  - never auto-publishes
 
 ## Required Before Authenticated Smoke
 

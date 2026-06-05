@@ -2,45 +2,54 @@
 
 ## Current Mode
 
-`VICTORIOSA_REALTIME_FUNCTION_EXECUTE_HARDENING`
+`VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DECISION_ENGINE_PHASE`
 
 ## Latest Cycle
 
-- Date: `2026-06-04`
+- Date: `2026-06-05`
 - Branch: `codex/victoriosa-autopilot-decision-engine`
 - Worktree: `C:\victoriosa-autopilot-admin-control-center`
-- Base commit observed: `1c6f572`
-- Scope executed: local hardening for public realtime broadcast helpers
-- Prepared local migration:
-  - `20260604000100_victoriosa_realtime_function_execute_hardening.sql`
-- Targeted functions:
-  - `public.autopilot_discovery_runs_realtime_broadcast()`
-  - `public.marketplace_orders_realtime_broadcast()`
-  - `public.marketplace_products_realtime_broadcast()`
-- Strategy:
-  - revoke `EXECUTE` from `public`
-  - revoke `EXECUTE` from `anon`
-  - revoke `EXECUTE` from `authenticated`
-  - keep change local only, no remote apply
-- Static guard extended in `scripts/test-rls-static.mjs`
+- Base commit: `2a32d07 fix(supabase): harden realtime function execute grants`
+- Scope executed: decision engine only
+- Explicit pipeline implemented:
+  - `normalize`
+  - `compliance gate`
+  - `pricing`
+  - `scoring`
+  - `recommendation`
+  - `review`
+- New pure engine module:
+  - `src/lib/autopilot/core/pipeline.ts`
+- Recommendations constrained to:
+  - `approve_candidate`
+  - `review`
+  - `reject`
+- Compliance acts as veto engine:
+  - hard blockers => `reject`
+  - provenance/risk ambiguity => `review`
+  - clean product can still be `approve_candidate`, but remains `pending_admin_review`
 
 ## Result
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
 - Remote apply: `NOT_EXECUTED`
 - Realtime hardening migration: `READY_LOCAL_ONLY`
+- Decision engine: `IMPLEMENTED_LOCAL`
 - Automatic publication: `DISABLED_BY_FLAG`
 - Live providers: `DISABLED_BY_FLAG`
+- Import path: `draft + needs_review`
 
 ## Checks
 
 - `npm run secret:scan`: PASS
 - `npm run production:check`: PASS
+- `npm run guard:no-production-deploy`: PASS
 - `npm run test:rls:static`: PASS
 - `npm run lint`: PASS
 - `npm run typecheck`: PASS
-- `npm run test`: PASS
+- `npm run test`: PASS, 23 files / 80 tests
 - `npm run build`: PASS
+- `npm run smoke:structure`: PASS
 - `git diff --check`: PASS
 
 ## Blockers
@@ -49,4 +58,4 @@
 
 ## Next Mode
 
-`VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DECISION_ENGINE_PHASE`
+`VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_ADMIN_QUEUE_DECISION_CONSUMPTION`

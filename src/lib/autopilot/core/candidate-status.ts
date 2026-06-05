@@ -4,5 +4,6 @@ export type CoreCandidateStatus = "discovered" | "shortlisted" | "needs_review" 
 
 export function initialCandidateStatus(risk: RiskAssessment): CoreCandidateStatus {
   if (risk.recommendedAction === "reject") return "rejected";
+  if (risk.recommendedAction === "approve_candidate") return "approved";
   return "needs_review";
 }
