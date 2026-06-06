@@ -6,47 +6,26 @@
 - Local Autopilot persistence: IMPLEMENTED
 - Fase 0 worktree recovery: IMPLEMENTED
 - Fase 1 safety flags: IMPLEMENTED via central config
-- Fase 1 contract consolidation: IMPLEMENTED for flags, connectors, candidates,
-  scoring, compliance, review events and AI drafts
-- Fase 2 safe discovery connectors: IMPLEMENTED for `mock`, `manual` and
-  `csv-json`
-- Fase 2 provenance normalization: IMPLEMENTED in `raw_payload` and candidate
-  contract
-- Strict admin-only RLS migration: READY_LOCAL
-- Confirmed Victoriosa Supabase ref: `ngliugfcwydnfbpalkpb`
-- Blocked Supabase ref: `dpwassnykcrgjwrruckz`
-- Remote public tables on confirmed ref: EMPTY
-- Remote migration apply: PASS, three reviewed migrations
-- Structural RLS audit: PASS
-- REST RLS smoke: PASS, seven internal tables expose zero rows to anon
-- Outbound email, supplier calls and automatic publication: DISABLED
-- Commercial intelligence scoring: IMPLEMENTED
-- Admin queue commercial filters: IMPLEMENTED
-- Suggested price edit: IMPLEMENTED_REVIEW_ONLY
-- Live providers: DISABLED_BY_FLAG_NEEDS_CREDENTIALS
+- Fase 1 contract consolidation: IMPLEMENTED for flags, connectors, candidates, scoring, compliance, review events and AI drafts
+- Fase 2 safe discovery connectors: IMPLEMENTED for `mock`, `manual` and `csv-json`
+- Fase 2 provenance normalization: IMPLEMENTED in `raw_payload` and candidate contract
+- Realtime function execute hardening: READY_LOCAL_ONLY
+- Decision engine explicit pipeline: IMPLEMENTED_LOCAL
+- Admin web panel `/admin/autopilot`: IMPLEMENTED_LOCAL_PREVIEW_READY
+- Supabase admin web fallback: IMPLEMENTED_SAFE_MESSAGE
+- Supabase public env hardening: IMPLEMENTED_LOCAL
+- Supabase env diagnostic script: IMPLEMENTED_LOCAL
+- K-beauty review-only research assets: IMPLEMENTED_LOCAL
+- K-beauty local-only seed script: READY_DRY_RUN
+- K-beauty local-only migration: READY_LOCAL_ONLY
 - Automatic publication: DISABLED_BY_FLAG
+- Live providers: DISABLED_BY_FLAG_NEEDS_CREDENTIALS
 - Real fulfillment: DISABLED_BY_FLAG
 - Supplier purchase: DISABLED_BY_FLAG
 - Outbound email: DISABLED_BY_FLAG
 - Alerts, sync, tracking and fulfillment sandbox: NOT_IMPLEMENTED_IN_THIS_PHASE
 
-## Phase 1 Flags
-
-- `AUTOPILOT_ENABLED=true`
-- `AUTOPILOT_AI_ENABLED=false`
-- `AUTOPILOT_LIVE_CONNECTORS_ENABLED=false`
-- `AUTOPILOT_AUTO_PUBLISH_ENABLED=false`
-- `AUTOPILOT_REAL_FULFILLMENT_ENABLED=false`
-- `AUTOPILOT_SUPPLIER_PURCHASE_ENABLED=false`
-- `AUTOPILOT_OUTBOUND_EMAIL_ENABLED=false`
-
-Legacy bridge maintained in this phase:
-
-- `ENABLE_AI_AUTOMATION` -> fallback for `AUTOPILOT_AI_ENABLED`
-- `ENABLE_AUTO_PUBLICATION` -> fallback for
-  `AUTOPILOT_AUTO_PUBLISH_ENABLED`
-
-## Phase 2 Discovery
+## Discovery
 
 - Safe connectors enabled:
   - `mock`
@@ -72,16 +51,42 @@ Legacy bridge maintained in this phase:
   - `rating`
   - `image_rights`
   - `resale_rights`
-- Local migration for provenance: NOT_REQUIRED. Existing schema was reused via
-  `raw_payload`, `provider`, `external_id`, `source_url` and supplier/pricing
-  columns.
 
-## Required Before Authenticated Smoke
+## Decision Engine
 
-1. Create a dedicated non-production admin identity through the secure manual
-   Dashboard path.
-2. Assign `marketplace_admin` using the staging-only reviewed SQL in the
-   access runbook.
+- Explicit pipeline implemented:
+  - `normalize`
+  - `compliance gate`
+  - `pricing`
+  - `scoring`
+  - `recommendation`
+  - `review`
+- Consolidated outputs:
+  - `ComplianceDecision`
+  - `PricingDecision`
+  - `ScoringDecision`
+- Recommendation values limited to:
+  - `approve_candidate`
+  - `review`
+  - `reject`
+- Import behavior unchanged:
+  - `draft + needs_review`
+  - never auto-publishes
+
+## K-beauty Review-only Boundary
+
+- Seed script:
+  - `npm run seed:autopilot:kbeauty`
+  - default mode: dry-run only
+  - write mode requires explicit write flags and non-production target confirmation
+- Allowed review states:
+  - `pending_admin_review`
+  - `needs_review`
+  - `needs_supplier_validation`
+- Allowed representation state:
+  - `not_official`
+- No path to `published`
+- No path to official representation in this phase
 
 ## Safety Boundary
 

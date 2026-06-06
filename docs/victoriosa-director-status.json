@@ -1,59 +1,36 @@
 {
   "project": "Victoriosa Marketplace",
-  "date": "2026-06-04",
-  "mode": "VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DISCOVERY_SAFE_PHASE",
+  "date": "2026-06-05",
+  "mode": "VICTORIOSA_KBEAUTY_STAGING_APPLY_AUTH_GATE_AFTER_MERGE",
   "productionStatus": "NO-GO_PRODUCTION",
-  "branch": "codex/victoriosa-autopilot-admin-control-center",
+  "branch": "codex/victoriosa-kbeauty-staging-auth-gate",
   "worktree": "C:\\victoriosa-autopilot-admin-control-center",
-  "baseCommit": "5674dfc",
+  "base": "origin/main",
   "features": {
     "autopilotSafeDiscovery": "IMPLEMENTED_MOCK_MANUAL_CSV_JSON",
-    "autopilotProvenancePersistence": "IMPLEMENTED_RAW_PAYLOAD_NORMALIZED",
-    "autopilotAutomaticPublication": "DISABLED_BY_FLAG",
-    "autopilotAiDraftMode": "MOCK_SAFE_ONLY",
-    "autopilotRealFulfillment": "DISABLED_BY_FLAG",
-    "autopilotSupplierPurchase": "DISABLED_BY_FLAG",
-    "autopilotOutboundEmail": "DISABLED_BY_FLAG",
-    "liveProviders": "DISABLED_BY_FLAG"
+    "autopilotDecisionEngine": "IMPLEMENTED_LOCAL_PIPELINE",
+    "autopilotAdminWebPanel": "IMPLEMENTED_LOCAL_PREVIEW_READY",
+    "supabaseEnvHardening": "IMPLEMENTED_LOCAL",
+    "kbeautyReviewOnlyResearch": "IMPLEMENTED_LOCAL",
+    "kbeautyLocalResearchMigration": "READY_LOCAL_ONLY",
+    "kbeautySeedMode": "DRY_RUN_DEFAULT"
   },
   "checks": {
-    "secretScan": "PASS",
-    "productionCheck": "PASS",
-    "guardNoProductionDeploy": "PASS",
-    "staticRlsCheck": "PASS_21_PUBLIC_TABLES",
-    "lint": "PASS",
-    "typecheck": "PASS",
-    "test": "PASS_21_FILES_71_TESTS",
-    "build": "PASS",
-    "smokeStructure": "PASS",
-    "gitDiffCheck": "PASS",
-    "stagingCheck": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE",
-    "rlsSmoke": "CHECK_NOT_RUN_SECURE_STAGING_VALUES_UNAVAILABLE"
-  },
-  "connectors": {
-    "safe": ["mock", "manual", "csv-json"],
-    "externalBlocked": ["cj", "aliexpress", "alibaba", "zendrop", "dropi", "autods", "dsers"]
-  },
-  "provenanceFields": [
-    "raw_payload",
-    "source_url",
-    "external_id",
-    "provider",
-    "supplier",
-    "price",
-    "shipping",
-    "stock",
-    "rating",
-    "image_rights",
-    "resale_rights"
-  ],
-  "migration": {
-    "localPrepared": "NOT_REQUIRED",
-    "remoteApplied": "NOT_EXECUTED"
+    "secretScan": "PENDING",
+    "productionCheck": "PENDING",
+    "guardNoProductionDeploy": "PENDING",
+    "testRlsStatic": "PENDING",
+    "lint": "PENDING",
+    "build": "PENDING",
+    "typecheck": "PENDING",
+    "test": "PENDING",
+    "smokeStructure": "PENDING",
+    "checkKbeautyPersistence": "PENDING",
+    "gitDiffCheck": "PENDING"
   },
   "blockers": [
     "BLOCKED_EXTERNAL_CREDENTIALS",
-    "BLOCKED_PRODUCTION_RISK"
+    "BLOCKED_TARGET_NOT_CONFIRMED"
   ],
-  "nextMode": "VICTORIOSA_AUTONOMOUS_COMMERCE_ENGINE_DECISION_ENGINE_PHASE"
+  "nextMode": "VICTORIOSA_KBEAUTY_STAGING_APPLY_AUTH_EXECUTION"
 }
