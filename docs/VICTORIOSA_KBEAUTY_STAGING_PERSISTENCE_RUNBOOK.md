@@ -9,6 +9,22 @@ runbook no autoriza ejecutar contra produccion.
 
 - staging no productivo del proyecto Victoriosa Marketplace
 - nunca production
+- target staging autorizado actualmente documentado:
+  - `https://ngliugfcwydnfbpalkpb.supabase.co`
+
+## Estado remoto actual conocido
+
+Tablas Autopilot existentes:
+
+- `autopilot_discovery_runs`
+- `autopilot_product_candidates`
+- `autopilot_review_events`
+
+Tablas K-beauty faltantes en remoto:
+
+- `autopilot_brand_candidates`
+- `autopilot_supplier_contacts`
+- `autopilot_import_requirements`
 
 ## Variables requeridas
 
@@ -36,6 +52,18 @@ npm run check:supabase-env
 npm run check:kbeauty-persistence
 ```
 
+Apply staging propuesto pero no ejecutado:
+
+```bash
+supabase db push --db-url "$env:SUPABASE_URL"
+```
+
+Solo despues de:
+
+- confirmar `SUPABASE_URL=SET`
+- confirmar que coincide exactamente con `https://ngliugfcwydnfbpalkpb.supabase.co`
+- autorizacion humana explicita
+
 Seed dry-run:
 
 ```bash
@@ -54,6 +82,7 @@ El modo write falla si:
 
 - `PRODUCTION_STATUS` no es `NO-GO_PRODUCTION`
 - `--target` no es `staging`
+- `SUPABASE_URL` no coincide con el staging autorizado
 - faltan `SUPABASE_URL` o `SUPABASE_SERVICE_ROLE_KEY`
 - faltan tablas requeridas
 - no existe confirmacion explicita de write review-only
