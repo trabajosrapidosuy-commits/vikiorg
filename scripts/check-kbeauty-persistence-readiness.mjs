@@ -7,6 +7,7 @@ const env = { ...loadLocalEnv(), ...process.env };
 const target = cli.target ?? "staging";
 const mode = cli.write ? "write" : "dry-run";
 const productionStatus = readProductionStatus();
+const expectedStagingUrl = "https://ngliugfcwydnfbpalkpb.supabase.co";
 const requiredTables = [
   "autopilot_discovery_runs",
   "autopilot_product_candidates",
@@ -21,6 +22,11 @@ const summary = {
   mode,
   target,
   productionStatus,
+  targetStatus: env.SUPABASE_URL
+    ? env.SUPABASE_URL === expectedStagingUrl
+      ? "CONFIRMED_STAGING"
+      : "BLOCKED_TARGET_NOT_CONFIRMED"
+    : "BLOCKED_EXTERNAL_CREDENTIALS",
   envStatus: {
     SUPABASE_URL: env.SUPABASE_URL ? "SET" : "MISSING",
     SUPABASE_SERVICE_ROLE_KEY: env.SUPABASE_SERVICE_ROLE_KEY ? "SET" : "MISSING",
@@ -44,6 +50,16 @@ if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
     issues: mode === "write" ? ["Missing server-side credentials for write mode."] : [],
   }, null, 2));
   process.exit(mode === "write" ? 1 : 0);
+}
+
+if (env.SUPABASE_URL !== expectedStagingUrl) {
+  console.log(JSON.stringify({
+    ...summary,
+    readiness: "BLOCKED",
+    tableStatus: Object.fromEntries(requiredTables.map((table) => [table, "NOT_CHECKED_TARGET_UNCONFIRMED"])),
+    issues: ["SUPABASE_URL does not match the authorized staging target."],
+  }, null, 2));
+  process.exit(1);
 }
 
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
