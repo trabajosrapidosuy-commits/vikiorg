@@ -7,7 +7,6 @@
   "worktree": "C:\\victoriosa-autopilot-admin-control-center",
   "base": "origin/main",
   "features": {
-    "autopilotSafeDiscovery": "IMPLEMENTED_MOCK_MANUAL_CSV_JSON",
     "autopilotDecisionEngine": "IMPLEMENTED_LOCAL_PIPELINE",
     "autopilotAdminWebPanel": "IMPLEMENTED_LOCAL_PREVIEW_READY",
     "supabaseEnvHardening": "IMPLEMENTED_LOCAL",

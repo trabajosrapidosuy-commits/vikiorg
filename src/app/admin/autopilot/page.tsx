@@ -3,10 +3,15 @@ import { requireAdmin } from "@/lib/supabase/require-admin";
 import { AUTOPILOT_MODE_FLAGS } from "@/lib/autopilot/config";
 import { listPersistentCandidates, listPersistentDiscoveryRuns } from "@/services/autopilot-persistence-service";
 import { listAutopilotConnectors } from "@/services/autopilot-service";
+import { loadAutopilotWebSnapshot } from "@/services/autopilot-web-service";
 
 export default async function AutopilotPage() {
   const { supabase } = await requireAdmin();
-  const [candidates, runs] = await Promise.all([listPersistentCandidates(supabase), listPersistentDiscoveryRuns(supabase)]);
+  const [candidates, runs, snapshot] = await Promise.all([
+    listPersistentCandidates(supabase),
+    listPersistentDiscoveryRuns(supabase),
+    loadAutopilotWebSnapshot(supabase),
+  ]);
   const connectors = listAutopilotConnectors();
   const reviewCount = candidates.filter((candidate) => candidate.review_status === "pending_admin_review").length;
   const approvedCount = candidates.filter((candidate) => candidate.review_status === "approved_for_draft").length;
@@ -31,6 +36,21 @@ export default async function AutopilotPage() {
       <section className="grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
         <div className="card">
           <h2 className="text-xl font-bold">Estado operativo</h2>
+          <p className="mt-2 text-sm">
+            Estado Supabase: <strong>{snapshot.connectionStatus === "connected" ? "CONNECTED" : "UNAVAILABLE"}</strong>
+          </p>
+          <p className="mt-2 text-sm text-gray-700">{snapshot.message}</p>
+          <p className="mt-2 text-sm text-gray-700">
+            K-beauty persistence:{" "}
+            <strong>
+              {snapshot.kbeautyPersistenceState === "applied"
+                ? "APPLIED"
+                : snapshot.kbeautyPersistenceState === "not_applied_yet"
+                  ? "Persistence not applied yet"
+                  : "UNAVAILABLE"}
+            </strong>{" "}
+            · Marcas persistidas: <strong>{snapshot.persistedBrandCount}</strong>
+          </p>
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
             <li>Discovery mock, manual y csv-json con scoring y persistencia admin-only disponibles.</li>
             <li>Todo candidato entra en review-only y queda sujeto a decision humana.</li>
@@ -38,6 +58,11 @@ export default async function AutopilotPage() {
             <li>Email marketing, publicacion y acciones con proveedores live permanecen deshabilitados.</li>
             <li>K-beauty research queda preparado solo para shortlist, draft y supplier validation.</li>
           </ul>
+          {snapshot.kbeautyPersistenceState !== "applied" ? (
+            <p className="mt-3 text-sm text-[#6c4d34]">
+              Fallback local activo para marcas K-beauty: {snapshot.fallbackBrandNames.join(", ")}.
+            </p>
+          ) : null}
           <div className="mt-4 flex flex-wrap gap-2">
             <Link className="btn" href="/admin/autopilot/discovery">Abrir discovery</Link>
             <Link className="btn btn-secondary" href="/admin/autopilot/candidates">Revisar candidatos</Link>
@@ -67,6 +92,6 @@ function Metric({ label, value }: { label: string; value: number }) {
   return <div className="card"><p className="text-sm text-gray-600">{label}</p><p className="mt-1 text-3xl font-bold">{value}</p></div>;
 }
 
-function Info({ label, value }: { label: string; value: string }) {
+function Info({ label, value }: { label: string }) {
   return <div><dt className="text-xs font-bold uppercase tracking-[0.14em] text-[#8b7165]">{label}</dt><dd className="mt-1 text-sm text-[#3a2a27]">{value}</dd></div>;
 }
