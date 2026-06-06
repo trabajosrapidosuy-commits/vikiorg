@@ -152,3 +152,12 @@ Cada ciclo debe informar:
 * representación oficial afirmada: `NO`
 * checks con `PASS`, `FAIL` o `CHECK_NOT_RUN`
 * estado final `GO` o `NO-GO` con bloqueo exacto
+
+## Sistema de agentes Victoriosa
+
+Antes de iniciar una tarea especializada, Codex debe revisar:
+
+`docs/agents/VICTORIOSA_AGENT_ROSTER.md`
+
+Debe elegir el agente que corresponda al alcance real y obedecer sus gates,
+checks y condiciones `GO` / `NO-GO`.
