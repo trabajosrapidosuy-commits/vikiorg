@@ -27,6 +27,7 @@
   },
   "checks": {
     "secretScan": "PASS",
+    "checkSupabaseEnv": "PASS_REMOTE_OK",
     "productionCheck": "PASS",
     "guardNoProductionDeploy": "PASS",
     "testRlsStatic": "PASS",
@@ -38,6 +39,11 @@
     "checkKbeautyPersistence": "PASS_PARTIAL",
     "gitDiffCheck": "PASS"
   },
+  "realtimeFunctions": [
+    "public.autopilot_discovery_runs_realtime_broadcast",
+    "public.marketplace_orders_realtime_broadcast",
+    "public.marketplace_products_realtime_broadcast"
+  ],
   "blockers": [
     "BLOCKED_EXTERNAL_CREDENTIALS",
     "BLOCKED_TARGET_NOT_CONFIRMED"

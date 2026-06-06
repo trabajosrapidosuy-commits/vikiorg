@@ -47,3 +47,16 @@
 ## Safety Boundary
 
 `PRODUCTION_STATUS=NO-GO_PRODUCTION`
+
+## Realtime Hardening Pending Apply
+
+- Local migration prepared:
+  - `20260604000100_victoriosa_realtime_function_execute_hardening.sql`
+- Purpose:
+  - revoke public `EXECUTE` on exposed realtime broadcast helpers detected by
+    Supabase Advisor
+- Target functions:
+  - `public.autopilot_discovery_runs_realtime_broadcast()`
+  - `public.marketplace_orders_realtime_broadcast()`
+  - `public.marketplace_products_realtime_broadcast()`
+- Remote apply: NOT_EXECUTED without explicit authorization

@@ -1,6 +1,6 @@
 import { AutopilotCandidateTable } from "@/components/autopilot/AutopilotCandidateTable";
 import { requireAdmin } from "@/lib/supabase/require-admin";
-import { listPersistentCandidates } from "@/services/autopilot-persistence-service";
+import { loadAutopilotWebSnapshot } from "@/services/autopilot-web-service";
 
 export default async function AutopilotReviewPage() {
   const fallbackMessage = "Supabase Autopilot data unavailable in this environment";
@@ -27,7 +27,9 @@ export default async function AutopilotReviewPage() {
       <section className="card">
         <AutopilotCandidateTable
           candidates={candidates}
-          emptyMessage="No hay candidatos pendientes de decision humana."
+          emptyMessage={snapshot.connectionStatus === "unavailable"
+            ? "Supabase Autopilot data unavailable in this environment"
+            : "No hay candidatos pendientes de decision humana."}
         />
       </section>
     </main>

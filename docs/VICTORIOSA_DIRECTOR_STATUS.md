@@ -20,10 +20,7 @@
 - Admin Autopilot UI: `SAFE_FALLBACK_READY`
 - Automatic publication: `DISABLED_BY_FLAG`
 - Live providers: `DISABLED_BY_FLAG`
-- AI drafts: `MOCK_SAFE_ONLY`
-- Real fulfillment: `DISABLED_BY_FLAG`
-- Supplier purchase: `DISABLED_BY_FLAG`
-- Outbound email: `DISABLED_BY_FLAG`
+- Import path: `draft + needs_review`
 
 ## Env Gate
 
@@ -40,9 +37,11 @@
 ## Checks
 
 - `npm run secret:scan`: PASS
+- `npm run check:supabase-env`: PASS, local env file loaded and remote probe returned `REMOTE_OK`
 - `npm run production:check`: PASS
 - `npm run guard:no-production-deploy`: PASS
 - `npm run test:rls:static`: PASS
+- `npm run check:kbeauty-persistence`: PASS, `PARTIAL` readiness with `SUPABASE_URL=MISSING`
 - `npm run lint`: PASS
 - `npm run build`: PASS
 - `npm run typecheck`: PASS

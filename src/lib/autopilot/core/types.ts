@@ -78,8 +78,11 @@ export interface PricingDecision extends PricingResult {}
 export interface ComplianceDecision {
   riskScore: number;
   riskFlags: string[];
+  warnings: string[];
+  blockers: string[];
+  provenanceComplete: boolean;
   recommendation: AutopilotRecommendation;
-  recommendedAction: "approve_candidate" | "needs_review" | "reject";
+  recommendedAction: AutopilotRecommendation;
 }
 
 export type RiskAssessment = ComplianceDecision;
@@ -105,10 +108,19 @@ export interface ScoringDecision {
   riskFlags: string[];
   recommendedAction: ComplianceDecision["recommendedAction"];
   recommendation: AutopilotRecommendation;
+  complianceDecision: ComplianceDecision;
   pricing: PricingDecision;
 }
 
 export type CandidateScoreResult = ScoringDecision;
+
+export interface DecisionEngineOutput {
+  compliance: ComplianceDecision;
+  pricing: PricingDecision;
+  scoring: ScoringDecision;
+  recommendation: AutopilotRecommendation;
+  reviewStatus: "pending_admin_review";
+}
 
 export interface SupplierConnector {
   id: string;
