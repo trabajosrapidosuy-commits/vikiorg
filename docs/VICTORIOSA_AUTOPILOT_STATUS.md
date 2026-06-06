@@ -33,6 +33,11 @@
 - Decision engine explicit pipeline: IMPLEMENTED_LOCAL
 - Admin web panel `/admin/autopilot`: IMPLEMENTED_LOCAL_PREVIEW_READY
 - Supabase admin web fallback: IMPLEMENTED_SAFE_MESSAGE
+- Supabase public env hardening: IMPLEMENTED_LOCAL
+- Supabase env diagnostic script: IMPLEMENTED_LOCAL
+- K-beauty review-only research assets: IMPLEMENTED_LOCAL
+- K-beauty local-only seed script: READY_DRY_RUN
+- K-beauty local-only migration: READY_LOCAL_ONLY
 - Browser visual smoke: VERIFIED_LOGIN_REDIRECT_NO_ADMIN_SESSION
 
 ## Phase 1 Flags
@@ -149,6 +154,47 @@ Legacy bridge maintained in this phase:
 - Evidence mode:
   - textual browser evidence recorded
   - screenshot attempts timed out in the embedded browser runtime
+
+## Supabase Public Env Hardening
+
+- New helper:
+  - `src/lib/supabase/env.ts`
+- Uses validated public env only:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Safe degradations:
+  - public catalog returns `[]` on failure
+  - product lookup returns `null` on failure
+  - public middleware paths continue even when env is invalid
+- Local env diagnostic:
+  - `npm run check:supabase-env`
+- Current host env:
+  - `NEXT_PUBLIC_SUPABASE_URL`: SET via `.env.local` loader in diagnostic script
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: SET via `.env.local` loader in diagnostic script
+  - remote probe: `REMOTE_OK`
+
+## K-beauty Research
+
+- Recommended #1:
+  - `HUBISLAB`
+- Alternative #2:
+  - `AESTURA`
+- Additional analyzed:
+  - `Dr. Oracle`
+  - `Renoderm Professional`
+  - `KRX Aesthetics`
+- Prepared review-only candidate set:
+  - 8 candidate products
+- Prepared local-only docs:
+  - `docs/VICTORIOSA_KBEAUTY_BRAND_RESEARCH.md`
+  - `docs/VICTORIOSA_OFFICIAL_REPRESENTATION_PLAN.md`
+  - `docs/VICTORIOSA_URUGUAY_COSMETICS_IMPORT_CHECKLIST.md`
+  - `docs/VICTORIOSA_SUPPLIER_OUTREACH_EMAILS.md`
+- Seed script:
+  - `npm run seed:autopilot:kbeauty`
+  - default mode: dry-run only
+  - write mode requires explicit `AUTOPILOT_KBEAUTY_SEED_WRITE=true`
+  - no write executed in this cycle
 
 ## Required Before Authenticated Smoke
 
