@@ -2,18 +2,17 @@
 
 ## Current Mode
 
-`VICTORIOSA_KBEAUTY_STAGING_APPLY_AUTH_GATE_AFTER_MERGE`
+`VICTORIOSA_AGENT_SYSTEM_BOOTSTRAP`
 
-## Current Branch
+## Canonical Structure
 
-- Branch: `codex/victoriosa-kbeauty-staging-auth-gate`
-- Worktree: `C:\victoriosa-autopilot-admin-control-center`
-- Base: `origin/main`
-- Base commit on branch creation: `e4e9262`
-
-## Current State
-
+- Git common-dir and base repo: `C:\victoriosa`
+- Active worktree: `C:\victoriosa-autopilot-admin-control-center`
+- Active branch: `codex/victoriosa-kbeauty-staging-auth-gate`
+- Active HEAD verified after cleanup: `42fabbb`
+- Origin: `https://github.com/trabajosrapidosuy-commits/Victoriosa-marketplace.git`
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
+<<<<<<< HEAD
 - K-beauty migration: `READY_LOCAL_ONLY`
 - K-beauty seed: `READY_DRY_RUN_ONLY`
 - Public catalog filter: `published + approved + low`
@@ -21,21 +20,20 @@
 - Automatic publication: `DISABLED_BY_FLAG`
 - Live providers: `DISABLED_BY_FLAG`
 - Import path: `draft + needs_review`
+=======
+>>>>>>> b51b74c (docs: add Victoriosa agent operating system)
 
-## Env Gate
+The active worktree uses
+`C:\victoriosa\.git\worktrees\victoriosa-autopilot-admin-control-center` and
+depends on `C:\victoriosa\.git` as its common Git directory. Both paths are
+required and were preserved.
 
-- `SUPABASE_URL`: `MISSING`
-- `SUPABASE_SERVICE_ROLE_KEY`: `SET`
-- `NEXT_PUBLIC_SUPABASE_URL`: `SET`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: `SET`
-- `PRODUCTION_STATUS`: `MISSING` as env var, enforced as `NO-GO_PRODUCTION` from docs/status
-- `AUTHORIZED_STAGING_TARGET`: `MISSING`
-- Readiness target status: `BLOCKED_EXTERNAL_CREDENTIALS`
-- Safe Supabase CLI apply path: `supabase link --project-ref ngliugfcwydnfbpalkpb` then `supabase db push`
-- Unsafe path explicitly blocked: `supabase db push --db-url "$env:SUPABASE_URL"` when `SUPABASE_URL` is only the HTTPS project URL
+## Quarantine
 
-## Checks
+Created:
+`C:\victoriosa-archive-before-cleanup\20260606-173024`
 
+<<<<<<< HEAD
 - `npm run secret:scan`: PASS
 - `npm run check:supabase-env`: PASS, local env file loaded and remote probe returned `REMOTE_OK`
 - `npm run production:check`: PASS
@@ -49,12 +47,56 @@
 - `npm run smoke:structure`: PASS
 - `npm run check:kbeauty-persistence`: PASS, `PARTIAL`
 - `git diff --check`: PASS
+=======
+Moved without deletion:
+
+- `C:\victoriosa-respalo`
+- `C:\victoriosa-safe`
+
+Preserved quarantine destinations:
+
+- `C:\victoriosa-archive-before-cleanup\20260606-173024\victoriosa-respalo`
+- `C:\victoriosa-archive-before-cleanup\20260606-173024\victoriosa-safe`
+
+Both remain valid Git repositories. The `victoriosa-respalo` repository
+retained all modified and untracked files plus its `.env.local`.
+
+## Verification
+
+- Active worktree Git status: `PASS`
+- Base repo Git status: `PASS`
+- Worktree relationship: `PASS`
+- Origin verification: `PASS`
+- `git diff --check`: `PASS`
+- Active `.env.local` ignored: `PASS`
+- Active `.env.local` tracked: `NO`
+- Quarantined repositories readable: `PASS`
+- Permanent deletion: `NO`
+- Secrets exposed: `NO`
+- Supabase/Vercel/deploy operations: `NO`
+
+## Agent System
+
+- Agent roster: `docs/agents/VICTORIOSA_AGENT_ROSTER.md`
+- Specialized agents documented: `7`
+- Canonical worktree:
+  `C:\victoriosa-autopilot-admin-control-center`
+- New dependencies installed: `NO`
+- Production or deploy activity: `NO`
+
+## Notes
+
+The active worktree HEAD changed from the initial observed `838f9c5` to
+`42fabbb` during this cycle. The change was external to the cleanup operation
+and was preserved.
+>>>>>>> b51b74c (docs: add Victoriosa agent operating system)
 
 ## Blockers
 
-- `BLOCKED_EXTERNAL_CREDENTIALS`
-- `BLOCKED_TARGET_NOT_CONFIRMED`
+`NO_BLOCKERS_FOR_SAFE_NEXT_CYCLE`
 
 ## Next Mode
 
-`VICTORIOSA_KBEAUTY_STAGING_APPLY_AUTH_EXECUTION`
+`VICTORIOSA_SUPABASE_MIGRATION_HISTORY_RECONCILIATION`
+
+See `docs/autonomous-cycles/CYCLE_VICTORIOSA_AGENT_SYSTEM_BOOTSTRAP.md`.
