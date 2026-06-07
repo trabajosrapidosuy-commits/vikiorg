@@ -38,8 +38,13 @@ browser-bound PKCE verifier.
 - `git diff --check`: `PASS`.
 - `.env.local`: ignored and untracked.
 - Local browser render: `PASS`.
-- Real Google first-attempt Preview smoke: `CHECK_NOT_RUN` until the pushed
-  Preview is ready.
+- Vercel Preview build for `be8e5c2`: `PASS`.
+- GitHub deployment classification: `Preview`,
+  `production_environment=false`.
+- Preview URL:
+  `https://victoriosa-marketplace-git-codex-a51630-victoriosa-marketplace.vercel.app`
+- Real Google first-attempt Preview smoke: `CHECK_NOT_RUN`; it requires a fresh
+  account selection in the user's Google session.
 
 ## Safety
 
@@ -54,7 +59,7 @@ browser-bound PKCE verifier.
 
 ## Decision
 
-`GO_PREVIEW_AUTH_SMOKE_REQUIRED`
+`GO_USER_FIRST_ATTEMPT_SMOKE_REQUIRED`
 
 PR #25 must remain draft. It must not be merged while Production deployment
 risk remains blocked.

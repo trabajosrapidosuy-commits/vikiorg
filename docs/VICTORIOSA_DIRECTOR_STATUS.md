@@ -187,12 +187,14 @@ Date: 2026-06-07
   secret scan, production guard and static RLS checks pass.
 - Browser smoke: login renders one client-side Google button and handles an
   unauthorized localhost callback with a generic visible error.
-- Pending evidence: first-attempt Google authentication on the new Vercel
-  Preview URL after the branch push.
+- Vercel Preview for commit `be8e5c2`: `PASS`, recorded by GitHub as
+  `production_environment=false`.
+- Pending evidence: first-attempt Google authentication with a fresh account
+  selection on the new Preview URL.
 - Production remains untouched and blocked:
   `PRODUCTION_STATUS=NO-GO_PRODUCTION`.
 
-Decision: `GO_PREVIEW_AUTH_SMOKE_REQUIRED`
+Decision: `GO_USER_FIRST_ATTEMPT_SMOKE_REQUIRED`
 
 Next safe mode: `VICTORIOSA_GOOGLE_OAUTH_PREVIEW_FIRST_ATTEMPT_SMOKE`
 
