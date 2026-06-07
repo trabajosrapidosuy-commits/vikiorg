@@ -42,6 +42,8 @@ grant execute on function private.is_marketplace_admin() to anon, authenticated;
 
 drop policy if exists "click events public insert"
   on public.marketplace_click_events;
+drop policy if exists "click events constrained public insert"
+  on public.marketplace_click_events;
 
 create policy "click events constrained public insert"
   on public.marketplace_click_events
@@ -68,6 +70,8 @@ create policy "click events constrained public insert"
   );
 
 drop policy if exists "consultations public insert"
+  on public.beauty_consultations;
+drop policy if exists "consultations constrained public insert"
   on public.beauty_consultations;
 
 create policy "consultations constrained public insert"

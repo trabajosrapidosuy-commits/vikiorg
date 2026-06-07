@@ -111,6 +111,13 @@ grant execute on function public.is_autopilot_admin() to authenticated;
 drop policy if exists "autopilot connectors admin all" on public.autopilot_supplier_connectors;
 drop policy if exists "autopilot discovery runs admin all" on public.autopilot_discovery_runs;
 drop policy if exists "autopilot candidates admin all" on public.autopilot_product_candidates;
+drop policy if exists "autopilot connectors strict admin all" on public.autopilot_supplier_connectors;
+drop policy if exists "autopilot discovery runs strict admin all" on public.autopilot_discovery_runs;
+drop policy if exists "autopilot candidates strict admin all" on public.autopilot_product_candidates;
+drop policy if exists "autopilot ai drafts strict admin all" on public.autopilot_ai_product_drafts;
+drop policy if exists "autopilot logs strict admin all" on public.autopilot_logs;
+drop policy if exists "autopilot campaign drafts strict admin all" on public.autopilot_campaign_drafts;
+drop policy if exists "autopilot marketing opt ins strict admin all" on public.autopilot_marketing_opt_ins;
 
 create policy "autopilot connectors strict admin all" on public.autopilot_supplier_connectors for all using (public.is_autopilot_admin()) with check (public.is_autopilot_admin());
 create policy "autopilot discovery runs strict admin all" on public.autopilot_discovery_runs for all using (public.is_autopilot_admin()) with check (public.is_autopilot_admin());

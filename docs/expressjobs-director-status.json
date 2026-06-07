@@ -3,27 +3,23 @@
   "compatibilityContract": "ExpressJobs Director",
   "canonicalStatusFile": "docs/VICTORIOSA_DIRECTOR_STATUS.md",
   "date": "2026-06-07",
-  "mode": "VICTORIOSA_STAGING_EXPLICIT_APPLY_AUTHORIZATION",
+  "mode": "VICTORIOSA_STAGING_MIGRATION_IDEMPOTENCY_RECONCILIATION",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-staging-enable",
-  "baseCommit": "0837b40",
-  "apply": {
-    "target": "ngliugfcwydnfbpalkpb",
-    "literalAuthorization": "YES",
-    "backup": "PASS",
-    "finalDryRun": "PASS_9_MIGRATIONS",
+  "baseCommit": "5819b7b",
+  "reconciliation": {
+    "originalError": "profiles own read or admin",
+    "policyGuardsAdded": 39,
+    "migrationFilesModified": 6,
+    "destructiveSql": "NO",
+    "rlsRelaxed": "NO",
+    "dangerousAnonGrants": "NO",
+    "migrationList": "PASS",
+    "dbPushDryRunIncludeAll": "PASS",
+    "pendingMigrationCount": 9,
     "planWithoutDrift": "YES",
-    "realPush": "FAIL_EXISTING_POLICY",
-    "failedMigration": "20260531000100_victoriosa_marketplace_foundation.sql",
-    "recordedAppliedMigrationCount": 0,
-    "migrationRepair": "NO",
-    "seed": "CHECK_NOT_RUN"
-  },
-  "smokes": {
-    "stagingCheck": "PASS",
-    "rlsSmoke": "FAIL_KBEAUTY_TABLES_HTTP_404",
-    "kbeautyPersistence": "FAIL_MISSING_OR_INACCESSIBLE_TABLES",
-    "adminAutopilot": "CHECK_NOT_RUN"
+    "realPush": "NO",
+    "seed": "NO"
   },
   "checks": {
     "secretScan": "PASS",
@@ -31,22 +27,21 @@
     "guardNoProductionDeploy": "PASS",
     "testRlsStatic": "PASS_25_PUBLIC_TABLES",
     "lint": "PASS",
-    "typecheck": "PASS_AFTER_BUILD",
-    "test": "PASS_30_FILES_106_TESTS",
+    "typecheck": "PASS",
+    "test": "PASS_31_FILES_109_TESTS",
     "build": "PASS",
+    "idempotencyTests": "PASS_8_TESTS",
     "gitDiffCheck": "PASS",
     "envLocalIgnoredUntracked": "PASS"
   },
   "remoteActions": {
     "deploy": "NO",
-    "databaseMutationCompleted": "NO",
+    "databaseMutation": "NO",
     "seed": "NO",
     "payment": "NO",
     "publication": "NO"
   },
-  "blockers": [
-    "BLOCKED_SUPABASE_ACCESS"
-  ],
-  "decision": "NO-GO_APPLY_FAILED",
-  "nextMode": "VICTORIOSA_STAGING_MIGRATION_IDEMPOTENCY_RECONCILIATION"
+  "blockers": [],
+  "decision": "GO_IDEMPOTENT_MIGRATIONS_READY_FOR_APPLY_RETRY",
+  "nextMode": "VICTORIOSA_STAGING_IDEMPOTENT_APPLY_RETRY_AUTHORIZATION"
 }

@@ -7,23 +7,22 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 
 ## Current Mode
 
-`VICTORIOSA_STAGING_EXPLICIT_APPLY_AUTHORIZATION`
+`VICTORIOSA_STAGING_MIGRATION_IDEMPOTENCY_RECONCILIATION`
 
 ## Status
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Authorization, backup and exact dry-run: `PASS`
-- Real staging apply: `FAIL_EXISTING_POLICY`
-- Pending migrations recorded as applied: `NONE`
-- Staging check: `PASS`
-- RLS and K-beauty persistence smoke: `FAIL_TABLES_NOT_APPLIED`
-- Seed: `NOT_EXECUTED`
+- Original duplicate-policy failure: `RECONCILED`
+- Policy idempotency guards added: `39`
+- Automated idempotency tests: `PASS`
+- Expanded dry-run: `PASS_9_MIGRATIONS_NO_DRIFT`
+- Real push and seed: `NOT_EXECUTED`
 - Deploys and remote mutations: `NOT_EXECUTED`
 
 ## Blockers
 
-`BLOCKED_SUPABASE_ACCESS`
+`NO_BLOCKERS_FOR_SAFE_NEXT_CYCLE`
 
 ## Next Mode
 
-`VICTORIOSA_STAGING_MIGRATION_IDEMPOTENCY_RECONCILIATION`
+`VICTORIOSA_STAGING_IDEMPOTENT_APPLY_RETRY_AUTHORIZATION`

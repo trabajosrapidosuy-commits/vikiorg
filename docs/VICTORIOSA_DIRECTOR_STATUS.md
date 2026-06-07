@@ -2,7 +2,7 @@
 
 ## Current Mode
 
-`VICTORIOSA_STAGING_EXPLICIT_APPLY_AUTHORIZATION`
+`VICTORIOSA_STAGING_MIGRATION_IDEMPOTENCY_RECONCILIATION`
 
 ## Current Cycle Gate
 
@@ -87,6 +87,26 @@ Decision: `GO_STAGING_APPLY_RUNBOOK_READY`
 Decision: `NO-GO_CHECKS_FAILING`
 
 Blocker: `BLOCKED_SUPABASE_ACCESS`
+
+## Staging Migration Idempotency Reconciliation
+
+- Original duplicate policy reconciled:
+  `profiles own read or admin`
+- Policy recreation guards added: `39`
+- Pending migration files changed: `6`
+- Automated idempotency test added: `YES`
+- SQL destructive operations: `NO`
+- RLS relaxed: `NO`
+- Dangerous effective grants to `anon`: `NO`
+- `migration list`: `PASS`
+- `db push --dry-run --include-all`: `PASS`
+- Plan drift: `NO`
+- Pending plan: exact same nine migrations
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `GO_IDEMPOTENT_MIGRATIONS_READY_FOR_APPLY_RETRY`
 
 ## Staging Dry-Run Authentication Recovery
 
@@ -327,18 +347,18 @@ Repository: `C:\victoriosa-autopilot-admin-control-center`
 
 Suggested branch: `codex/victoriosa-autopilot-staging-enable`
 
-Mode: `VICTORIOSA_STAGING_MIGRATION_IDEMPOTENCY_RECONCILIATION`
+Mode: `VICTORIOSA_STAGING_IDEMPOTENT_APPLY_RETRY_AUTHORIZATION`
 
-Objective: make the nine pending migrations safely idempotent against the
-existing staging schema, starting with duplicate policy handling. Work locally
-and produce a reviewable dry-run; do not execute another real apply.
+Objective: perform a fresh authorization gate for one staging apply retry using
+the now-idempotent nine-migration plan. Execute no write without a new literal
+authorization in that cycle.
 
 Context:
 
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`.
-- The authorized apply stopped in migration 1 because a policy already exists.
-- No pending migration was recorded as applied.
-- K-beauty tables remain absent and seed stayed blocked.
+- All named policies are dropped safely before recreation.
+- The expanded dry-run passes with the unchanged nine migrations.
+- Backup and post-apply smoke requirements remain mandatory.
 
 Safety:
 
@@ -351,18 +371,16 @@ Safety:
 Tasks:
 
 1. Revalidate worktree, target and env as `SET/MISSING`.
-2. Inventory every non-idempotent policy, trigger, grant and constraint in the
-   nine pending migrations.
-3. Add safe `drop ... if exists` or catalog-guarded statements where required.
-4. Preserve RLS, review-only states and public catalog constraints.
-5. Run all local checks and one expanded dry-run only.
-6. Do not use `migration repair` and do not execute a real push.
+2. Reconfirm backup, exact target, migration history and dry-run.
+3. Require new literal staging apply authorization.
+4. If authorized, execute the apply once and stop on any error.
+5. Run staging, RLS and K-beauty persistence smoke.
+6. Seed only after every smoke is green and separately allowed by the cycle.
 
-GO: migrations are idempotent, checks pass and the dry-run remains the exact
-reviewed plan.
+GO: fresh authorization and every gate green.
 
-NO-GO: destructive reconciliation, RLS regression, plan drift or unresolved
-existing-object conflicts.
+NO-GO: missing authorization, plan drift, failed dry-run, failed apply,
+security regression or production risk.
 
 ## Integration Preview-Only Smoke Repeat
 

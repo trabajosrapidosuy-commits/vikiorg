@@ -114,6 +114,10 @@ alter table public.autopilot_brand_candidates enable row level security;
 alter table public.autopilot_supplier_contacts enable row level security;
 alter table public.autopilot_import_requirements enable row level security;
 
+drop policy if exists "autopilot research runs strict admin all" on public.autopilot_research_runs;
+drop policy if exists "autopilot brand candidates strict admin all" on public.autopilot_brand_candidates;
+drop policy if exists "autopilot supplier contacts strict admin all" on public.autopilot_supplier_contacts;
+drop policy if exists "autopilot import requirements strict admin all" on public.autopilot_import_requirements;
 create policy "autopilot research runs strict admin all" on public.autopilot_research_runs
   for all using (public.is_autopilot_admin()) with check (public.is_autopilot_admin());
 create policy "autopilot brand candidates strict admin all" on public.autopilot_brand_candidates

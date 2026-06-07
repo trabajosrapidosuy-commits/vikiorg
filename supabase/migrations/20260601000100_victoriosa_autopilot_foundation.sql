@@ -42,6 +42,9 @@ alter table public.autopilot_supplier_connectors enable row level security;
 alter table public.autopilot_discovery_runs enable row level security;
 alter table public.autopilot_product_candidates enable row level security;
 
+drop policy if exists "autopilot connectors admin all" on public.autopilot_supplier_connectors;
+drop policy if exists "autopilot discovery runs admin all" on public.autopilot_discovery_runs;
+drop policy if exists "autopilot candidates admin all" on public.autopilot_product_candidates;
 create policy "autopilot connectors admin all" on public.autopilot_supplier_connectors for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 create policy "autopilot discovery runs admin all" on public.autopilot_discovery_runs for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 create policy "autopilot candidates admin all" on public.autopilot_product_candidates for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
