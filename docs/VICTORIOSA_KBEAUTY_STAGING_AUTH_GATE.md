@@ -85,7 +85,7 @@ npm run seed:autopilot:kbeauty -- --write --target=staging --confirm-review-only
 Solo permitido si:
 
 - `SUPABASE_URL=SET`
-- `SUPABASE_SERVICE_ROLE_KEY=SET`
+- `SUPABASE_SERVICE_ROLE_KEY: SET`
 - `AUTHORIZED_STAGING_TARGET=true`
 - migracion aplicada
 - readiness PASS completo

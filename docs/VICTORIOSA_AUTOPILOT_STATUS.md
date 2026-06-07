@@ -25,7 +25,7 @@
   - default mode: dry-run only
   - write mode requires:
     - `SUPABASE_URL=SET`
-    - `SUPABASE_SERVICE_ROLE_KEY=SET`
+    - `SUPABASE_SERVICE_ROLE_KEY: SET`
     - `AUTHORIZED_STAGING_TARGET=true`
     - migration applied
     - readiness PASS
