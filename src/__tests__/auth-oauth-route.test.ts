@@ -35,6 +35,29 @@ describe("OAuth provider route", () => {
     });
   });
 
+  it("keeps the callback on the request origin", async () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "https://configured.example.com";
+    const signInWithOAuth = vi.fn(() =>
+      Promise.resolve({
+        data: { url: "https://supabase.example.com/redirect" },
+        error: null,
+      }),
+    );
+    mockedCreateClient.mockResolvedValue({ auth: { signInWithOAuth } } as any);
+
+    const request = new Request("https://preview.example.com/auth/oauth/google");
+    await oauthRouteGET(request, {
+      params: Promise.resolve({ provider: "google" }),
+    });
+
+    expect(signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: {
+        redirectTo: "https://preview.example.com/auth/callback",
+      },
+    });
+  });
+
   it("rejects an unsupported provider with an error redirect", async () => {
     const request = new Request("https://example.com/auth/oauth/facebook");
     const response = await oauthRouteGET(request, {
@@ -100,5 +123,27 @@ describe("OAuth callback route", () => {
     const response = await callbackRouteGET(request);
 
     expect(response.headers.get("location")).toBe("https://example.com/account");
+  });
+
+  it("preserves the callback origin and hides raw PKCE errors", async () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "https://configured.example.com";
+    const exchangeCodeForSession = vi.fn(() =>
+      Promise.resolve({
+        data: null,
+        error: { message: "PKCE code verifier not found in storage" },
+      }),
+    );
+    mockedCreateClient.mockResolvedValue({ auth: { exchangeCodeForSession } } as any);
+
+    const request = new Request("https://preview.example.com/auth/callback?code=abc123");
+    const response = await callbackRouteGET(request);
+    const location = new URL(response.headers.get("location")!);
+
+    expect(location.origin).toBe("https://preview.example.com");
+    expect(location.pathname).toBe("/auth/login");
+    expect(location.searchParams.get("error")).toBe(
+      "No pudimos completar el acceso con Google. Intenta nuevamente.",
+    );
+    expect(location.search).not.toContain("verifier");
   });
 });

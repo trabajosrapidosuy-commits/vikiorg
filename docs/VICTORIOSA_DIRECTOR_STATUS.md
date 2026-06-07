@@ -171,6 +171,31 @@ Operational release remains:
 
 `NO-GO_BLOCKED_PRODUCTION_RISK`
 
+## Google OAuth PKCE First-Attempt Fix
+
+Date: 2026-06-07
+
+- Reported behavior: the first Google login returned
+  `PKCE code verifier not found in storage`; a second click succeeded.
+- Root cause: OAuth started in a server route while the browser completed the
+  callback, and configured site URLs could switch the Preview hostname.
+- Fix: Google OAuth now starts with the Supabase browser client and uses
+  `window.location.origin` for the callback. Callback redirects also preserve
+  the request origin, middleware does not refresh the session before the code
+  exchange, and raw provider errors are not exposed.
+- Local result: focused auth tests, full test suite, lint, typecheck, build,
+  secret scan, production guard and static RLS checks pass.
+- Browser smoke: login renders one client-side Google button and handles an
+  unauthorized localhost callback with a generic visible error.
+- Pending evidence: first-attempt Google authentication on the new Vercel
+  Preview URL after the branch push.
+- Production remains untouched and blocked:
+  `PRODUCTION_STATUS=NO-GO_PRODUCTION`.
+
+Decision: `GO_PREVIEW_AUTH_SMOKE_REQUIRED`
+
+Next safe mode: `VICTORIOSA_GOOGLE_OAUTH_PREVIEW_FIRST_ATTEMPT_SMOKE`
+
 ## NEXT_CODEX_PROMPT
 
 Repository: `C:\victoriosa-autopilot-admin-control-center`

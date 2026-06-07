@@ -20,3 +20,7 @@ export function sanitizeSameSiteNextPath(value: string | null | undefined): stri
     return undefined;
   }
 }
+
+export function getOAuthCallbackError(): string {
+  return "No pudimos completar el acceso con Google. Intenta nuevamente.";
+}
