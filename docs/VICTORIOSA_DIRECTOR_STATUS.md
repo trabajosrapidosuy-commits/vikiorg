@@ -2,7 +2,7 @@
 
 ## Current Mode
 
-`VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW`
+`VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE`
 
 ## Current Cycle Gate
 
@@ -63,6 +63,30 @@ Decision: `GO_HARDENING_DRY_RUN_REVIEWABLE`
 - Production/deploy: `NO`
 
 Decision: `GO_STAGING_APPLY_RUNBOOK_READY`
+
+## Staging Apply Authorization Gate
+
+- Authorized staging ref: `ngliugfcwydnfbpalkpb`
+- Project status: `ACTIVE_HEALTHY`
+- Env gate: `PASS`
+- Link: `PASS`
+- `migration list`: `PASS`
+- Physical backup available: `YES`
+- Latest completed backup observed: `2026-06-06T11:28:54.763Z`
+- PITR: `DISABLED`
+- Current `db push --dry-run --include-all`: `FAIL`
+- Failure: temporary CLI role authentication and Supabase pooler
+  `ECIRCUITBREAKER`
+- `SUPABASE_DB_PASSWORD`: `MISSING`
+- Plan without drift: `UNKNOWN_CURRENT_RUN`
+- Post-apply smoke prepared: `YES`, 13 Autopilot tables
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `NO-GO_CHECKS_FAILING`
+
+Blocker: `BLOCKED_SUPABASE_ACCESS`
 
 ## Context
 
@@ -264,19 +288,18 @@ Repository: `C:\victoriosa-autopilot-admin-control-center`
 
 Suggested branch: `codex/victoriosa-autopilot-staging-enable`
 
-Mode: `VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE`
+Mode: `VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY`
 
-Objective: perform the final staging-write authorization gate against the
-reviewed runbook. Revalidate target, exact nine-migration plan, backup
-availability and post-apply smoke readiness. Do not execute a real push unless
-the cycle explicitly grants staging mutation.
+Objective: recover Supabase CLI dry-run authentication without mutating
+staging. Wait for the pooler circuit breaker cooldown, revalidate the exact
+target and run one controlled expanded dry-run.
 
 Context:
 
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`.
-- Apply runbook is ready and the expanded dry-run passes.
-- Four K-beauty tables remain absent from staging before apply.
-- Supabase migrations require forward-only compensating rollback.
+- Link, migration list and backup availability pass.
+- Current expanded dry-run fails temporary-role authentication.
+- `SUPABASE_DB_PASSWORD` is missing from the local secure environment.
 
 Safety:
 
@@ -289,17 +312,17 @@ Safety:
 Tasks:
 
 1. Revalidate worktree, target and env as `SET/MISSING`.
-2. Confirm the reviewed HEAD and exact nine-migration dry-run.
-3. Confirm staging backup/snapshot availability without changing production.
-4. Confirm the operator can run all post-apply smoke commands in one session.
-5. Execute no write unless this cycle explicitly authorizes staging apply.
-6. Record GO/NO-GO and update Director documentation.
+2. Do not retry while the pooler circuit breaker is active.
+3. If still required after cooldown, load `SUPABASE_DB_PASSWORD` only in
+   ignored `.env.local`; never print or commit it.
+4. Re-link the exact authorized ref and run migration list.
+5. Run one `db push --dry-run --include-all`.
+6. Confirm the exact nine-migration plan and update Director documentation.
 
-GO: exact target, no plan drift, backup available, smoke ready and explicit
-staging-write authorization.
+GO: current dry-run passes with the exact reviewed plan.
 
-NO-GO: missing authorization, backup unavailable, target mismatch, plan drift,
-security regression or any production risk.
+NO-GO: authentication remains unavailable, target mismatch, plan drift or any
+security/production risk.
 
 ## Integration Preview-Only Smoke Repeat
 

@@ -3,21 +3,22 @@
   "compatibilityContract": "ExpressJobs Director",
   "canonicalStatusFile": "docs/VICTORIOSA_DIRECTOR_STATUS.md",
   "date": "2026-06-07",
-  "mode": "VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW",
+  "mode": "VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-staging-enable",
-  "baseCommit": "2157867",
-  "stagingReview": {
+  "baseCommit": "d5e09bd",
+  "authorizationGate": {
     "target": "ngliugfcwydnfbpalkpb",
+    "projectStatus": "ACTIVE_HEALTHY",
     "link": "PASS",
     "migrationList": "PASS",
-    "pendingMigrationCount": 9,
-    "dbPushDryRunIncludeAll": "PASS",
-    "destructiveSql": "NO",
-    "rlsRelaxed": "NO",
-    "dangerousAnonGrants": "NO",
-    "autopilotSmokeTableCount": 13,
-    "runbook": "docs/VICTORIOSA_STAGING_CANONICAL_APPLY_RUNBOOK.md",
+    "expectedMigrationCount": 9,
+    "dbPushDryRunIncludeAll": "FAIL_AUTH_CIRCUIT_BREAKER",
+    "planWithoutDrift": "UNKNOWN_CURRENT_RUN",
+    "backupConfirmed": "YES",
+    "latestCompletedBackupUtc": "2026-06-06T11:28:54.763Z",
+    "pitrEnabled": false,
+    "smokeTableCount": 13,
     "realPush": "NO",
     "seed": "NO"
   },
@@ -27,10 +28,6 @@
     "productionCheck": "PASS",
     "guardNoProductionDeploy": "PASS",
     "testRlsStatic": "PASS_25_PUBLIC_TABLES",
-    "lint": "PASS",
-    "typecheck": "PASS",
-    "test": "PASS_30_FILES_106_TESTS",
-    "build": "PASS",
     "gitDiffCheck": "PASS",
     "envLocalIgnoredUntracked": "PASS"
   },
@@ -41,7 +38,9 @@
     "payment": "NO",
     "publication": "NO"
   },
-  "blockers": [],
-  "decision": "GO_STAGING_APPLY_RUNBOOK_READY",
-  "nextMode": "VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE"
+  "blockers": [
+    "BLOCKED_SUPABASE_ACCESS"
+  ],
+  "decision": "NO-GO_CHECKS_FAILING",
+  "nextMode": "VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY"
 }
