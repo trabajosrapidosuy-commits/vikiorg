@@ -100,3 +100,7 @@ and was preserved.
 `VICTORIOSA_SUPABASE_MIGRATION_HISTORY_RECONCILIATION`
 
 See `docs/autonomous-cycles/CYCLE_VICTORIOSA_AGENT_SYSTEM_BOOTSTRAP.md`.
+
+Integration preview smoke repeated after confirming the Vercel Production
+Branch is expected to remain `production`. Production remains
+`NO-GO_PRODUCTION`.
