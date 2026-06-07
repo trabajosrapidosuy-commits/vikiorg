@@ -7,22 +7,22 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 
 ## Current Mode
 
-`VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE`
+`VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY`
 
 ## Status
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Supabase target, link and migration history: `PASS`
-- Physical backup availability: `PASS`
-- Apply runbook and 13-table smoke: `READY`
-- Current `db push --dry-run --include-all`: `FAIL_AUTH_CIRCUIT_BREAKER`
+- Supabase target, link, history and backup: `PASS`
+- Local database password: `SET_IGNORED_UNTRACKED`
+- `db push --dry-run --include-all`: `PASS_9_MIGRATIONS`
+- Plan drift: `NO`
 - Real push and seed: `NOT_EXECUTED`
 - Deploys and remote mutations: `NOT_EXECUTED`
 
 ## Blockers
 
-`BLOCKED_SUPABASE_ACCESS`
+`NO_BLOCKERS_FOR_SAFE_NEXT_CYCLE`
 
 ## Next Mode
 
-`VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY`
+`VICTORIOSA_STAGING_EXPLICIT_APPLY_AUTHORIZATION`

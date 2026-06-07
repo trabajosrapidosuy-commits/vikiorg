@@ -2,7 +2,7 @@
 
 ## Current Mode
 
-`VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE`
+`VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY`
 
 ## Current Cycle Gate
 
@@ -87,6 +87,21 @@ Decision: `GO_STAGING_APPLY_RUNBOOK_READY`
 Decision: `NO-GO_CHECKS_FAILING`
 
 Blocker: `BLOCKED_SUPABASE_ACCESS`
+
+## Staging Dry-Run Authentication Recovery
+
+- `SUPABASE_DB_PASSWORD`: `SET`
+- Secret location: ignored and untracked `.env.local`
+- Supabase link: `PASS`
+- `migration list`: `PASS`
+- `db push --dry-run --include-all`: `PASS`
+- Plan without drift: `YES`
+- Pending migrations: exactly nine
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `GO_READY_FOR_EXPLICIT_STAGING_APPLY_AUTHORIZATION`
 
 ## Context
 
@@ -288,18 +303,18 @@ Repository: `C:\victoriosa-autopilot-admin-control-center`
 
 Suggested branch: `codex/victoriosa-autopilot-staging-enable`
 
-Mode: `VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY`
+Mode: `VICTORIOSA_STAGING_EXPLICIT_APPLY_AUTHORIZATION`
 
-Objective: recover Supabase CLI dry-run authentication without mutating
-staging. Wait for the pooler circuit breaker cooldown, revalidate the exact
-target and run one controlled expanded dry-run.
+Objective: perform the final staging apply gate using the reviewed runbook.
+Execute the real apply only if this new cycle includes the exact literal
+authorization and every gate remains green.
 
 Context:
 
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`.
-- Link, migration list and backup availability pass.
-- Current expanded dry-run fails temporary-role authentication.
-- `SUPABASE_DB_PASSWORD` is missing from the local secure environment.
+- Link, migration list, backup availability and expanded dry-run pass.
+- The plan is exactly the reviewed nine migrations.
+- Post-apply smoke covers all 13 Autopilot tables.
 
 Safety:
 
@@ -312,17 +327,16 @@ Safety:
 Tasks:
 
 1. Revalidate worktree, target and env as `SET/MISSING`.
-2. Do not retry while the pooler circuit breaker is active.
-3. If still required after cooldown, load `SUPABASE_DB_PASSWORD` only in
-   ignored `.env.local`; never print or commit it.
-4. Re-link the exact authorized ref and run migration list.
-5. Run one `db push --dry-run --include-all`.
-6. Confirm the exact nine-migration plan and update Director documentation.
+2. Reconfirm backup, link, history and exact expanded dry-run.
+3. Require the exact literal authorization in the current cycle.
+4. If authorized, run only `supabase db push --include-all`.
+5. Stop immediately on failure and do not seed.
+6. Run staging, RLS and K-beauty persistence smoke after a successful apply.
 
-GO: current dry-run passes with the exact reviewed plan.
+GO: explicit current-cycle authorization and all gates green.
 
-NO-GO: authentication remains unavailable, target mismatch, plan drift or any
-security/production risk.
+NO-GO: missing authorization, target mismatch, plan drift, failed dry-run,
+backup unavailable or any security/production risk.
 
 ## Integration Preview-Only Smoke Repeat
 

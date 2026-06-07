@@ -3,22 +3,18 @@
   "compatibilityContract": "ExpressJobs Director",
   "canonicalStatusFile": "docs/VICTORIOSA_DIRECTOR_STATUS.md",
   "date": "2026-06-07",
-  "mode": "VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE",
+  "mode": "VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-staging-enable",
-  "baseCommit": "d5e09bd",
-  "authorizationGate": {
+  "baseCommit": "a8a7642",
+  "recovery": {
     "target": "ngliugfcwydnfbpalkpb",
-    "projectStatus": "ACTIVE_HEALTHY",
+    "dbPassword": "SET_IGNORED_UNTRACKED",
     "link": "PASS",
     "migrationList": "PASS",
-    "expectedMigrationCount": 9,
-    "dbPushDryRunIncludeAll": "FAIL_AUTH_CIRCUIT_BREAKER",
-    "planWithoutDrift": "UNKNOWN_CURRENT_RUN",
-    "backupConfirmed": "YES",
-    "latestCompletedBackupUtc": "2026-06-06T11:28:54.763Z",
-    "pitrEnabled": false,
-    "smokeTableCount": 13,
+    "dbPushDryRunIncludeAll": "PASS",
+    "pendingMigrationCount": 9,
+    "planWithoutDrift": "YES",
     "realPush": "NO",
     "seed": "NO"
   },
@@ -38,9 +34,7 @@
     "payment": "NO",
     "publication": "NO"
   },
-  "blockers": [
-    "BLOCKED_SUPABASE_ACCESS"
-  ],
-  "decision": "NO-GO_CHECKS_FAILING",
-  "nextMode": "VICTORIOSA_STAGING_DRY_RUN_AUTH_RECOVERY"
+  "blockers": [],
+  "decision": "GO_READY_FOR_EXPLICIT_STAGING_APPLY_AUTHORIZATION",
+  "nextMode": "VICTORIOSA_STAGING_EXPLICIT_APPLY_AUTHORIZATION"
 }
