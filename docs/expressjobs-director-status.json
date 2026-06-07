@@ -3,19 +3,23 @@
   "compatibilityContract": "ExpressJobs Director",
   "canonicalStatusFile": "docs/VICTORIOSA_DIRECTOR_STATUS.md",
   "date": "2026-06-07",
-  "mode": "VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW",
+  "mode": "VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-staging-enable",
-  "baseCommit": "8434823",
-  "hardening": {
-    "migration": "20260607025035_harden_legacy_public_policies_and_anon_grants.sql",
-    "unconstrainedInsertPolicies": "REMEDIATED",
-    "anonymousRoleHelperGrant": "REVOKED",
-    "anonymousBooleanAdminHelper": "RETAINED_POLICY_REQUIRED",
-    "catalogVisibility": "PUBLISHED_APPROVED_LOW",
+  "baseCommit": "2157867",
+  "stagingReview": {
+    "target": "ngliugfcwydnfbpalkpb",
+    "link": "PASS",
+    "migrationList": "PASS",
+    "pendingMigrationCount": 9,
+    "dbPushDryRunIncludeAll": "PASS",
     "destructiveSql": "NO",
     "rlsRelaxed": "NO",
-    "dangerousAnonGrantsRemaining": "NO"
+    "dangerousAnonGrants": "NO",
+    "autopilotSmokeTableCount": 13,
+    "runbook": "docs/VICTORIOSA_STAGING_CANONICAL_APPLY_RUNBOOK.md",
+    "realPush": "NO",
+    "seed": "NO"
   },
   "checks": {
     "envGate": "PASS",
@@ -27,10 +31,8 @@
     "typecheck": "PASS",
     "test": "PASS_30_FILES_106_TESTS",
     "build": "PASS",
-    "stagingCheck": "PASS",
-    "rlsSmoke": "FAIL_KBEAUTY_TABLES_HTTP_404_NOT_APPLIED",
-    "dbPushDryRunIncludeAll": "PASS_9_MIGRATIONS",
-    "gitDiffCheck": "PASS"
+    "gitDiffCheck": "PASS",
+    "envLocalIgnoredUntracked": "PASS"
   },
   "remoteActions": {
     "deploy": "NO",
@@ -40,6 +42,6 @@
     "publication": "NO"
   },
   "blockers": [],
-  "decision": "GO_HARDENING_DRY_RUN_REVIEWABLE",
-  "nextMode": "VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW"
+  "decision": "GO_STAGING_APPLY_RUNBOOK_READY",
+  "nextMode": "VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE"
 }

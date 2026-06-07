@@ -2,7 +2,7 @@
 
 ## Current Mode
 
-`VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW`
+`VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW`
 
 ## Current Cycle Gate
 
@@ -44,6 +44,25 @@
 - Production: `NO-GO_PRODUCTION`
 
 Decision: `GO_HARDENING_DRY_RUN_REVIEWABLE`
+
+## Staging Canonical Apply Review
+
+- Authorized ref relinked: `ngliugfcwydnfbpalkpb`
+- `migration list`: `PASS`
+- Final `db push --dry-run --include-all`: `PASS`
+- Pending plan: nine migrations, unchanged from the hardening review
+- SQL destructive operations: `NONE`
+- Effective RLS relaxation: `NO`
+- Effective dangerous grants to `anon`: `NO`
+- Public catalog boundary preserved: `published`, `approved`, `low`
+- Post-apply smoke plan: all 13 Autopilot tables
+- Apply runbook:
+  `docs/VICTORIOSA_STAGING_CANONICAL_APPLY_RUNBOOK.md`
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `GO_STAGING_APPLY_RUNBOOK_READY`
 
 ## Context
 
@@ -245,20 +264,19 @@ Repository: `C:\victoriosa-autopilot-admin-control-center`
 
 Suggested branch: `codex/victoriosa-autopilot-staging-enable`
 
-Mode: `VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW`
+Mode: `VICTORIOSA_STAGING_CANONICAL_APPLY_AUTHORIZATION_GATE`
 
-Objective: independently review the nine-migration `--include-all` plan and
-prepare a fail-closed staging apply runbook. Do not execute the real push unless
-the cycle explicitly authorizes staging mutation and revalidates the exact
-target, migration order, SQL safety and rollback limitations.
+Objective: perform the final staging-write authorization gate against the
+reviewed runbook. Revalidate target, exact nine-migration plan, backup
+availability and post-apply smoke readiness. Do not execute a real push unless
+the cycle explicitly grants staging mutation.
 
 Context:
 
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`.
-- `db push --dry-run --include-all` passes.
-- Legacy public inserts are constrained by migration `20260607025035`.
-- Four K-beauty tables return HTTP 404 in staging and cannot be smoke-tested
-  until their migration is applied.
+- Apply runbook is ready and the expanded dry-run passes.
+- Four K-beauty tables remain absent from staging before apply.
+- Supabase migrations require forward-only compensating rollback.
 
 Safety:
 
@@ -271,19 +289,17 @@ Safety:
 Tasks:
 
 1. Revalidate worktree, target and env as `SET/MISSING`.
-2. Re-run migration list and expanded dry-run.
-3. Audit all nine planned migrations for destructive SQL, unsafe grants,
-   publication, payment, seed and RLS regressions.
-4. Document the exact apply command, expected migration order and post-apply
-   anonymous smoke covering all 13 Autopilot tables.
-5. Keep real apply disabled unless explicitly authorized by the cycle scope.
-6. Run all local safety checks and update Director documentation.
+2. Confirm the reviewed HEAD and exact nine-migration dry-run.
+3. Confirm staging backup/snapshot availability without changing production.
+4. Confirm the operator can run all post-apply smoke commands in one session.
+5. Execute no write unless this cycle explicitly authorizes staging apply.
+6. Record GO/NO-GO and update Director documentation.
 
-GO: exact staging target, unchanged reviewable plan, complete runbook and no
-security regression.
+GO: exact target, no plan drift, backup available, smoke ready and explicit
+staging-write authorization.
 
-NO-GO: target mismatch, plan drift, destructive SQL, unsafe RLS, production
-risk or missing rollback analysis.
+NO-GO: missing authorization, backup unavailable, target mismatch, plan drift,
+security regression or any production risk.
 
 ## Integration Preview-Only Smoke Repeat
 
