@@ -10,6 +10,9 @@ type CookieToSet = {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  if (pathname === "/auth/callback") {
+    return NextResponse.next();
+  }
   const isPrivateControlSurface = pathname.startsWith("/admin") || pathname.startsWith("/owner");
   const requiresLogin = pathname.startsWith("/account") || pathname.startsWith("/wishlist") || isPrivateControlSurface;
   const forwardedHeaders = new Headers(request.headers);
