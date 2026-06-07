@@ -3,30 +3,33 @@
   "compatibilityContract": "ExpressJobs Director",
   "canonicalStatusFile": "docs/VICTORIOSA_DIRECTOR_STATUS.md",
   "date": "2026-06-07",
-  "mode": "VICTORIOSA_SUPABASE_MISSING_REMOTE_MIGRATIONS_SAFE_RECONSTRUCTION",
+  "mode": "VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW",
   "productionStatus": "NO-GO_PRODUCTION",
   "branch": "codex/victoriosa-autopilot-staging-enable",
-  "baseCommit": "68f46e7",
-  "migrationHistory": {
-    "remotePlaceholderCount": 6,
-    "migrationList": "PASS_ALIGNED_REMOTE_PLACEHOLDERS",
-    "dbPullLinked": "FAIL_LOCAL_VERSIONS_ABSENT_REMOTE",
-    "dbPushDryRun": "FAIL_INCLUDE_ALL_REQUIRED",
-    "reconciliationMigration": "NONE",
-    "realPush": "NO",
-    "migrationRepair": "NO"
+  "baseCommit": "8434823",
+  "hardening": {
+    "migration": "20260607025035_harden_legacy_public_policies_and_anon_grants.sql",
+    "unconstrainedInsertPolicies": "REMEDIATED",
+    "anonymousRoleHelperGrant": "REVOKED",
+    "anonymousBooleanAdminHelper": "RETAINED_POLICY_REQUIRED",
+    "catalogVisibility": "PUBLISHED_APPROVED_LOW",
+    "destructiveSql": "NO",
+    "rlsRelaxed": "NO",
+    "dangerousAnonGrantsRemaining": "NO"
   },
   "checks": {
+    "envGate": "PASS",
     "secretScan": "PASS",
     "productionCheck": "PASS",
     "guardNoProductionDeploy": "PASS",
     "testRlsStatic": "PASS_25_PUBLIC_TABLES",
     "lint": "PASS",
     "typecheck": "PASS",
-    "test": "PASS_29_FILES_103_TESTS",
-    "build": "PASS_WITH_WARNINGS",
-    "stagingCheck": "CHECK_NOT_RUN_MISSING_STAGING_ALIAS_VARS",
-    "rlsSmoke": "CHECK_NOT_RUN_MISSING_STAGING_ALIAS_VARS",
+    "test": "PASS_30_FILES_106_TESTS",
+    "build": "PASS",
+    "stagingCheck": "PASS",
+    "rlsSmoke": "FAIL_KBEAUTY_TABLES_HTTP_404_NOT_APPLIED",
+    "dbPushDryRunIncludeAll": "PASS_9_MIGRATIONS",
     "gitDiffCheck": "PASS"
   },
   "remoteActions": {
@@ -36,8 +39,7 @@
     "payment": "NO",
     "publication": "NO"
   },
-  "blockers": [
-    "BLOCKED_SECURITY_RISK"
-  ],
-  "nextMode": "VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW"
+  "blockers": [],
+  "decision": "GO_HARDENING_DRY_RUN_REVIEWABLE",
+  "nextMode": "VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW"
 }

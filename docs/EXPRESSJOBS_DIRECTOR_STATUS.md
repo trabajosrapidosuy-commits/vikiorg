@@ -7,22 +7,24 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 
 ## Current Mode
 
-`VICTORIOSA_SUPABASE_MISSING_REMOTE_MIGRATIONS_SAFE_RECONSTRUCTION`
+`VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW`
 
 ## Status
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Migration placeholders: `CREATED_6_NO_OP`
-- Migration list alignment: `PASS`
-- `db pull --linked`: `FAIL_HISTORY_DIVERGENCE`
-- `db push --dry-run`: `FAIL_INCLUDE_ALL_REQUIRED`
-- Full local CI: `PASS_29_FILES_103_TESTS_BUILD_GREEN`
+- Hardening migration: `CREATED_IDEMPOTENT`
+- Legacy `with check (true)` policies: `REMEDIATED`
+- Dangerous anonymous helper grant: `REVOKED`
+- Public catalog contract: `PRESERVED`
+- `db push --dry-run --include-all`: `PASS_9_MIGRATIONS`
+- Full local CI: `PASS_30_FILES_106_TESTS_BUILD_GREEN`
+- K-beauty staging smoke: `FAIL_TABLES_NOT_APPLIED_HTTP_404`
 - Deploys and remote mutations: `NOT_EXECUTED`
 
 ## Blockers
 
-`BLOCKED_SECURITY_RISK`
+`NO_BLOCKERS_FOR_SAFE_NEXT_CYCLE`
 
 ## Next Mode
 
-`VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW`
+`VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW`

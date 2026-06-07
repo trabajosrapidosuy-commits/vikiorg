@@ -2,7 +2,7 @@
 
 ## Current Mode
 
-`VICTORIOSA_SUPABASE_MISSING_REMOTE_MIGRATIONS_SAFE_RECONSTRUCTION`
+`VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW`
 
 ## Current Cycle Gate
 
@@ -19,6 +19,31 @@
 - `--include-all` preflight: `NO-GO` (public `with check (true)` policies and
   helper grants to `anon` require security review)
 - Remote staging write actions: blocked by `NO-GO_MIGRATION_REVIEW`
+
+## Legacy Policy Hardening Result
+
+- Hardening migration:
+  `20260607025035_harden_legacy_public_policies_and_anon_grants.sql`
+- Unconstrained legacy insert policies remediated:
+  `marketplace_click_events`, `beauty_consultations`
+- Anonymous role helper execution revoked:
+  `private.current_app_role()`
+- Anonymous boolean admin helper retained:
+  `private.is_marketplace_admin()`, required for safe evaluation of mixed
+  public/admin RLS policies and returns no role data
+- Helper `search_path`: hardened to empty with fully qualified references
+- Public catalog contract preserved:
+  `published`, `approved`, `low`
+- K-beauty tables remain RLS-enabled and explicitly revoked from `anon` in
+  local migrations
+- Planned migration SQL destructive scan: `PASS`
+- `db push --dry-run --include-all`: `PASS`, nine migrations reviewable
+- Real `db push`: `NO`
+- Staging smoke: `FAIL`, the four K-beauty tables return HTTP 404 because their
+  migration is not applied remotely
+- Production: `NO-GO_PRODUCTION`
+
+Decision: `GO_HARDENING_DRY_RUN_REVIEWABLE`
 
 ## Context
 
@@ -220,21 +245,20 @@ Repository: `C:\victoriosa-autopilot-admin-control-center`
 
 Suggested branch: `codex/victoriosa-autopilot-staging-enable`
 
-Mode: `VICTORIOSA_SUPABASE_LEGACY_POLICY_HARDENING_REVIEW`
+Mode: `VICTORIOSA_STAGING_CANONICAL_APPLY_REVIEW`
 
-Objective: review and harden the six local migrations that Supabase requires
-before the last remote migration, without mutating staging. Produce additive,
-idempotent remediation SQL for unsafe anonymous grants and unconstrained public
-insert policies, then re-run static checks and only the non-mutating
-`db push --dry-run --include-all` if the review is green.
+Objective: independently review the nine-migration `--include-all` plan and
+prepare a fail-closed staging apply runbook. Do not execute the real push unless
+the cycle explicitly authorizes staging mutation and revalidates the exact
+target, migration order, SQL safety and rollback limitations.
 
 Context:
 
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`.
-- Six remote-applied versions now have local no-op placeholders.
-- Plain `db push --dry-run` requires `--include-all`.
-- Preflight found `with check (true)` public insert policies and helper
-  execution grants to `anon` in the foundation migration.
+- `db push --dry-run --include-all` passes.
+- Legacy public inserts are constrained by migration `20260607025035`.
+- Four K-beauty tables return HTTP 404 in staging and cannot be smoke-tested
+  until their migration is applied.
 
 Safety:
 
@@ -247,20 +271,19 @@ Safety:
 Tasks:
 
 1. Revalidate worktree, target and env as `SET/MISSING`.
-2. Review the exact anonymous grants and public insert policies against the
-   application contract and abuse controls.
-3. Add a new idempotent hardening migration; do not rewrite applied history
-   unless required solely for new-environment correctness and fully justified.
-4. Run secret, production, RLS static, lint, typecheck, test, build and diff
-   checks.
-5. Run `db push --dry-run --include-all` only if the SQL review is green.
-6. Update Director and cycle documentation.
+2. Re-run migration list and expanded dry-run.
+3. Audit all nine planned migrations for destructive SQL, unsafe grants,
+   publication, payment, seed and RLS regressions.
+4. Document the exact apply command, expected migration order and post-apply
+   anonymous smoke covering all 13 Autopilot tables.
+5. Keep real apply disabled unless explicitly authorized by the cycle scope.
+6. Run all local safety checks and update Director documentation.
 
-GO: no dangerous anonymous grants, constrained public inserts, all checks pass,
-and expanded dry-run is reviewable.
+GO: exact staging target, unchanged reviewable plan, complete runbook and no
+security regression.
 
-NO-GO: unresolved policy abuse risk, destructive SQL, target mismatch, history
-ambiguity, or any production risk.
+NO-GO: target mismatch, plan drift, destructive SQL, unsafe RLS, production
+risk or missing rollback analysis.
 
 ## Integration Preview-Only Smoke Repeat
 

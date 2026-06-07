@@ -76,6 +76,39 @@ const publicTrueChecks = migration.match(/create policy .* with check \(true\);/
 for (const policy of publicTrueChecks) {
   if (!allowedPublicInsertPolicies.includes(policy)) failures.push(`Unreviewed public insert policy: ${policy}`);
 }
+if (publicTrueChecks.length !== allowedPublicInsertPolicies.length) {
+  failures.push("Legacy public insert policy inventory changed without review");
+}
+
+const legacyHardening = fs.readFileSync(
+  "supabase/migrations/20260607025035_harden_legacy_public_policies_and_anon_grants.sql",
+  "utf8",
+);
+const requiredHardeningStatements = [
+  'drop policy if exists "click events public insert"',
+  'create policy "click events constrained public insert"',
+  "product.publication_status = 'published'",
+  "product.compliance_status = 'approved'",
+  "product.risk_level = 'low'",
+  'drop policy if exists "consultations public insert"',
+  'create policy "consultations constrained public insert"',
+  "and status = 'submitted'",
+  "and admin_notes is null",
+  "and cardinality(recommended_product_ids) = 0",
+  "revoke execute on function private.current_app_role() from anon;",
+  "grant execute on function private.is_marketplace_admin() to anon, authenticated;",
+];
+for (const statement of requiredHardeningStatements) {
+  if (!legacyHardening.includes(statement)) {
+    failures.push(`Legacy policy hardening is missing: ${statement}`);
+  }
+}
+if (/with check\s*\(\s*true\s*\)/i.test(legacyHardening)) {
+  failures.push("Legacy policy hardening reintroduces an unconstrained insert");
+}
+if (/disable row level security/i.test(legacyHardening)) {
+  failures.push("Legacy policy hardening disables RLS");
+}
 
 if (failures.length) {
   console.error("test:rls:static FAIL", failures);
