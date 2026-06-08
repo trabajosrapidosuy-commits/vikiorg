@@ -1,5 +1,6 @@
 import { AutopilotAuditTimeline } from "@/components/autopilot/AutopilotAuditTimeline";
 import { notFound } from "next/navigation";
+import { asRecord, getCandidateDetailLists, toStringList } from "@/lib/autopilot/admin/candidate-detail";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import { generateCommercialDraft } from "@/services/autopilot-marketing-service";
 import { getPersistentCandidate, listPersistentCandidateEvents, mapPersistentCandidateRowToCandidate } from "@/services/autopilot-persistence-service";
@@ -17,14 +18,15 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
     shippingCost: Number(row.estimated_shipping_cost),
     suggestedSalePrice: Number(row.suggested_price),
     estimatedMarginPercent: Number(row.margin_percent),
-    riskFlags: row.risk_flags ?? [],
+    riskFlags: toStringList(row.risk_flags),
   };
   const draft = generateCommercialDraft(mapPersistentCandidateRowToCandidate(candidate));
   const scoring = isRecord(candidate.scoring) ? candidate.scoring : {};
   const scoreBreakdown = isRecord(candidate.score_breakdown) ? candidate.score_breakdown : {};
   const recommendation = getRecommendation(scoring, scoreBreakdown, Number(candidate.risk_score ?? 0));
-  const warnings = listFrom(scoring.warnings ?? scoreBreakdown.warnings);
-  const blockers = listFrom(scoring.blockers ?? scoreBreakdown.blockers);
+  const { blockers, explanation, strengths, warnings, weaknesses } =
+    getCandidateDetailLists(candidate);
+  const rawPayload = asRecord(candidate.raw_payload);
 
   return (
     <main className="space-y-5">
@@ -36,7 +38,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
           <Info label="Proveedor" value={candidate.supplier_name} />
           <Info label="Fuente" value={candidate.source_url ? "URL disponible" : "Sin URL fuente"} />
           <Info label="Categoria" value={candidate.category} />
-          <Info label="Entrega estimada" value={`${Number(candidate.raw_payload?.estimatedDeliveryDays ?? 0)} dias`} />
+          <Info label="Entrega estimada" value={`${Number(rawPayload.estimatedDeliveryDays ?? 0)} dias`} />
           <Info label="Costo total" value={`USD ${(candidate.supplierCost + candidate.shippingCost).toFixed(2)}`} />
           <Info label="Precio sugerido" value={`USD ${candidate.suggestedSalePrice.toFixed(2)}`} />
           <Info label="Margen estimado" value={`${candidate.estimatedMarginPercent.toFixed(1)}%`} />
@@ -45,7 +47,7 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         {candidate.source_url && <p className="mt-3 text-sm"><a className="underline" href={candidate.source_url} rel="noreferrer" target="_blank">Abrir fuente sandbox/autorizada</a></p>}
       </section>
       <section className="grid gap-5 md:grid-cols-2">
-        <div className="card"><h3 className="font-bold">Scoring explicable</h3><ul className="mt-3 list-disc pl-5 text-sm">{candidate.scoring.explanation.map((line: string) => <li key={line}>{line}</li>)}</ul></div>
+        <ListCard title="Scoring explicable" values={explanation} />
         <div className="card"><h3 className="font-bold">Riesgos detectados</h3><p className="mt-3 text-sm">{candidate.riskFlags.join(", ") || "Sin alertas automaticas. Requiere revision humana igualmente."}</p></div>
       </section>
       <section className="grid gap-5 md:grid-cols-3">
@@ -57,8 +59,8 @@ export default async function CandidateDetailPage({ params }: { params: Promise<
         <ScoreCard label="Marca/Mercado" value={Number(scoring.marketFit ?? candidate.brand_fit_score ?? 0)} />
       </section>
       <section className="grid gap-5 md:grid-cols-2">
-        <ListCard title="Fortalezas" values={candidate.strengths ?? []} />
-        <ListCard title="Debilidades" values={candidate.weaknesses ?? []} />
+        <ListCard title="Fortalezas" values={strengths} />
+        <ListCard title="Debilidades" values={weaknesses} />
       </section>
       <section className="grid gap-5 md:grid-cols-2">
         <ListCard title="Advertencias compliance" values={warnings} />
@@ -124,10 +126,6 @@ function ScoreCard({ label, value }: { label: string; value: number }) {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function listFrom(value: unknown) {
-  return Array.isArray(value) ? value.map(String) : [];
 }
 
 function getRecommendation(scoring: Record<string, unknown>, breakdown: Record<string, unknown>, riskScore: number) {

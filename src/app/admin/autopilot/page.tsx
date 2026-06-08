@@ -12,6 +12,7 @@ export default async function AutopilotPage() {
   const runs = snapshot.runs;
   const connectors = listAutopilotConnectors();
   const reviewCount = candidates.filter((candidate) => candidate.status === "pending_admin_review").length;
+  const kbeautyReviewOnlyCount = candidates.filter((candidate) => candidate.isKbeautyReviewOnly).length;
   const approvedCount = candidates.filter((candidate) => candidate.status === "approved_for_draft").length;
   const rejectedCount = candidates.filter((candidate) => candidate.status === "rejected").length;
   const importedCount = candidates.filter((candidate) => candidate.status === "imported_to_products").length;
@@ -23,6 +24,7 @@ export default async function AutopilotPage() {
     <main className="space-y-5">
       <section className="grid gap-4 md:grid-cols-4 xl:grid-cols-6">
         <Metric label="Candidatos descubiertos" value={candidates.length} />
+        <Metric label="K-beauty review-only" value={kbeautyReviewOnlyCount} />
         <Metric label="Pendientes de revision" value={reviewCount} />
         <Metric label="Aprobados" value={approvedCount} />
         <Metric label="Rechazados" value={rejectedCount} />

@@ -20,6 +20,7 @@ export interface AutopilotWebCandidate {
   createdAt?: string;
   updatedAt?: string;
   draftSafetyLabel: "draft + needs_review";
+  isKbeautyReviewOnly: boolean;
 }
 
 export interface AutopilotWebSnapshot {
@@ -76,6 +77,7 @@ export async function loadAutopilotWebSnapshot(
 export function mapAutopilotWebCandidate(row: Record<string, unknown>): AutopilotWebCandidate {
   const scoring = asRecord(row.scoring);
   const compliance = asRecord(scoring.complianceDecision);
+  const rawPayload = asRecord(row.raw_payload);
   return {
     id: String(row.id ?? ""),
     title: String(row.title ?? "Candidate"),
@@ -92,6 +94,9 @@ export function mapAutopilotWebCandidate(row: Record<string, unknown>): Autopilo
     createdAt: stringOrUndefined(row.created_at),
     updatedAt: stringOrUndefined(row.updated_at),
     draftSafetyLabel: "draft + needs_review",
+    isKbeautyReviewOnly:
+      rawPayload.source === "kbeauty_seed_review_only" &&
+      String(row.review_status ?? row.status) === "pending_admin_review",
   };
 }
 
