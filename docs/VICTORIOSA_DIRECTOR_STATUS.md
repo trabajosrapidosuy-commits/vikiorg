@@ -20,11 +20,18 @@ Date: 2026-06-08
 - Focused discoverability and authorization tests: `PASS_25_TESTS`
 - Full tests: `PASS_34_FILES_121_TESTS`
 - Build: `PASS`
+- Preview deployment: `READY`
+- Preview target: `preview`
+- Stable branch alias:
+  `https://victoriosa-marketplace-git-codex-victo-ac899b-akuma424-projects.vercel.app`
+- Anonymous automated smoke: blocked by Vercel Deployment Protection before
+  reaching the application.
+- Authenticated admin smoke: `CHECK_NOT_RUN_CHROME_SESSION_UNAVAILABLE`
 - Production touched: `NO`
 - Production deploy: `NO`
 - Secrets exposed: `NO`
 
-Decision: `GO_ADMIN_AUTOPILOT_DISCOVERABLE`
+Decision: `GO_PREVIEW_READY_AUTH_SMOKE_BLOCKED`
 
 ## Password Recovery PKCE Fix
 

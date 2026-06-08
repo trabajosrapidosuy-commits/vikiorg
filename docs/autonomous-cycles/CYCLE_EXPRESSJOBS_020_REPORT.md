@@ -17,6 +17,12 @@ Canonical project: Victoriosa Marketplace
   roles.
 - Normal users still land on `/account`.
 - Existing admin route guards remain mandatory.
+- Vercel deployment `dpl_Hk8W7mJZfCEwhgSdrPoJvVBVfhwT` reached `Ready`
+  with target `preview`.
+- Stable branch alias:
+  `https://victoriosa-marketplace-git-codex-victo-ac899b-akuma424-projects.vercel.app`
+- Automated Preview navigation was stopped by Vercel Deployment Protection
+  before reaching the application.
 
 ## Checks
 
@@ -42,7 +48,11 @@ Canonical project: Victoriosa Marketplace
 - Products published: `NO`
 - Official brand representation asserted: `NO`
 
-Decision: `GO_ADMIN_AUTOPILOT_DISCOVERABLE`
+Decision: `GO_PREVIEW_READY_AUTH_SMOKE_BLOCKED`
+
+Blocker: `BLOCKED_VERCEL_ACCESS` because the available automated browser has no
+Vercel-protected session and the user's existing Chrome session was not
+available to the browser connector.
 
 Next mode: `VICTORIOSA_PREVIEW_ADMIN_DISCOVERABILITY_SMOKE`
 

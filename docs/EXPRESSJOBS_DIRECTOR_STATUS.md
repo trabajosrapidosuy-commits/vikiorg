@@ -30,11 +30,13 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 - Admin post-login destination: `PASS_DIRECT_TO_ADMIN_AUTOPILOT`
 - Admin header/account discovery: `PASS_ROLE_GATED`
 - Non-admin Studio discovery: `BLOCKED_BY_ROLE`
+- Preview deployment: `READY_PREVIEW_ONLY`
+- Preview browser smoke: `CHECK_NOT_RUN_VERCEL_PROTECTION`
 - Production deploy/payment/publication: `NO`
 
 ## Blockers
 
-`NO_BLOCKERS_FOR_SAFE_NEXT_CYCLE`
+`BLOCKED_VERCEL_ACCESS`
 
 ## Next Mode
 

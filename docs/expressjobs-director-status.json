@@ -37,6 +37,8 @@
     "adminHeaderDiscovery": "PASS_ROLE_GATED",
     "adminAccountDiscovery": "PASS_ROLE_GATED",
     "nonAdminStudioDiscovery": "BLOCKED_BY_ROLE",
+    "previewDeployment": "READY_PREVIEW_ONLY",
+    "previewBrowserSmoke": "CHECK_NOT_RUN_VERCEL_PROTECTION",
     "validatedAdmins": [
       "akuma424424@gmail.com",
       "trabajosrapidos.uy@gmail.com"
@@ -62,7 +64,9 @@
     "payment": "NO",
     "publication": "NO"
   },
-  "blockers": [],
-  "decision": "GO_ADMIN_AUTOPILOT_DISCOVERABLE",
+  "blockers": [
+    "BLOCKED_VERCEL_ACCESS"
+  ],
+  "decision": "GO_PREVIEW_READY_AUTH_SMOKE_BLOCKED",
   "nextMode": "VICTORIOSA_PREVIEW_ADMIN_DISCOVERABILITY_SMOKE"
 }
