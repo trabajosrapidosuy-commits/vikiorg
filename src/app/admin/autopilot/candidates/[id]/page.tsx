@@ -1,0 +1,134 @@
+import { AutopilotAuditTimeline } from "@/components/autopilot/AutopilotAuditTimeline";
+import { notFound } from "next/navigation";
+import { asRecord, getCandidateDetailLists, toStringList } from "@/lib/autopilot/admin/candidate-detail";
+import { requireAdmin } from "@/lib/supabase/require-admin";
+import { generateCommercialDraft } from "@/services/autopilot-marketing-service";
+import { getPersistentCandidate, listPersistentCandidateEvents, mapPersistentCandidateRowToCandidate } from "@/services/autopilot-persistence-service";
+import { addCandidateAdminNoteAction, approveProductCandidateAction, generateAiDraftForCandidateAction, importCandidateToDraftProductAction, markProductCandidateNeedsReviewAction, rejectProductCandidateAction, updateCandidateSuggestedPriceAction } from "../../actions";
+
+export default async function CandidateDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { supabase } = await requireAdmin();
+  const row = await getPersistentCandidate(supabase, id).catch(() => null);
+  if (!row) notFound();
+  const events = await listPersistentCandidateEvents(supabase, id);
+  const candidate = {
+    ...row,
+    supplierCost: Number(row.supplier_cost),
+    shippingCost: Number(row.estimated_shipping_cost),
+    suggestedSalePrice: Number(row.suggested_price),
+    estimatedMarginPercent: Number(row.margin_percent),
+    riskFlags: toStringList(row.risk_flags),
+  };
+  const draft = generateCommercialDraft(mapPersistentCandidateRowToCandidate(candidate));
+  const scoring = isRecord(candidate.scoring) ? candidate.scoring : {};
+  const scoreBreakdown = isRecord(candidate.score_breakdown) ? candidate.score_breakdown : {};
+  const recommendation = getRecommendation(scoring, scoreBreakdown, Number(candidate.risk_score ?? 0));
+  const { blockers, explanation, strengths, warnings, weaknesses } =
+    getCandidateDetailLists(candidate);
+  const rawPayload = asRecord(candidate.raw_payload);
+
+  return (
+    <main className="space-y-5">
+      <section className="card">
+        <span className="badge">{candidate.review_status}</span>
+        <h2 className="mt-3 text-2xl font-bold">{candidate.title}</h2>
+        <p className="mt-2">{candidate.description}</p>
+        <dl className="mt-4 grid gap-3 text-sm md:grid-cols-3">
+          <Info label="Proveedor" value={candidate.supplier_name} />
+          <Info label="Fuente" value={candidate.source_url ? "URL disponible" : "Sin URL fuente"} />
+          <Info label="Categoria" value={candidate.category} />
+          <Info label="Entrega estimada" value={`${Number(rawPayload.estimatedDeliveryDays ?? 0)} dias`} />
+          <Info label="Costo total" value={`USD ${(candidate.supplierCost + candidate.shippingCost).toFixed(2)}`} />
+          <Info label="Precio sugerido" value={`USD ${candidate.suggestedSalePrice.toFixed(2)}`} />
+          <Info label="Margen estimado" value={`${candidate.estimatedMarginPercent.toFixed(1)}%`} />
+          <Info label="Recomendacion" value={recommendation} />
+        </dl>
+        {candidate.source_url && <p className="mt-3 text-sm"><a className="underline" href={candidate.source_url} rel="noreferrer" target="_blank">Abrir fuente sandbox/autorizada</a></p>}
+      </section>
+      <section className="grid gap-5 md:grid-cols-2">
+        <ListCard title="Scoring explicable" values={explanation} />
+        <div className="card"><h3 className="font-bold">Riesgos detectados</h3><p className="mt-3 text-sm">{candidate.riskFlags.join(", ") || "Sin alertas automaticas. Requiere revision humana igualmente."}</p></div>
+      </section>
+      <section className="grid gap-5 md:grid-cols-3">
+        <ScoreCard label="Rentabilidad" value={Number(scoring.profitability ?? candidate.profitability_score ?? 0)} />
+        <ScoreCard label="Viralidad" value={Number(scoring.viral ?? candidate.viral_score ?? 0)} />
+        <ScoreCard label="Proveedor" value={Number(scoring.supplierReliability ?? scoring.supplier ?? candidate.supplier_score ?? 0)} />
+        <ScoreCard label="Riesgo compliance" value={Number(scoring.complianceRisk ?? candidate.risk_score ?? 0)} />
+        <ScoreCard label="Envio" value={Number(scoring.shipping ?? scoring.logistics ?? candidate.logistics_score ?? 0)} />
+        <ScoreCard label="Marca/Mercado" value={Number(scoring.marketFit ?? candidate.brand_fit_score ?? 0)} />
+      </section>
+      <section className="grid gap-5 md:grid-cols-2">
+        <ListCard title="Fortalezas" values={strengths} />
+        <ListCard title="Debilidades" values={weaknesses} />
+      </section>
+      <section className="grid gap-5 md:grid-cols-2">
+        <ListCard title="Advertencias compliance" values={warnings} />
+        <ListCard title="Bloqueos" values={blockers} />
+      </section>
+      <section className="card">
+        <h3 className="font-bold">Acciones controladas</h3>
+        <p className="mt-2 text-sm">Estas acciones persisten cambios admin-only. Publicar automaticamente permanece prohibido.</p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <ActionForm action={approveProductCandidateAction} id={candidate.id} label="Aprobar para draft" />
+          <ActionForm action={markProductCandidateNeedsReviewAction} id={candidate.id} label="Marcar needs review" />
+          <ActionForm action={generateAiDraftForCandidateAction} id={candidate.id} label="Generar ficha local" />
+          <ActionForm action={importCandidateToDraftProductAction} id={candidate.id} label="Importar como draft" />
+          <form action={rejectProductCandidateAction} className="flex gap-2">
+            <input name="id" type="hidden" value={candidate.id} />
+            <input className="rounded border p-2 text-sm" name="reason" minLength={3} placeholder="Motivo rechazo" required />
+            <button className="btn btn-secondary" type="submit">Rechazar</button>
+          </form>
+        </div>
+        <form action={updateCandidateSuggestedPriceAction} className="mt-4 flex flex-wrap gap-2 text-sm">
+          <input name="id" type="hidden" value={candidate.id} />
+          <input className="rounded border p-2" name="suggestedPrice" min="0.01" step="0.01" type="number" defaultValue={candidate.suggestedSalePrice} />
+          <button className="btn btn-secondary" type="submit">Guardar precio sugerido</button>
+          <span className="self-center text-gray-600">No cambia publicacion; solo recalcula margen interno.</span>
+        </form>
+        <form action={addCandidateAdminNoteAction} className="mt-4 grid gap-2 text-sm">
+          <input name="id" type="hidden" value={candidate.id} />
+          <textarea className="rounded border p-2" name="note" minLength={3} placeholder="Agregar nota admin para auditoria" required />
+          <div>
+            <button className="btn btn-secondary" type="submit">Agregar nota admin</button>
+          </div>
+        </form>
+      </section>
+      <section className="card">
+        <h3 className="font-bold">Borrador comercial local</h3>
+        <p className="mt-2 text-lg font-bold">{draft.title}</p>
+        <p className="mt-1 text-sm">{draft.subtitle}</p>
+        <h4 className="mt-4 font-bold">Email draft</h4>
+        <p className="mt-1 text-sm"><strong>Asunto:</strong> {draft.emailSubject}</p>
+        <p className="mt-1 text-sm">{draft.emailBody}</p>
+        <p className="mt-3 text-sm font-bold">{draft.safetyNotice}</p>
+      </section>
+      <AutopilotAuditTimeline events={events} />
+    </main>
+  );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return <div><dt className="font-bold">{label}</dt><dd>{value}</dd></div>;
+}
+
+function ListCard({ title, values }: { title: string; values: string[] }) {
+  return <div className="card"><h3 className="font-bold">{title}</h3><ul className="mt-3 list-disc pl-5 text-sm">{values.map((value) => <li key={value}>{value}</li>)}{values.length === 0 && <li>Sin observaciones automaticas.</li>}</ul></div>;
+}
+
+function ActionForm({ action, id, label }: { action: (formData: FormData) => Promise<void>; id: string; label: string }) {
+  return <form action={action}><input name="id" type="hidden" value={id} /><button className="btn btn-secondary" type="submit">{label}</button></form>;
+}
+
+function ScoreCard({ label, value }: { label: string; value: number }) {
+  return <div className="card"><p className="text-sm text-gray-600">{label}</p><p className="mt-1 text-2xl font-bold">{Math.round(value)}</p></div>;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function getRecommendation(scoring: Record<string, unknown>, breakdown: Record<string, unknown>, riskScore: number) {
+  const value = scoring.recommendation ?? breakdown.recommendation;
+  return value === "approve_candidate" || value === "reject" || value === "review" ? value : riskScore >= 70 ? "reject" : "review";
+}

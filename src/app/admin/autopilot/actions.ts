@@ -1,0 +1,80 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/supabase/require-admin";
+import {
+  addPersistentCandidateAdminNote,
+  approvePersistentCandidate,
+  createPersistentManualCandidate,
+  generatePersistentAiDraft,
+  importPersistentCandidateToDraft,
+  markPersistentCandidateNeedsReview,
+  rejectPersistentCandidate,
+  runPersistentProductDiscovery,
+  updatePersistentCandidateSuggestedPrice,
+} from "@/services/autopilot-persistence-service";
+
+export async function runProductDiscoveryAction(formData: FormData) {
+  const { supabase, user } = await requireAdmin();
+  await runPersistentProductDiscovery(supabase, user.id, Object.fromEntries(formData));
+  revalidatePath("/admin/autopilot");
+  redirect("/admin/autopilot/candidates");
+}
+
+export async function approveProductCandidateAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await approvePersistentCandidate(supabase, id);
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+}
+
+export async function rejectProductCandidateAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await rejectPersistentCandidate(supabase, id, String(formData.get("reason") ?? ""));
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+}
+
+export async function updateCandidateSuggestedPriceAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await updatePersistentCandidateSuggestedPrice(supabase, id, formData.get("suggestedPrice"));
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+  revalidatePath("/admin/autopilot/candidates");
+}
+
+export async function markProductCandidateNeedsReviewAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await markPersistentCandidateNeedsReview(supabase, id);
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+}
+
+export async function createManualCandidateAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  await createPersistentManualCandidate(supabase, Object.fromEntries(formData));
+  revalidatePath("/admin/autopilot/candidates");
+  redirect("/admin/autopilot/candidates");
+}
+
+export async function generateAiDraftForCandidateAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await generatePersistentAiDraft(supabase, id);
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+}
+
+export async function importCandidateToDraftProductAction(formData: FormData) {
+  const { supabase, user } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await importPersistentCandidateToDraft(supabase, id, user.id);
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+}
+
+export async function addCandidateAdminNoteAction(formData: FormData) {
+  const { supabase, user } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await addPersistentCandidateAdminNote(supabase, id, String(formData.get("note") ?? ""), user.id);
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+}

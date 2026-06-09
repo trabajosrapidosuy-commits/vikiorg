@@ -1,72 +1,37 @@
-'use client'
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
+import { MarketplaceAccessError, requireAdmin } from "@/lib/supabase/require-admin";
 
-import Link from 'next/link'
+export const metadata: Metadata = {
+  title: "Victoriosa Studio",
+  robots: { index: false, follow: false },
+};
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  try {
+    await requireAdmin();
+  } catch (error) {
+    if (error instanceof MarketplaceAccessError) {
+      redirect(error.status === 401 ? "/auth/login" : "/");
+    }
+    throw error;
+  }
+
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-victoriosa-primary text-white p-6 flex flex-col">
-        <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
-        <nav className="space-y-4 flex-1">
-          <Link
-            href="/admin"
-            className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
-          >
-            📊 Dashboard
-          </Link>
-          <Link
-            href="/admin/products"
-            className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
-          >
-            📦 Products
-          </Link>
-          <Link
-            href="/admin/pricing"
-            className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
-          >
-            💰 Pricing
-          </Link>
-          <Link
-            href="/admin/imports"
-            className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
-          >
-            📥 Imports
-          </Link>
-          <Link
-            href="/admin/orders"
-            className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
-          >
-            📋 Orders
-          </Link>
-          <Link
-            href="/admin/whatsapp"
-            className="block px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
-          >
-            💬 WhatsApp
-          </Link>
-        </nav>
-        <div className="border-t border-victoriosa-secondary pt-4">
-          <button
-            onClick={async () => {
-              // TODO: Implement logout
-              window.location.href = '/'
-            }}
-            className="w-full text-left px-4 py-2 rounded hover:bg-victoriosa-secondary transition"
-          >
-            🚪 Logout
-          </button>
+    <div className="studio-shell">
+      <aside className="studio-sidebar">
+        <div>
+          <p className="studio-kicker">CONTROL CENTER</p>
+          <h1>Victoriosa Studio</h1>
+          <p className="studio-caption">Superficie privada de admin/owner para control comercial y revision humana.</p>
         </div>
+        <AdminSidebarNav />
+        <form action="/auth/logout" method="post">
+          <button className="studio-logout" type="submit">Cerrar sesion</button>
+        </form>
       </aside>
-
-      {/* Main content */}
-      <main className="flex-1 bg-gray-50 p-8">
-        {children}
-      </main>
+      <main className="studio-main">{children}</main>
     </div>
-  )
+  );
 }

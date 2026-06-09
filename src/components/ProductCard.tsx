@@ -1,17 +1,21 @@
-import type { MarketplaceProduct } from "@/types/marketplace";
+import Image from "next/image";
+import type { PublicCatalogProduct } from "@/domain/public-catalog";
 
-export default function ProductCard({ product }: { product: MarketplaceProduct }) {
+export default function ProductCard({ product }: { product: PublicCatalogProduct }) {
   return (
-    <article className="card">
-      <div style={{ aspectRatio: "4/3", background: "#f7e8d7", borderRadius: 18, display: "grid", placeItems: "center", marginBottom: 14 }}>
-        <span>{product.category}</span>
+    <article className="product-card">
+      <div className="product-media">
+        {product.mainImageUrl ? <Image alt="" src={product.mainImageUrl} width={640} height={480} /> : <span>{product.category}</span>}
       </div>
-      <span className="badge">{product.fulfillmentType}</span>
+      <span className="badge">{product.category}</span>
       <h3>{product.title}</h3>
       <p>{product.shortDescription}</p>
-      <strong>{product.localCurrency} {Math.round(product.salePrice * (product.fxRate || 1))}</strong>
-      <p style={{ fontSize: 12 }}>Riesgo: {product.riskLevel} - Estado: {product.complianceStatus}</p>
-      <a className="btn" href={`/productos/${product.slug}`}>Ver detalle</a>
+      <div className="product-meta">
+        <strong>{product.localCurrency} {Math.round(product.salePrice)}</strong>
+        <span>Confirmacion previa</span>
+      </div>
+      <p className="product-note">Disponibilidad y entrega sujetas a confirmacion.</p>
+      <a className="btn btn-quiet" href={`/productos/${product.slug}`}>Ver detalle</a>
     </article>
   );
 }
