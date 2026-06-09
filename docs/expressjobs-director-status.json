@@ -26,11 +26,12 @@
     "remote_legal_routes": "BLOCKED_PRODUCTION_RISK_CURRENT_PUBLIC_DEPLOY_HTTP_404",
     "human_release_decision": "PREPARED_NO_PRODUCTION_ACTION_EXECUTED"
   },
-  "blockers": [
-    "BLOCKED_EXTERNAL_CREDENTIALS",
-    "BLOCKED_SUPABASE_ACCESS",
-    "BLOCKED_PRODUCTION_RISK"
-  ],
-  "next_mode": "VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW",
-  "canonical_status_file": "docs/VICTORIOSA_DIRECTOR_STATUS.md"
+  "remoteActions": {
+    "deploy": "NO",
+    "databaseMutation": "NO",
+    "payment": "NO",
+    "publication": "NO"
+  },
+  "blockers": [],
+  "nextMode": "VICTORIOSA_RELEASE_GATE_GO_NO_GO"
 }

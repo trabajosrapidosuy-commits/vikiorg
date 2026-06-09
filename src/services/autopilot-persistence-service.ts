@@ -3,7 +3,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { generateCommercialDraft } from "./autopilot-marketing-service";
 import { createDraftProductRow } from "@/lib/autopilot/core/import-draft";
-import { createManualCandidate } from "@/lib/autopilot/providers/manual-provider";
 import { normalizeSlug } from "./marketplace-product-service";
 import { runProductDiscovery } from "./autopilot-service";
 import type { DiscoveryInput, ProductCandidate } from "@/types/autopilot";
@@ -17,6 +16,20 @@ export const discoveryInputSchema = z.object({
   targetMarket: z.enum(["Uruguay", "LATAM", "global"]).default("Uruguay"),
   maximumShippingDays: z.coerce.number().int().positive().max(120).default(45),
   maximumResults: z.coerce.number().int().positive().max(50).default(10),
+  title: emptyToUndefined(z.string().trim().min(3).max(180).optional()),
+  description: emptyToUndefined(z.string().trim().min(3).max(5000).optional()),
+  supplierName: emptyToUndefined(z.string().trim().min(2).max(160).optional()),
+  sourceUrl: emptyToUndefined(z.string().url().optional()),
+  imageUrl: emptyToUndefined(z.string().url().optional()),
+  buyPrice: emptyToUndefined(z.coerce.number().min(0).optional()),
+  shippingCost: emptyToUndefined(z.coerce.number().min(0).optional()),
+  inventoryTotal: emptyToUndefined(z.coerce.number().int().min(0).optional()),
+  verifiedInventory: emptyToUndefined(z.coerce.number().int().min(0).optional()),
+  rating: emptyToUndefined(z.coerce.number().min(0).max(5).optional()),
+  imageRightsStatus: z.enum(["unknown", "allowed", "restricted"]).default("unknown"),
+  resaleRightsStatus: z.enum(["unknown", "allowed", "restricted"]).default("unknown"),
+  payloadText: emptyToUndefined(z.string().trim().min(2).optional()),
+  payloadFormat: z.enum(["csv", "json"]).default("json"),
 });
 
 function emptyToUndefined<T extends z.ZodTypeAny>(schema: T) {
@@ -49,7 +62,7 @@ export async function runPersistentProductDiscovery(supabase: SupabaseClient, us
     return { runId: run.id, ...result };
   }
 
-  const rows = result.candidates.map((candidate) => mapCandidateToRow(run.id, candidate));
+  const rows = result.candidates.map((candidate) => createAutopilotCandidateRow(run.id, candidate));
   const { error: candidatesError } = await supabase.from("autopilot_product_candidates").insert(rows);
   if (candidatesError) {
     await supabase.from("autopilot_discovery_runs").update({ status: "failed", error_message: candidatesError.message, completed_at: new Date().toISOString() }).eq("id", run.id);
@@ -77,6 +90,28 @@ export async function listPersistentDiscoveryRuns(supabase: SupabaseClient) {
   return data ?? [];
 }
 
+export async function listPersistentDraftImports(supabase: SupabaseClient) {
+  const { data, error } = await supabase
+    .from("autopilot_product_candidates")
+    .select("id,title,category,provider,supplier_name,suggested_price,margin_percent,review_status,imported_product_id,created_at,updated_at")
+    .eq("review_status", "imported_to_products")
+    .order("updated_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function listPersistentCandidateEvents(supabase: SupabaseClient, candidateId: string) {
+  const id = z.string().uuid().parse(candidateId);
+  const { data, error } = await supabase
+    .from("autopilot_review_events")
+    .select("*")
+    .eq("candidate_id", id)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
 export async function getPersistentCandidate(supabase: SupabaseClient, id: string) {
   const candidateId = z.string().uuid().parse(id);
   const { data, error } = await supabase.from("autopilot_product_candidates").select("*").eq("id", candidateId).single();
@@ -97,32 +132,56 @@ export async function rejectPersistentCandidate(supabase: SupabaseClient, id: st
   return updateCandidateReview(supabase, id, { status: "rejected", review_status: "rejected", rejection_reason: rejectionReason }, "rejected", rejectionReason);
 }
 
+export async function updatePersistentCandidateSuggestedPrice(supabase: SupabaseClient, id: string, rawPrice: unknown) {
+  const candidate = await getPersistentCandidate(supabase, id);
+  const suggestedPrice = z.coerce.number().positive().max(100000).parse(rawPrice);
+  const landedCost = Number(candidate.supplier_cost) + Number(candidate.estimated_shipping_cost);
+  const marginPercent = suggestedPrice <= 0 ? 0 : Math.round(((suggestedPrice - landedCost) / suggestedPrice) * 10000) / 100;
+  const { data, error } = await supabase.from("autopilot_product_candidates").update({
+    suggested_price: suggestedPrice,
+    margin_percent: marginPercent,
+    pricing: { ...(isRecord(candidate.pricing) ? candidate.pricing : {}), suggestedSalePrice: suggestedPrice, estimatedMarginPercent: marginPercent, priceEditedByAdmin: true },
+    updated_at: new Date().toISOString(),
+  }).eq("id", candidate.id).select("*").single();
+  if (error) throw new Error(error.message);
+  await logReviewEvent(supabase, {
+    candidateId: candidate.id,
+    eventType: "note_added",
+    previousStatus: candidate.review_status,
+    newStatus: candidate.review_status,
+    metadata: { field: "suggested_price", previousValue: candidate.suggested_price, newValue: suggestedPrice, marginPercent },
+  });
+  await logAutopilotEvent(supabase, { candidateId: candidate.id, level: "info", message: "Suggested price edited by admin. Candidate remains review-only." });
+  return data;
+}
+
 export async function markPersistentCandidateNeedsReview(supabase: SupabaseClient, id: string) {
   return updateCandidateReview(supabase, id, { status: "pending_admin_review", review_status: "pending_admin_review" }, "needs_review");
 }
 
+export async function addPersistentCandidateAdminNote(supabase: SupabaseClient, id: string, reason: string, actorId?: string) {
+  const candidate = await getPersistentCandidate(supabase, id);
+  const note = z.string().trim().min(3).max(1000).parse(reason);
+  await logReviewEvent(supabase, {
+    candidateId: candidate.id,
+    actorId,
+    eventType: "note_added",
+    previousStatus: candidate.review_status,
+    newStatus: candidate.review_status,
+    reason: note,
+    metadata: { note },
+  });
+  await logAutopilotEvent(supabase, { candidateId: candidate.id, level: "info", message: "Admin note added to candidate audit history." });
+  return candidate;
+}
+
 export async function createPersistentManualCandidate(supabase: SupabaseClient, rawInput: unknown) {
-  const manual = createManualCandidate(rawInput);
-  const candidate: ProductCandidate = {
-    id: `manual-${crypto.randomUUID()}`, connectorId: "manual", supplierName: "Carga manual Victoriosa",
-    title: manual.product.title, description: manual.product.description, category: manual.product.category,
-    sourceUrl: manual.product.sourceUrl ?? "", imageUrl: manual.product.images[0], supplierCost: manual.product.buyPrice,
-    shippingCost: manual.product.shippingCost, currency: manual.product.currency,
-    estimatedDeliveryDays: manual.product.deliveryEstimateDays ?? 0,
-    suggestedSalePrice: manual.score.pricing.estimatedSellPrice,
-    estimatedMarginPercent: manual.score.pricing.estimatedMarginPercent,
-    score: {
-      profitability: manual.score.profitabilityScore, viral: manual.score.viralSignal,
-      compliance: 100 - manual.score.riskScore, logistics: manual.score.logisticsScore,
-      supplier: manual.score.inventoryScore, total: manual.score.finalScore,
-      explanation: [...manual.score.strengths, ...manual.score.weaknesses],
-      brandFitScore: manual.score.brandFitScore, riskScore: manual.score.riskScore,
-      contentQualityScore: manual.score.contentQualityScore, scoreBreakdown: manual.score.scoreBreakdown,
-      strengths: manual.score.strengths, weaknesses: manual.score.weaknesses,
-    },
-    riskFlags: manual.score.riskFlags, status: "pending_admin_review",
-  };
-  const row = mapCandidateToRow("", candidate);
+  const result = runProductDiscovery({ connectorId: "manual", ...(isRecord(rawInput) ? rawInput : {}) });
+  if (result.status !== "completed" || result.candidates.length === 0) {
+    throw new Error(result.message || "Manual candidate could not be normalized");
+  }
+  const candidate = result.candidates[0] as ProductCandidate;
+  const row = createAutopilotCandidateRow("", candidate);
   delete (row as { discovery_run_id?: string }).discovery_run_id;
   const { data, error } = await supabase.from("autopilot_product_candidates").insert(row).select("*").single();
   if (error) throw new Error(error.message);
@@ -132,7 +191,7 @@ export async function createPersistentManualCandidate(supabase: SupabaseClient, 
 
 export async function generatePersistentAiDraft(supabase: SupabaseClient, id: string) {
   const candidate = await getPersistentCandidate(supabase, id);
-  const draft = generateCommercialDraft(mapRowToCandidate(candidate));
+  const draft = generateCommercialDraft(mapPersistentCandidateRowToCandidate(candidate));
   const { data, error } = await supabase.from("autopilot_ai_product_drafts").insert({
     product_candidate_id: candidate.id,
     generated_title: draft.title,
@@ -202,10 +261,29 @@ async function logAutopilotEvent(supabase: SupabaseClient, input: { runId?: stri
   if (error) throw new Error(error.message);
 }
 
-function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
+export function createAutopilotCandidateRow(runId: string, candidate: ProductCandidate) {
   const rawScore = candidate.score as ProductCandidate["score"] & {
     brandFitScore?: number; riskScore?: number; contentQualityScore?: number;
     scoreBreakdown?: Record<string, number>; strengths?: string[]; weaknesses?: string[];
+  };
+  const rawPayload = {
+    ...candidate.rawPayload,
+    estimatedDeliveryDays: candidate.estimatedDeliveryDays,
+    provenance: candidate.provenance,
+    normalized_candidate: {
+      connectorId: candidate.connectorId,
+      provider: candidate.provider,
+      externalId: candidate.externalId,
+      sourceUrl: candidate.sourceUrl,
+      supplierName: candidate.supplierName,
+      supplierCost: candidate.supplierCost,
+      shippingCost: candidate.shippingCost,
+      inventoryTotal: candidate.inventoryTotal ?? 0,
+      verifiedInventory: candidate.verifiedInventory ?? 0,
+      rating: candidate.rating ?? null,
+      imageRightsStatus: candidate.imageRightsStatus,
+      resaleRightsStatus: candidate.resaleRightsStatus,
+    },
   };
   return {
     discovery_run_id: runId,
@@ -214,7 +292,7 @@ function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
     description: candidate.description,
     category: candidate.category,
     source_url: candidate.sourceUrl,
-    raw_payload: candidate,
+    raw_payload: rawPayload,
     pricing: { suggestedSalePrice: candidate.suggestedSalePrice, estimatedMarginPercent: candidate.estimatedMarginPercent },
     scoring: candidate.score,
     risk_flags: candidate.riskFlags,
@@ -228,14 +306,20 @@ function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
     logistics_score: candidate.score.logistics,
     supplier_score: candidate.score.supplier,
     total_score: candidate.score.total,
-    provider: candidate.connectorId,
-    external_id: candidate.id,
+    provider: candidate.provider,
+    external_id: candidate.externalId ?? candidate.id,
     image_url: candidate.imageUrl,
     landed_cost: candidate.supplierCost + candidate.shippingCost,
     brand_fit_score: rawScore.brandFitScore ?? 0,
     risk_score: rawScore.riskScore ?? (candidate.riskFlags.length ? 70 : 0),
     content_quality_score: rawScore.contentQualityScore ?? 0,
-    score_breakdown: rawScore.scoreBreakdown ?? candidate.score,
+    score_breakdown: {
+      ...(rawScore.scoreBreakdown ?? candidate.score),
+      recommendation: rawScore.recommendation ?? "review",
+      warnings: rawScore.warnings ?? [],
+      blockers: rawScore.blockers ?? [],
+      estimatedDeliveryDays: candidate.estimatedDeliveryDays,
+    },
     strengths: rawScore.strengths ?? candidate.score.explanation,
     weaknesses: rawScore.weaknesses ?? candidate.riskFlags,
     currency: candidate.currency,
@@ -245,12 +329,16 @@ function mapCandidateToRow(runId: string, candidate: ProductCandidate) {
   };
 }
 
-function mapRowToCandidate(row: Record<string, unknown>): ProductCandidate {
+export function mapPersistentCandidateRowToCandidate(row: Record<string, unknown>): ProductCandidate {
   const rawPayload = isRecord(row.raw_payload) ? row.raw_payload : {};
+  const provenance = isRecord(rawPayload.provenance) ? rawPayload.provenance : {};
+  const normalizedCandidate = isRecord(rawPayload.normalized_candidate) ? rawPayload.normalized_candidate : {};
   const scoring = isRecord(row.scoring) ? row.scoring : {};
   return {
     id: String(row.id),
-    connectorId: String(row.connector_id ?? "mock"),
+    connectorId: String(normalizedCandidate.connectorId ?? row.provider ?? "mock"),
+    provider: String(row.provider ?? normalizedCandidate.provider ?? "mock"),
+    externalId: stringOrUndefined(row.external_id ?? normalizedCandidate.externalId),
     supplierName: String(row.supplier_name),
     title: String(row.title),
     description: String(row.description ?? ""),
@@ -260,9 +348,28 @@ function mapRowToCandidate(row: Record<string, unknown>): ProductCandidate {
     supplierCost: Number(row.supplier_cost),
     shippingCost: Number(row.estimated_shipping_cost),
     currency: row.currency === "UYU" ? "UYU" : "USD",
+    inventoryTotal: numberOrUndefined(normalizedCandidate.inventoryTotal),
+    verifiedInventory: numberOrUndefined(normalizedCandidate.verifiedInventory),
     estimatedDeliveryDays: Number(rawPayload.estimatedDeliveryDays ?? 0),
     suggestedSalePrice: Number(row.suggested_price),
     estimatedMarginPercent: Number(row.margin_percent),
+    rating: numberOrUndefined(normalizedCandidate.rating ?? provenance.rating),
+    imageRightsStatus: isRightsStatus(normalizedCandidate.imageRightsStatus) ? normalizedCandidate.imageRightsStatus : isRightsStatus(provenance.imageRights) ? provenance.imageRights : "unknown",
+    resaleRightsStatus: isRightsStatus(normalizedCandidate.resaleRightsStatus) ? normalizedCandidate.resaleRightsStatus : isRightsStatus(provenance.resaleRights) ? provenance.resaleRights : "unknown",
+    rawPayload,
+    provenance: {
+      rawPayload: isRecord(provenance.rawPayload) ? provenance.rawPayload : rawPayload,
+      sourceUrl: stringOrUndefined(provenance.sourceUrl ?? row.source_url),
+      externalId: stringOrUndefined(provenance.externalId ?? row.external_id),
+      provider: String(provenance.provider ?? row.provider ?? "mock"),
+      supplier: String(provenance.supplier ?? row.supplier_name ?? "Proveedor no especificado"),
+      price: numberOrZero(provenance.price ?? row.supplier_cost),
+      shipping: numberOrZero(provenance.shipping ?? row.estimated_shipping_cost),
+      stock: numberOrZero(provenance.stock ?? normalizedCandidate.verifiedInventory ?? normalizedCandidate.inventoryTotal),
+      rating: numberOrUndefined(provenance.rating),
+      imageRights: isRightsStatus(provenance.imageRights) ? provenance.imageRights : "unknown",
+      resaleRights: isRightsStatus(provenance.resaleRights) ? provenance.resaleRights : "unknown",
+    },
     score: {
       profitability: Number(scoring.profitability ?? row.profitability_score ?? 0),
       viral: Number(scoring.viral ?? row.viral_score ?? 0),
@@ -271,12 +378,38 @@ function mapRowToCandidate(row: Record<string, unknown>): ProductCandidate {
       supplier: Number(scoring.supplier ?? row.supplier_score ?? 0),
       total: Number(scoring.total ?? row.total_score ?? 0),
       explanation: Array.isArray(scoring.explanation) ? scoring.explanation.map(String) : [],
+      supplierReliability: Number(scoring.supplierReliability ?? scoring.supplier ?? row.supplier_score ?? 0),
+      complianceRisk: Number(scoring.complianceRisk ?? row.risk_score ?? 0),
+      shipping: Number(scoring.shipping ?? scoring.logistics ?? row.logistics_score ?? 0),
+      marketFit: Number(scoring.marketFit ?? row.brand_fit_score ?? 0),
+      recommendation: isRecommendation(scoring.recommendation) ? scoring.recommendation : "review",
     },
     riskFlags: Array.isArray(row.risk_flags) ? row.risk_flags.map(String) : [],
     status: row.status as ProductCandidate["status"],
   };
 }
 
+function isRecommendation(value: unknown): value is "reject" | "review" | "approve_candidate" {
+  return value === "reject" || value === "review" || value === "approve_candidate";
+}
+
+function isRightsStatus(value: unknown): value is "unknown" | "allowed" | "restricted" {
+  return value === "unknown" || value === "allowed" || value === "restricted";
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function stringOrUndefined(value: unknown): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function numberOrUndefined(value: unknown): number | undefined {
+  const number = typeof value === "number" ? value : typeof value === "string" && value.trim().length > 0 ? Number(value) : Number.NaN;
+  return Number.isFinite(number) ? number : undefined;
+}
+
+function numberOrZero(value: unknown): number {
+  return numberOrUndefined(value) ?? 0;
 }

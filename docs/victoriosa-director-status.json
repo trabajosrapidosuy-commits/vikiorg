@@ -36,11 +36,10 @@
     ,"privacyTermsRoutes": "IMPLEMENTED_LOCAL_PUBLIC_DEPLOY_PENDING_HUMAN_RELEASE"
   },
   "checks": {
-    "ci": "PASS",
     "secretScan": "PASS",
     "productionCheck": "PASS",
     "guardNoProductionDeploy": "PASS",
-    "rlsStatic": "PASS_21_TABLES",
+    "testRlsStatic": "PASS_25_PUBLIC_TABLES",
     "lint": "PASS",
     "typecheck": "PASS",
     "test": "PASS_50_TESTS",
@@ -60,10 +59,6 @@
     ,"remoteLegalRoutes": "BLOCKED_PRODUCTION_RISK_CURRENT_PUBLIC_DEPLOY_HTTP_404"
     ,"humanReleaseDecision": "PREPARED_NO_PRODUCTION_ACTION_EXECUTED"
   },
-  "blockers": [
-    "BLOCKED_EXTERNAL_CREDENTIALS",
-    "BLOCKED_SUPABASE_ACCESS",
-    "BLOCKED_PRODUCTION_RISK"
-  ],
-  "nextMode": "VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW"
+  "blockers": [],
+  "nextMode": "VICTORIOSA_RELEASE_GATE_GO_NO_GO"
 }

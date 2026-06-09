@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/supabase/require-admin";
 import {
+  addPersistentCandidateAdminNote,
   approvePersistentCandidate,
   createPersistentManualCandidate,
   generatePersistentAiDraft,
@@ -11,6 +12,7 @@ import {
   markPersistentCandidateNeedsReview,
   rejectPersistentCandidate,
   runPersistentProductDiscovery,
+  updatePersistentCandidateSuggestedPrice,
 } from "@/services/autopilot-persistence-service";
 
 export async function runProductDiscoveryAction(formData: FormData) {
@@ -32,6 +34,14 @@ export async function rejectProductCandidateAction(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   await rejectPersistentCandidate(supabase, id, String(formData.get("reason") ?? ""));
   revalidatePath(`/admin/autopilot/candidates/${id}`);
+}
+
+export async function updateCandidateSuggestedPriceAction(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await updatePersistentCandidateSuggestedPrice(supabase, id, formData.get("suggestedPrice"));
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+  revalidatePath("/admin/autopilot/candidates");
 }
 
 export async function markProductCandidateNeedsReviewAction(formData: FormData) {
@@ -59,5 +69,12 @@ export async function importCandidateToDraftProductAction(formData: FormData) {
   const { supabase, user } = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   await importPersistentCandidateToDraft(supabase, id, user.id);
+  revalidatePath(`/admin/autopilot/candidates/${id}`);
+}
+
+export async function addCandidateAdminNoteAction(formData: FormData) {
+  const { supabase, user } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  await addPersistentCandidateAdminNote(supabase, id, String(formData.get("note") ?? ""), user.id);
   revalidatePath(`/admin/autopilot/candidates/${id}`);
 }

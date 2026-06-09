@@ -2,10 +2,17 @@
 
 ## Current Mode
 
-`VICTORIOSA_CUSTOM_DOMAIN_AUTH_URL_HUMAN_APPLY_AND_SMOKE`
+`VICTORIOSA_PRODUCTION_AUTODEPLOY_BLOCK_STRATEGY`
 
-## Result
+## Context
 
+- Worktree: `C:\victoriosa-autopilot-admin-control-center`
+- Branch: `codex/victoriosa-git-upload-repair`
+- HEAD before cycle: `530169a`
+- Pull request: `#25`
+- PR base: `main`
+- PR state: `OPEN_DRAFT`
+- PR checks: `PASS`
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
 - Branch: `codex/victoriosa-domain-ssl-dns-rescue`
 - Authorized staging ref: `ngliugfcwydnfbpalkpb`
@@ -314,29 +321,43 @@
 
 ## NEXT_CODEX_PROMPT
 
-Repo: `C:\victoriosa`
+Repository: `C:\victoriosa-autopilot-admin-control-center`
 
-Branch suggested: `codex/victoriosa-email-auth-profiles-settings`
+Branch: `codex/victoriosa-git-upload-repair`
 
-Objective: review the isolated private admin surface in Preview and prepare a
-controlled release runbook without mutating production.
+Mode: `VICTORIOSA_MANUAL_VERCEL_SCOPE_AUDIT_PREP`
 
-Rules: keep `PRODUCTION_STATUS=NO-GO_PRODUCTION`; do not deploy production; do
-not print secrets; do not weaken RLS; do not execute payments; do not buy from
-suppliers; do not send emails; do not expose internal costs publicly; preserve
-unrelated worktree changes.
+Objective: prepare a read-only inventory worksheet for every Vercel scope and
+project connected to this repository, then record human-verified Production
+Branch settings without modifying Vercel, GitHub branches or PR #25.
 
-Tasks:
+Rules:
 
-1. Deploy the isolated admin branch only through explicit Preview.
-2. Confirm Preview target and protection before route smoke.
-3. Load a controlled staging admin identity outside chat if protected Preview
-   browser verification is required.
-4. Verify storefront remains free of owner links.
-5. Prepare a future private subdomain extraction runbook.
+- Keep PR #25 draft.
+- Do not merge or retarget.
+- Do not create Production deployments.
+- Do not modify Vercel or Production environment variables.
+- Never print secrets.
 
-GO criterion: isolated Preview is protected, storefront is clean and owner
-surface remains admin-only with RLS preserved.
+Checks:
 
-NO-GO criterion: unauthorized Production mutation, secret exposure, payment
-execution or RLS weakening.
+See `docs/autonomous-cycles/CYCLE_VICTORIOSA_AGENT_SYSTEM_BOOTSTRAP.md`.
+
+Integration preview smoke repeated after confirming the Vercel Production
+Branch is expected to remain `production`. Production remains
+`NO-GO_PRODUCTION`.
+
+## Integration Preview-Only Smoke Repeat
+
+Date: 2026-06-07
+
+- Initial smoke commit `0513268`: Preview-only deployment created, build
+  failed because three Autopilot admin pages contained partial merge
+  regressions.
+- Corrective commit `ee73eb9`: local build and all required checks passed.
+- Vercel result: `PASS` in both observed scopes.
+- Deployment classification: `Preview`, `production_environment=false`.
+- Production deployment triggered: `NO`.
+- PR #25 remains draft and unchanged.
+
+Decision: `GO_INTEGRATION_PREVIEW_ONLY`.

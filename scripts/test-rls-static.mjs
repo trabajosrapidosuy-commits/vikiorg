@@ -45,6 +45,21 @@ if (!migration.includes("where id = auth.uid() and role in ('admin','marketplace
 if (!migration.includes("send_enabled boolean not null default false check (send_enabled = false)")) {
   failures.push("Autopilot campaign send lock is missing");
 }
+if (!migration.includes("autopilot_discovery_runs_realtime_broadcast")) {
+  failures.push("Realtime hardening for autopilot_discovery_runs_realtime_broadcast is missing");
+}
+if (!migration.includes("marketplace_orders_realtime_broadcast")) {
+  failures.push("Realtime hardening for marketplace_orders_realtime_broadcast is missing");
+}
+if (!migration.includes("marketplace_products_realtime_broadcast")) {
+  failures.push("Realtime hardening for marketplace_products_realtime_broadcast is missing");
+}
+if (!migration.includes("revoke execute on function %s from anon")) {
+  failures.push("Realtime hardening migration must revoke EXECUTE from anon");
+}
+if (!migration.includes("revoke execute on function %s from authenticated")) {
+  failures.push("Realtime hardening migration must revoke EXECUTE from authenticated");
+}
 
 const autopilotTables = tables.filter((table) => table.startsWith("autopilot_"));
 for (const table of autopilotTables) {

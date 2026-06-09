@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { scoreBrandFit } from "@/lib/autopilot/core/brand-fit";
+import { evaluateBusinessRules, matchesPriorityCategory } from "@/lib/autopilot/core/business-rules";
 import { createDraftProductRow } from "@/lib/autopilot/core/import-draft";
+import { evaluateDecisionEngine } from "@/lib/autopilot/core/pipeline";
 import { calculateSuggestedPrice } from "@/lib/autopilot/core/pricing";
 import { detectProductRisks } from "@/lib/autopilot/core/risk";
 import { scoreCandidate } from "@/lib/autopilot/core/scoring";
@@ -10,10 +12,10 @@ import { listMockSupplierProducts } from "@/lib/autopilot/providers/mock-provide
 import { createManualCandidate } from "@/lib/autopilot/providers/manual-provider";
 
 const beautyProduct: NormalizedSupplierProduct = {
-  provider: "manual", title: "Organizador beauty facial", description: "Organizador visual de maquillaje y autocuidado facial con demostracion simple.",
+  provider: "manual", supplierName: "Proveedor seguro", sourceUrl: "https://example.invalid/beauty-safe", title: "Organizador beauty facial", description: "Organizador visual de maquillaje y autocuidado facial con demostracion simple.",
   images: ["https://example.invalid/a.jpg", "https://example.invalid/b.jpg", "https://example.invalid/c.jpg"],
   category: "Beauty", niche: "beauty", targetCountry: "UY", currency: "USD", buyPrice: 5, shippingCost: 1,
-  inventoryTotal: 100, verifiedInventory: 80, listedCount: 400, reviewsCount: 120, hasVideo: true, tags: ["belleza"], raw: {},
+  inventoryTotal: 100, verifiedInventory: 80, listedCount: 400, reviewsCount: 120, imageRightsStatus: "allowed", resaleRightsStatus: "allowed", hasVideo: true, tags: ["belleza"], raw: {},
 };
 
 describe("supplier agnostic autopilot core", () => {
@@ -33,10 +35,72 @@ describe("supplier agnostic autopilot core", () => {
     expect(scoreCandidate(beautyProduct).finalScore).toBeGreaterThan(scoreCandidate({ ...beautyProduct, inventoryTotal: 1, verifiedInventory: 0 }).finalScore);
   });
 
+  it("returns commercial intelligence aliases and recommendation", () => {
+    const score = scoreCandidate(beautyProduct);
+    expect(score.supplierReliabilityScore).toBe(score.inventoryScore);
+    expect(score.complianceRiskScore).toBe(score.riskScore);
+    expect(score.shippingScore).toBe(score.logisticsScore);
+    expect(score.marketFitScore).toBe(score.brandFitScore);
+    expect(score.recommendation).toBe("approve_candidate");
+    expect(score.blockers).toEqual([]);
+  });
+
+  it("keeps risky or excluded products out of auto-approval", () => {
+    const score = scoreCandidate({ ...beautyProduct, title: "Replica medicamento milagro", description: "Suplemento que cura enfermedad" });
+    expect(score.recommendation).toBe("reject");
+    expect(score.blockers.length).toBeGreaterThan(0);
+  });
+
+  it("documents Victoriosa category boosts and warnings", () => {
+    expect(matchesPriorityCategory(beautyProduct)).toBe(true);
+    const evaluation = evaluateBusinessRules({ ...beautyProduct, deliveryEstimateDays: 45, verifiedInventory: 0 });
+    expect(evaluation.boosts).toContain("Categoria prioritaria para Victoriosa.");
+    expect(evaluation.warnings).toContain("Envio lento para validacion comercial inicial.");
+    expect(evaluation.warnings).toContain("Proveedor con inventario verificado debil o insuficiente.");
+  });
+
   it("detects medical and ingestible risks", () => {
     const risk = detectProductRisks({ ...beautyProduct, title: "Suplemento milagro", description: "Medicamento que cura enfermedad" });
     expect(risk.riskFlags).toContain("blocked_commercial_risk");
     expect(risk.recommendedAction).toBe("reject");
+  });
+
+  it("keeps provenance gaps in review instead of approval", () => {
+    const decision = evaluateDecisionEngine({
+      ...beautyProduct,
+      supplierName: undefined,
+      sourceUrl: undefined,
+      imageRightsStatus: "unknown",
+    });
+    expect(decision.compliance.provenanceComplete).toBe(false);
+    expect(decision.recommendation).toBe("review");
+  });
+
+  it("keeps low-margin products out of approval", () => {
+    const decision = evaluateDecisionEngine({
+      ...beautyProduct,
+      buyPrice: 150,
+      shippingCost: 70,
+      hasVideo: false,
+      verifiedInventory: 4,
+      inventoryTotal: 6,
+    });
+    expect(decision.pricing.estimatedSellPrice).toBeGreaterThan(180);
+    expect(decision.recommendation).toBe("review");
+  });
+
+  it("returns explicit decision outputs for safe products", () => {
+    const decision = evaluateDecisionEngine({
+      ...beautyProduct,
+      supplierName: "Proveedor seguro",
+      sourceUrl: "https://example.invalid/beauty-safe",
+      imageRightsStatus: "allowed",
+      resaleRightsStatus: "allowed",
+    });
+    expect(decision.compliance.recommendation).toBe("approve_candidate");
+    expect(decision.recommendation).toBe("approve_candidate");
+    expect(decision.reviewStatus).toBe("pending_admin_review");
+    expect(decision.scoring.complianceDecision.recommendation).toBe("approve_candidate");
   });
 
   it("rewards Victoriosa brand fit and penalizes mismatch", () => {

@@ -8,9 +8,13 @@ export default function ManualAutopilotImportPage() {
       <form action={createManualCandidateAction} className="mt-4 grid gap-3 text-sm md:grid-cols-2">
         <label>Titulo<input className="mt-1 w-full rounded border p-2" name="title" required /></label>
         <label>Categoria<input className="mt-1 w-full rounded border p-2" name="category" defaultValue="Beauty" required /></label>
+        <label>Supplier<input className="mt-1 w-full rounded border p-2" name="supplierName" placeholder="Opcional" /></label>
+        <label>Rating<input className="mt-1 w-full rounded border p-2" max="5" min="0" name="rating" step="0.1" type="number" /></label>
         <label className="md:col-span-2">Descripcion<textarea className="mt-1 w-full rounded border p-2" name="description" required /></label>
         <label>Imagen URL<input className="mt-1 w-full rounded border p-2" name="imageUrl" type="url" /></label>
         <label>URL origen<input className="mt-1 w-full rounded border p-2" name="sourceUrl" type="url" /></label>
+        <label>Derechos de imagen<select className="mt-1 w-full rounded border p-2" name="imageRightsStatus" defaultValue="unknown"><option value="unknown">unknown</option><option value="allowed">allowed</option><option value="restricted">restricted</option></select></label>
+        <label>Derechos de reventa<select className="mt-1 w-full rounded border p-2" name="resaleRightsStatus" defaultValue="unknown"><option value="unknown">unknown</option><option value="allowed">allowed</option><option value="restricted">restricted</option></select></label>
         <label>Precio compra USD<input className="mt-1 w-full rounded border p-2" min="0" name="buyPrice" step="0.01" type="number" required /></label>
         <label>Envio USD<input className="mt-1 w-full rounded border p-2" defaultValue="0" min="0" name="shippingCost" step="0.01" type="number" /></label>
         <label>Inventario<input className="mt-1 w-full rounded border p-2" defaultValue="0" min="0" name="inventoryTotal" type="number" /></label>
