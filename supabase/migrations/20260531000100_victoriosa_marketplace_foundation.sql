@@ -228,9 +228,13 @@ alter table public.marketplace_reviews_queue enable row level security;
 alter table public.beauty_consultations enable row level security;
 alter table public.marketplace_settings enable row level security;
 
+drop policy if exists "profiles own read or admin" on public.marketplace_profiles;
+drop policy if exists "profiles admin write" on public.marketplace_profiles;
 create policy "profiles own read or admin" on public.marketplace_profiles for select using (id = auth.uid() or private.is_marketplace_admin());
 create policy "profiles admin write" on public.marketplace_profiles for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 
+drop policy if exists "suppliers admin all" on public.marketplace_suppliers;
+drop policy if exists "suppliers public minimal through published product" on public.marketplace_suppliers;
 create policy "suppliers admin all" on public.marketplace_suppliers for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 create policy "suppliers public minimal through published product" on public.marketplace_suppliers for select using (
   status = 'active' and exists (
@@ -238,29 +242,46 @@ create policy "suppliers public minimal through published product" on public.mar
   )
 );
 
+drop policy if exists "products public approved published" on public.marketplace_products;
+drop policy if exists "products admin all" on public.marketplace_products;
 create policy "products public approved published" on public.marketplace_products for select using (publication_status = 'published' and compliance_status = 'approved' and risk_level = 'low');
 create policy "products admin all" on public.marketplace_products for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 
+drop policy if exists "import batches admin all" on public.marketplace_product_import_batches;
+drop policy if exists "import rows admin all" on public.marketplace_product_import_rows;
 create policy "import batches admin all" on public.marketplace_product_import_batches for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 create policy "import rows admin all" on public.marketplace_product_import_rows for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 
+drop policy if exists "orders buyer read own" on public.marketplace_orders;
+drop policy if exists "orders buyer create own" on public.marketplace_orders;
+drop policy if exists "orders admin update" on public.marketplace_orders;
 create policy "orders buyer read own" on public.marketplace_orders for select using (buyer_user_id = auth.uid() or private.is_marketplace_admin());
 create policy "orders buyer create own" on public.marketplace_orders for insert with check (buyer_user_id = auth.uid() or buyer_user_id is null or private.is_marketplace_admin());
 create policy "orders admin update" on public.marketplace_orders for update using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 
+drop policy if exists "order items buyer read own" on public.marketplace_order_items;
+drop policy if exists "order items admin all" on public.marketplace_order_items;
 create policy "order items buyer read own" on public.marketplace_order_items for select using (
   private.is_marketplace_admin() or exists (select 1 from public.marketplace_orders o where o.id = marketplace_order_items.order_id and o.buyer_user_id = auth.uid())
 );
 create policy "order items admin all" on public.marketplace_order_items for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 
+drop policy if exists "click events public insert" on public.marketplace_click_events;
+drop policy if exists "click events admin read" on public.marketplace_click_events;
 create policy "click events public insert" on public.marketplace_click_events for insert with check (true);
 create policy "click events admin read" on public.marketplace_click_events for select using (private.is_marketplace_admin());
 
+drop policy if exists "reviews queue admin all" on public.marketplace_reviews_queue;
 create policy "reviews queue admin all" on public.marketplace_reviews_queue for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 
+drop policy if exists "consultations own read or admin" on public.beauty_consultations;
+drop policy if exists "consultations public insert" on public.beauty_consultations;
+drop policy if exists "consultations admin update" on public.beauty_consultations;
 create policy "consultations own read or admin" on public.beauty_consultations for select using (user_id = auth.uid() or private.is_marketplace_admin());
 create policy "consultations public insert" on public.beauty_consultations for insert with check (true);
 create policy "consultations admin update" on public.beauty_consultations for update using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 
+drop policy if exists "settings admin all" on public.marketplace_settings;
+drop policy if exists "settings public safe read" on public.marketplace_settings;
 create policy "settings admin all" on public.marketplace_settings for all using (private.is_marketplace_admin()) with check (private.is_marketplace_admin());
 create policy "settings public safe read" on public.marketplace_settings for select using (key in ('brand','public_contact','commerce_disclaimers'));

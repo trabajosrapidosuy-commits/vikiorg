@@ -7,44 +7,45 @@ Canonical status: `docs/VICTORIOSA_DIRECTOR_STATUS.md`
 
 ## Current Mode
 
-`VICTORIOSA_HUMAN_PR_REVIEW_AND_RELEASE_DECISION`
+`VICTORIOSA_PREVIEW_CANDIDATE_DETAIL_FIX`
 
 ## Status
 
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Founder hero: PASS, Sofia Victoria original editorial integration
-- Authenticated account smoke: PASS, reversible staging identities removed
-- Role escalation guard: PASS, staging hotfix applied and remote retry green
-- Google OAuth bootstrap: PASS, interactive provider login pending
-- Private admin separation: PASS, `Victoriosa Studio` isolated from storefront
-- Middleware compiled from `src/middleware.ts`: PASS
-- Build: PASS
-- Staging migration apply: PASS, five reviewed migrations
-- Structural RLS audit: PASS
-- `npm run ci`: PASS, 32 tests and 47 built routes
-- `npm run staging:check`: PASS, secure subshell from local env
-- REST anonymous RLS smoke: PASS
-- Authenticated account smoke: PASS, reversible staging identities removed
-- Outbound publish, purchase and email send: DISABLED
-- Supplier-agnostic Autopilot core: IMPLEMENTED, staging migration prepared
-- Supplier intelligence migration: PASS, applied only to authorized staging
-- Core CI: PASS, 48 tests, 21 RLS tables, 52 pages plus Middleware
-- Authenticated Autopilot staging smoke: PASS with reversible fixtures removed
-- Draft public visibility after import: ZERO
-- Custom domain DNS and SSL: PASS for apex and WWW
-- Supabase custom-domain Auth URLs: APPLIED_AND_SMOKE_VERIFIED
-- Custom-domain Auth smoke: PASS, reversible fixtures removed
-- OAuth consent information URL: IMPLEMENTED, Google login remains inactive
-- Privacy and terms routes: IMPLEMENTED locally, public deploy pending
-  human-approved release
-- Controlled release review: PASS locally, remote informational routes remain
-  404 on current public deployment
-- Human PR/release decision: PREPARED, no Production release executed
+- Expanded dry-run: `PASS_9_MIGRATIONS_NO_DRIFT`
+- Real staging apply: `PASS_9_MIGRATIONS`
+- Staging and RLS smoke: `PASS_13_AUTOPILOT_TABLES`
+- K-beauty persistence: `PASS`
+- Review-only seed: `PASS_8_CANDIDATES`
+- Published products: `0`
+- Unauthenticated admin guard: `PASS`
+- Server action guards: `PASS_9_OF_9`
+- Authenticated admin browser smoke: `CHECK_NOT_RUN_NO_SECURE_SESSION`
+- Admin identity validation: `PASS_2_MARKETPLACE_ADMINS`
+- `akuma424424@gmail.com`: `marketplace_admin`
+- `trabajosrapidos.uy@gmail.com`: `marketplace_admin`
+- Password recovery PKCE exchange: `PASS`
+- Invalid recovery browser smoke: `PASS_FAIL_CLOSED`
+- Real fresh-link password update: `CHECK_NOT_RUN_USER_SECRET_REQUIRED`
+- Admin post-login destination: `PASS_DIRECT_TO_ADMIN_AUTOPILOT`
+- Admin header/account discovery: `PASS_ROLE_GATED`
+- Non-admin Studio discovery: `BLOCKED_BY_ROLE`
+- Preview deployment: `READY_PREVIEW_ONLY`
+- Preview browser smoke: `CHECK_NOT_RUN_VERCEL_PROTECTION`
+- Human admin dashboard smoke: `PASS`
+- K-beauty candidates: `PASS_8_PENDING_ADMIN_REVIEW`
+- Candidate detail normalization: `PASS_DEPLOYED_TO_PREVIEW`
+- Candidate detail human smoke: `CHECK_NOT_RUN_HUMAN_SESSION_UNAVAILABLE`
+- Preview deployment: `READY_PREVIEW_ONLY`
+- Total candidates: `10`
+- K-beauty pending review: `8`
+- Published products: `0`
+- Production deploy/payment/publication: `NO`
 
 ## Blockers
 
-`NO_BLOCKERS_FOR_SAFE_NEXT_CYCLE`
+`BLOCKED_MISSING_ACCESS`
 
 ## Next Mode
 
-`VICTORIOSA_RELEASE_GATE_GO_NO_GO`
+`VICTORIOSA_PREVIEW_CANDIDATE_DETAIL_HUMAN_SMOKE`

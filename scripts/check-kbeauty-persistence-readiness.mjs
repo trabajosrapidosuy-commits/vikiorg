@@ -89,8 +89,8 @@ for (const table of requiredTables) {
 const issues = [];
 if (productionStatus !== "NO-GO_PRODUCTION") issues.push("Production status is not NO-GO_PRODUCTION.");
 if (target !== "staging") issues.push("Target must remain staging in this phase.");
-if (mode === "write" && Object.values(tableStatus).some((state) => state !== "READY")) {
-  issues.push("Required persistence tables are not fully ready for write mode.");
+if (Object.values(tableStatus).some((state) => state !== "READY")) {
+  issues.push("Required persistence tables are not fully ready.");
 }
 
 console.log(JSON.stringify({

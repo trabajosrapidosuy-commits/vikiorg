@@ -2,350 +2,599 @@
 
 ## Current Mode
 
-`VICTORIOSA_PRODUCTION_AUTODEPLOY_BLOCK_STRATEGY`
+`VICTORIOSA_PREVIEW_CANDIDATE_DETAIL_FIX`
+
+## Preview Candidate Detail Fix
+
+Date: 2026-06-08
+
+- Fix commit: `72a5a06`
+- Preview deployment: `dpl_C3bSqX89VJurLDb5aJUUXCQHo9iS`
+- Preview URL:
+  `https://victoriosa-marketplace-k32hs2umj-akuma424-projects.vercel.app`
+- Vercel target: `preview`
+- Vercel status: `READY`
+- Production deployment: `NO`
+- `scoring.explanation` normalization: `PASS`
+- Accepted safe formats: array, string, object, null and undefined
+- Score, risk and compliance cards remain visible in the detail implementation
+- Candidate listing: `PASS_NOT_REGRESSED`
+- Staging candidates: `10` total
+- K-beauty candidates: `8`
+- K-beauty `pending_admin_review`: `8`
+- Published products: `0`
+- Supplier contacts sent or advanced: `0`
+- Campaigns enabled: `0`
+- Official representation claims: `0`
+- RLS smoke: `PASS_13_INTERNAL_TABLES`
+- Unauthenticated guard: `PASS`
+- Non-admin guard: `CHECK_NOT_RUN_NO_SAFE_SESSION`
+- Authenticated Preview dashboard/detail/runs/drafts/review smoke:
+  `CHECK_NOT_RUN_HUMAN_CHROME_SESSION_UNAVAILABLE`
+- Preview logs after deployment: no matching SSR exception observed, but no
+  authenticated human detail navigation was available as positive evidence
+- Production touched: `NO`
+- Secrets exposed: `NO`
+
+Decision: `PENDING_HUMAN_DETAIL_SMOKE`
+
+## Autopilot Staging Human Admin Smoke Record
+
+Date: 2026-06-08
+
+- Worktree: `C:\victoriosa-autopilot-admin-control-center`
+- Branch: `codex/victoriosa-autopilot-staging-enable`
+- Staging target: `ngliugfcwydnfbpalkpb`
+- Human-authenticated `/admin/autopilot`: `PASS`
+- Dashboard candidates shown: `10` total
+- K-beauty candidates: `8`
+- K-beauty review status: `PASS_8_PENDING_ADMIN_REVIEW`
+- Candidate detail:
+  `FAIL_SERVER_SIDE_EXCEPTION_DIGEST_3146828372`
+- Root cause: legacy persisted candidates do not contain
+  `scoring.explanation`, while the detail page called `.map()` directly.
+- Local fix: `PASS`; candidate detail lists now normalize missing or malformed
+  explanation, strengths, weaknesses, warnings and blockers.
+- Dashboard now distinguishes `K-beauty review-only` from total historical
+  candidates.
+- Detail score/risk/compliance data exists in staging:
+  score `0`, risk `45`, compliance `45`, recommendation `review`, warning
+  `kbeauty_seed_pending_validation`, zero blockers.
+- Human rendering of score/risk/compliance/blockers/warnings:
+  `FAIL_BLOCKED_BY_DETAIL_SSR`
+- Products with `publication_status=published`: `0`
+- Review-only drafts: `3`
+- Official representation claims: `0`
+- Explicit `not_official` candidates: `10`
+- Unauthenticated `/admin/autopilot` guard: `PASS`
+- SSR/Supabase errors: `FAIL_DETAIL_SSR`; no staging database error found.
+- Deploy executed: `NO`
+- Production touched: `NO`
+- Secrets exposed: `NO`
+
+Decision: `NO-GO_ADMIN_SMOKE_FAILED`
+
+Blocker: `BLOCKED_PRODUCTION_RISK` does not apply. The remaining operational
+gate is an intentionally undeployed local fix because this cycle prohibited
+deploy. A separate Preview-only cycle must deploy and repeat the human detail
+smoke before declaring Autopilot staging ready.
+
+## Admin Autopilot Discoverability
+
+Date: 2026-06-08
+
+- Administrators no longer need to know or guess `/admin/autopilot`.
+- Email/password and Google OAuth sessions with role `admin` or
+  `marketplace_admin` now land directly on `/admin/autopilot`.
+- Authenticated administrators see an `Autopilot` entry in the storefront
+  header on desktop and mobile.
+- The account summary and account navigation expose
+  `Victoriosa Studio / Autopilot` only after a server-side role check.
+- Normal authenticated users continue to land on `/account`.
+- Anonymous and non-admin `/admin` guards remain unchanged and fail closed.
+- Focused discoverability and authorization tests: `PASS_25_TESTS`
+- Full tests: `PASS_34_FILES_121_TESTS`
+- Build: `PASS`
+- Preview deployment: `READY`
+- Preview target: `preview`
+- Stable branch alias:
+  `https://victoriosa-marketplace-git-codex-victo-ac899b-akuma424-projects.vercel.app`
+- Anonymous automated smoke: blocked by Vercel Deployment Protection before
+  reaching the application.
+- Authenticated admin smoke: `CHECK_NOT_RUN_CHROME_SESSION_UNAVAILABLE`
+- Production touched: `NO`
+- Production deploy: `NO`
+- Secrets exposed: `NO`
+
+Decision: `GO_PREVIEW_READY_AUTH_SMOKE_BLOCKED`
+
+## Password Recovery PKCE Fix
+
+Date: 2026-06-08
+
+- Root cause: recovery links redirected directly to `/auth/reset-password`
+  with a PKCE authorization code, but that page did not exchange the code for
+  a session before calling `updateUser`.
+- New recovery emails now redirect through
+  `/auth/callback?next=/auth/reset-password`.
+- Previously issued links that reach `/auth/reset-password?code=...` are
+  forwarded through the same callback.
+- Invalid, expired or cross-browser PKCE links fail closed with a generic
+  recovery message and do not expose raw verifier errors.
+- Local browser smoke with a synthetic invalid code: `PASS_FAIL_CLOSED`
+- Focused tests: `PASS_12_TESTS`
+- Full tests: `PASS_33_FILES_115_TESTS`
+- Build: `PASS`
+- Production touched: `NO`
+- Deploy executed: `NO`
+- Secrets exposed: `NO`
+
+Decision: `GO_PASSWORD_RECOVERY_CODE_FIXED`
+
+## Autopilot Admin Identity Validation
+
+Date: 2026-06-08
+
+- Authorized staging ref: `ngliugfcwydnfbpalkpb`
+- Project: `Victoriosa-marketplace`, `ACTIVE_HEALTHY`
+- `akuma424424@gmail.com`: confirmed, active, `marketplace_admin`
+- `trabajosrapidos.uy@gmail.com`: confirmed, active, promoted from
+  `authenticated` to `marketplace_admin`
+- Duplicate Auth users for either email: `NO`
+- Effective Autopilot admin role for both users: `PASS`
+- Autopilot RLS admin gate present: `PASS`
+- Production touched: `NO`
+- Deploy executed: `NO`
+- Secrets exposed: `NO`
+- Browser login smoke: `CHECK_NOT_RUN_NO_SECURE_SESSION`
+
+Decision: `GO_ADMIN_IDENTITIES_VERIFIED`
+
+## Current Cycle Gate
+
+- Branch: `codex/victoriosa-autopilot-staging-enable`
+- Target Supabase: `ngliugfcwydnfbpalkpb`
+- `.env.local`: exists, ignored, not tracked
+- Env gate: `PASS`
+- Link to staging: `PASS`
+- Remote versions reconstructed locally: `20260602003409`, `20260602003504`, `20260602003559`, `20260602165959`, `20260602174851`, `20260602190714`
+- Safe placeholders created locally: `YES`
+- `migration list`: `PASS` (the six remote versions now align)
+- `db pull --linked`: `FAIL` (eight local versions are absent from remote history)
+- `db push --dry-run`: `FAIL` (six earlier local migrations require `--include-all`)
+- `--include-all` preflight: `NO-GO` (public `with check (true)` policies and
+  helper grants to `anon` require security review)
+- Remote staging write actions: blocked by `NO-GO_MIGRATION_REVIEW`
+
+## Legacy Policy Hardening Result
+
+- Hardening migration:
+  `20260607025035_harden_legacy_public_policies_and_anon_grants.sql`
+- Unconstrained legacy insert policies remediated:
+  `marketplace_click_events`, `beauty_consultations`
+- Anonymous role helper execution revoked:
+  `private.current_app_role()`
+- Anonymous boolean admin helper retained:
+  `private.is_marketplace_admin()`, required for safe evaluation of mixed
+  public/admin RLS policies and returns no role data
+- Helper `search_path`: hardened to empty with fully qualified references
+- Public catalog contract preserved:
+  `published`, `approved`, `low`
+- K-beauty tables remain RLS-enabled and explicitly revoked from `anon` in
+  local migrations
+- Planned migration SQL destructive scan: `PASS`
+- `db push --dry-run --include-all`: `PASS`, nine migrations reviewable
+- Real `db push`: `NO`
+- Staging smoke: `FAIL`, the four K-beauty tables return HTTP 404 because their
+  migration is not applied remotely
+- Production: `NO-GO_PRODUCTION`
+
+Decision: `GO_HARDENING_DRY_RUN_REVIEWABLE`
+
+## Staging Canonical Apply Review
+
+- Authorized ref relinked: `ngliugfcwydnfbpalkpb`
+- `migration list`: `PASS`
+- Final `db push --dry-run --include-all`: `PASS`
+- Pending plan: nine migrations, unchanged from the hardening review
+- SQL destructive operations: `NONE`
+- Effective RLS relaxation: `NO`
+- Effective dangerous grants to `anon`: `NO`
+- Public catalog boundary preserved: `published`, `approved`, `low`
+- Post-apply smoke plan: all 13 Autopilot tables
+- Apply runbook:
+  `docs/VICTORIOSA_STAGING_CANONICAL_APPLY_RUNBOOK.md`
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `GO_STAGING_APPLY_RUNBOOK_READY`
+
+## Staging Apply Authorization Gate
+
+- Authorized staging ref: `ngliugfcwydnfbpalkpb`
+- Project status: `ACTIVE_HEALTHY`
+- Env gate: `PASS`
+- Link: `PASS`
+- `migration list`: `PASS`
+- Physical backup available: `YES`
+- Latest completed backup observed: `2026-06-06T11:28:54.763Z`
+- PITR: `DISABLED`
+- Current `db push --dry-run --include-all`: `FAIL`
+- Failure: temporary CLI role authentication and Supabase pooler
+  `ECIRCUITBREAKER`
+- `SUPABASE_DB_PASSWORD`: `MISSING`
+- Plan without drift: `UNKNOWN_CURRENT_RUN`
+- Post-apply smoke prepared: `YES`, 13 Autopilot tables
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `NO-GO_CHECKS_FAILING`
+
+Blocker: `BLOCKED_SUPABASE_ACCESS`
+
+## Staging Migration Idempotency Reconciliation
+
+- Original duplicate policy reconciled:
+  `profiles own read or admin`
+- Policy recreation guards added: `39`
+- Pending migration files changed: `6`
+- Automated idempotency test added: `YES`
+- SQL destructive operations: `NO`
+- RLS relaxed: `NO`
+- Dangerous effective grants to `anon`: `NO`
+- `migration list`: `PASS`
+- `db push --dry-run --include-all`: `PASS`
+- Plan drift: `NO`
+- Pending plan: exact same nine migrations
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `GO_IDEMPOTENT_MIGRATIONS_READY_FOR_APPLY_RETRY`
+
+## Staging Idempotent Apply Retry Result
+
+- Literal authorization detected: `YES`
+- Authorized ref: `ngliugfcwydnfbpalkpb`
+- Physical backup confirmed: `YES`
+- Final dry-run: `PASS`, exact nine-migration plan
+- Plan drift: `NO`
+- Real apply: `PASS`
+- Remote migration history aligned: `PASS`
+- `staging:check`: `PASS`
+- `rls:smoke`: `PASS`, anonymous boundary and 13 Autopilot tables
+- K-beauty persistence: `PASS`
+- First seed attempt: `FAIL`, partial unique-index conflict inference
+- Seed implementation corrected: `efaa299`
+- Final seed review-only: `PASS`
+- K-beauty candidates: `8`, all `pending_admin_review`
+- Research status: `6 needs_review`, `2 needs_supplier_validation`
+- Representation status: `8 not_official`
+- Imported candidates: `0`
+- Published marketplace products: `0`
+- Supplier contacts contacted: `0`
+- Campaign sends enabled: `0`
+- Failed partial research run reconciled to `failed`: `YES`
+- Unauthenticated admin route guard: `PASS`
+- Authenticated browser smoke: `CHECK_NOT_RUN`, integrated browser unavailable
+- Production/deploy/payment: `NO`
+
+Decision: `PENDING_HUMAN_ADMIN_SMOKE`
+
+Blocker: `BLOCKED_MISSING_ACCESS`
+
+## Authenticated Autopilot Smoke Attempt
+
+- Date: `2026-06-07`
+- Mode: `VICTORIOSA_AUTOPILOT_STAGING_AUTHENTICATED_ADMIN_SMOKE`
+- Authorized staging ref: `ngliugfcwydnfbpalkpb`
+- Env gate: `PASS`, eight required variables `SET`
+- `staging:check`: `PASS`
+- `rls:smoke`: `PASS`, anonymous boundary and 13 Autopilot tables
+- K-beauty persistence: `PASS`
+- Seeded candidates: `8`
+- Candidates `pending_admin_review`: `8`
+- Representation `not_official`: `8`
+- Published products: `0`
+- Draft + needs-review products: `2`
+- Supplier contacts sent: `0`
+- Campaign sends enabled: `0`
+- Unauthenticated guard: `PASS` for `/admin`, Autopilot dashboard,
+  candidate detail, runs and drafts
+- Server actions protected by `requireAdmin()`: `PASS`, 9 of 9
+- Draft import safety: `PASS`, `draft + needs_review`
+- Local SSR errors during unauthenticated smoke: `NONE`
+- Integrated browser available: `NO`
+- Secure admin session available to Codex: `NO`
+- Authenticated dashboard, candidate detail, runs and drafts:
+  `CHECK_NOT_RUN`
+- Non-admin session smoke: `CHECK_NOT_RUN`
+- Production/deploy/payment/publication mutation: `NO`
+
+Decision: `PENDING_HUMAN_ADMIN_SESSION`
+
+Blocker: `BLOCKED_MISSING_ACCESS`
+
+## Staging Dry-Run Authentication Recovery
+
+- `SUPABASE_DB_PASSWORD`: `SET`
+- Secret location: ignored and untracked `.env.local`
+- Supabase link: `PASS`
+- `migration list`: `PASS`
+- `db push --dry-run --include-all`: `PASS`
+- Plan without drift: `YES`
+- Pending migrations: exactly nine
+- Real `db push`: `NO`
+- Seed: `NO`
+- Production/deploy: `NO`
+
+Decision: `GO_READY_FOR_EXPLICIT_STAGING_APPLY_AUTHORIZATION`
+
+## Explicit Staging Apply Result
+
+- Literal authorization detected: `YES`
+- Backup: `PASS`
+- Final dry-run: `PASS`, exact nine-migration plan
+- Real apply: `FAIL`
+- Failed migration:
+  `20260531000100_victoriosa_marketplace_foundation.sql`
+- Failure: policy `profiles own read or admin` already exists
+- Pending migrations recorded remotely after failure: `NONE`
+- `migration repair`: `NO`
+- Further apply retries: `NO`
+- `staging:check`: `PASS`
+- `rls:smoke`: `FAIL`, K-beauty tables remain absent
+- K-beauty persistence: `FAIL`
+- Seed: `CHECK_NOT_RUN`
+- Candidates created: `CHECK_NOT_RUN`
+- Products published: `NO`
+- Production/deploy: `NO`
+
+Decision: `NO-GO_APPLY_FAILED`
+
+Blocker: `BLOCKED_SUPABASE_ACCESS`
 
 ## Context
 
 - Worktree: `C:\victoriosa-autopilot-admin-control-center`
-- Branch: `codex/victoriosa-git-upload-repair`
-- HEAD before cycle: `530169a`
+- Branch: `codex/victoriosa-autopilot-staging-enable`
+- HEAD before cycle: `68f46e7`
 - Pull request: `#25`
 - PR base: `main`
 - PR state: `OPEN_DRAFT`
 - PR checks: `PASS`
 - `PRODUCTION_STATUS=NO-GO_PRODUCTION`
-- Branch: `codex/victoriosa-domain-ssl-dns-rescue`
-- Authorized staging ref: `ngliugfcwydnfbpalkpb`
-- Blocked ref not used: `dpwassnykcrgjwrruckz`
-- Public storefront canonicalization: IMPLEMENTED
-- Automatic publication, outbound email, supplier purchase and payments:
-  NOT_EXECUTED
 
-## Repository Publication
+## Current Risk
 
-- Safe publish branch:
-  `codex/victoriosa-staging-foundation-publish`
-- Remote repository:
-  `https://github.com/trabajosrapidosuy-commits/Victoriosa-marketplace`
-- GitHub Push Protection rejected the inherited local history because an older
-  commit contained a Supabase credential under `credenciales/`.
-- Published branch was rebuilt from `origin/main` with the validated safe tree.
-- PR `#2`: MERGED into `main`.
-- Mitigation PR for the latest guardrail commit: BLOCKED_MISSING_ACCESS. Open
-  manually from the published branch.
+`BLOCKED_PRODUCTION_RISK`
 
-## Platform Link
+GitHub deployment history consistently shows:
 
-- Supabase project `Victoriosa-marketplace` (`ngliugfcwydnfbpalkpb`):
-  ACTIVE_HEALTHY through the authenticated MCP connector.
-- Supabase staging migrations: foundation, autopilot foundation and admin
-  boundary present.
-- Vercel project `victoriosa-marketplace`: CREATED_AND_LOCALLY_LINKED.
-- Vercel Git repository connection: CONNECTED.
-- Vercel branch-scoped Preview variables: CONFIGURED with public URL and anon
-  key only.
-- Vercel deployed public smoke: PASS.
-- Vercel Preview:
-  `https://victoriosa-marketplace-i9nqyd117-akuma424-projects.vercel.app`
-- Vercel Preview status: READY_TARGET_PREVIEW_PROTECTED.
-- Preview-only `VICTORIOSA_DEMO_MODE=true`: CONFIGURED.
-- Local functional demo: `http://localhost:3101/productos`.
-- Production incident: a bare Vercel deploy command unexpectedly created a
-  Ready deployment with `target=production` and aliases. No production flag or
-  promote command was used. No rollback or alias mutation was executed.
-- Deployment URL:
-  `https://victoriosa-marketplace-ecru.vercel.app`
+- feature and PR commits create Vercel Preview deployments;
+- commits integrated into `main` create Vercel Production deployments;
+- at least three Vercel scopes are connected to this repository;
+- `main` has no branch protection;
+- no remote test CI workflow is required before merge.
 
-## Implemented
+No remote branch named exactly `integration` or `staging` currently exists.
+PR #25 must remain draft and must not be merged or retargeted yet.
 
-1. Added public presentation contract that omits internal fields.
-2. Added server-side public catalog service over the canonical repository.
-3. Migrated `/`, `/productos`, `/productos/[slug]` and `/kits` away from local
-   seeds.
-4. Removed visitor-facing admin navigation and import links.
-5. Removed internal risk, compliance and review labels from public cards and
-   detail.
-6. Replaced checkout and cart entry surfaces with honest
-   `Compra online proximamente` messaging while payments remain disabled.
-7. Added professional empty catalog state.
-8. Added public storefront safety tests.
-9. Redirected legacy `/products`, `/cart`, `/orders/[id]` and `/thank-you`
-   surfaces to safe canonical pages.
-10. Applied `requireAdmin` to the full `/admin` UI tree before render.
+## Recommended Strategy
 
-## Staging Smoke
+Use a two-lane Git model:
 
-- `npm run rls:smoke`: PASS.
-- Public catalog visible rows: ZERO.
-- Anonymous draft visibility: ZERO.
-- Imported `draft + needs_review` products remain hidden.
-- Internal Autopilot tables hidden: PASS.
+1. `integration` is the normal merge target for reviewed work.
+2. `production` is the only Vercel Production branch.
+3. `main` remains frozen until every connected Vercel project is audited.
+4. Feature branches and `integration` may create Preview deployments only.
+5. Production changes require a separate PR from `integration` to `production`,
+   explicit human authorization and a release window.
+6. `PRODUCTION_STATUS=NO-GO_PRODUCTION` remains active until that authorization.
 
-## Browser Smoke
+This is safer than merely retargeting PR #25 because a new branch alone does
+not change Vercel Production settings. The branch and all connected Vercel
+projects must be configured and verified as one controlled change.
 
-- Local home title: `Victoriosa Marketplace`.
-- Home empty catalog message: visible.
-- Catalog empty state: visible.
-- Public admin link: absent.
-- Internal labels: absent.
-- Legacy `/products`, `/cart` and `/thank-you` redirects: PASS.
-- Anonymous `/admin/marketplace` redirect to `/`: PASS, no panel leak.
-- Screenshot: CHECK_NOT_RUN_COMPLETE, embedded viewport screenshot was not
-  required for DOM verification.
-- Mobile viewport smoke: CHECK_NOT_RUN, viewport capability documentation was
-  not available in the installed browser bundle.
+## Manual GitHub Steps
 
-## Checks
+Human execution only:
 
-- `npm run staging:check`: PASS
-- `npm run rls:smoke`: PASS
-- `npm run secret:scan`: PASS
-- `npm run production:check`: PASS
-- `npm run guard:no-production-deploy`: PASS
-- `npm run test:rls:static`: PASS, 18 public tables
-- `npm run lint`: PASS
-- `npm run typecheck`: PASS
-- `npm run test`: PASS, 26 tests
-- `npm run build`: PASS
-- `npm run smoke:structure`: PASS
-- `git diff --check`: PASS
-- `npm run ci`: CHECK_NOT_RUN_COMPLETE, gates executed sequentially to avoid
-  the previously observed wrapper hang.
+1. Create `integration` from the current reviewed `main`.
+2. Create `production` from the current approved production baseline.
+3. Add branch protection to `integration`:
+   - require pull requests;
+   - require at least one approval;
+   - require conversation resolution;
+   - require Vercel Preview checks;
+   - require the repository CI workflow after it is added;
+   - block force pushes and deletion.
+4. Add stricter protection to `production`:
+   - require pull requests from `integration`;
+   - require explicit release approval;
+   - block direct pushes, force pushes and deletion;
+   - require all checks and resolved conversations.
+5. Do not retarget PR #25 until the Vercel verification below passes.
 
-## Preview Smoke
+## Manual Vercel Steps
 
-- Explicit Preview deployment: PASS, `target=preview`.
-- Protected Preview anonymous boundary: PASS, HTTP `401`.
-- Cycle 021 completed: founder-provided Sofia Victoria portrait integrated as
-  an original premium Victoriosa hero with natural editorial retouch.
-- Sofia Victoria hero Preview: PASS, `target=preview`, `Ready`,
-  `https://victoriosa-marketplace-3id8vyhgs-akuma424-projects.vercel.app`.
-- Cycle 022 authenticated staging smoke: PASS with reversible temporary users.
-- Security hotfix: PASS, `victoriosa_profile_role_escalation_guard` applied to
-  authorized staging after smoke detected a surviving broad profile update
-  privilege. Remote retry confirmed role escalation blocked.
-- Google OAuth provider bootstrap: PASS for local and documented Preview
-  redirects. Interactive Google identity smoke remains external.
-- Public signup: CHECK_NOT_RUN_COMPLETE, Supabase returned email delivery rate
-  limit HTTP `429`; no temporary auth residue remained.
-- Positive admin browser smoke: CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
-  One staging admin profile exists, but its credential is not loaded locally.
-- Protected Preview route smoke:
-  CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS because no project-specific
-  automation bypass is available.
-- Public deployed smoke: PASS, home and `/productos` render.
-- Public deployed API smoke: PASS, `{"products":[]}`.
-- Legacy API smoke: PASS, product, order and import handlers remain deprecated.
-- Anonymous `/admin/marketplace`: PASS, redirects away from admin.
-- Authenticated admin deployed smoke:
-  CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
-- Browser embedded smoke: CHECK_NOT_RUN_BROWSER_HOST_ATTACH_TIMEOUT.
-- Local staging RLS smoke: PASS.
+Repeat these steps in every connected project/scope, currently observed as
+`akuma424-projects`, `victoriosa-marketplace` and `ads-42d98c21`:
 
-## Functional Demo
+1. Open Vercel Dashboard, select the project, then open `Settings > Git`.
+2. Confirm the connected repository is exactly
+   `trabajosrapidosuy-commits/Victoriosa-marketplace`.
+3. Record the current Production Branch and project owner/scope.
+4. Change the Production Branch from `main` to `production`.
+5. Confirm `integration` and feature branches remain Preview-only.
+6. If the project is a duplicate or unauthorized connection, disconnect its Git
+   integration only after a human ownership review.
+7. Keep Production environment variables unchanged.
+8. Do not use Promote, Redeploy to Production, rollback, alias mutation or CLI.
+9. Push a documentation-only test commit to `integration`.
+10. Confirm each connected project creates Preview only and that GitHub records
+    zero Production deployments for that SHA.
 
-- Catalog demo notice: PASS.
-- Catalog sample cards: PASS.
-- Product detail: PASS.
-- Add-to-cart control: PASS.
-- Persistent local cart route: PASS.
-- Manual checkout route: PASS.
-- Real payment execution: DISABLED.
-- Demo products: explicitly labeled and never persisted as published records.
+Vercel also supports disabling automatic deployments globally or per branch,
+but that is a fallback. It can hide useful Preview feedback and does not solve
+the multiple-project ownership problem by itself.
 
-## Blockers
+## Strategy Comparison
 
-- `BLOCKED_EXTERNAL_CREDENTIALS`: public signup email confirmation delivery
-  validation returned HTTP `429`; retry after provider cooldown.
-- `BLOCKED_EXTERNAL_CREDENTIALS`: interactive Google and positive admin browser
-  smoke require controlled identities loaded outside chat.
-- `BLOCKED_SUPABASE_ACCESS`: current Sofia Victoria Preview callback and reset
-  URLs still need allowlist confirmation.
-- Cycle 020 completed: original editorial hero, premium navigation, email auth,
-  SSR session refresh, private account pages and safe user preferences.
-- Authorized staging `ngliugfcwydnfbpalkpb`: migration
-  `victoriosa_email_auth_profiles_settings` applied and listed remotely.
-- `npm run ci`: PASS, including 31 tests and build with 46 routes.
-- `npm run staging:check` and `npm run rls:smoke`: CHECK_NOT_RUN in the current
-  shell because `.env.rls` retains empty staging smoke values.
-- Google OAuth bootstrap is configured. The local OAuth credential file remains
-  ignored and was not read or committed.
-- Explicit Preview deployment: PASS, `target=preview`, `Ready`,
-  `https://victoriosa-marketplace-ntcbh4o5p-akuma424-projects.vercel.app`.
-- Protected Preview anonymous boundary: PASS, HTTP `401`.
+### Keep PR #25 draft and use Preview only
 
-- `BLOCKED_MISSING_ACCESS`: the authenticated GitHub account can push the
-  branch but cannot create the mitigation PR.
-- `BLOCKED_EXTERNAL_CREDENTIALS`: supplier and payment sandbox credentials
-  remain absent.
-- `BLOCKED_PRODUCTION_RISK`: an accidental Vercel deployment has
-  `target=production`. Alias removal, rollback or deletion requires explicit
-  human approval.
-- `BLOCKED_EXTERNAL_CREDENTIALS`: authenticated deployed admin smoke requires
-  staging admin credentials loaded through a secure local mechanism.
-- `BLOCKED_EXTERNAL_CREDENTIALS`: protected Preview route smoke requires a
-  project-specific Vercel automation bypass loaded securely.
-- `BLOCKED_PRODUCTION_RISK`: production remains prohibited until canonical
-  orders, fulfillment, compliance and payment sandbox cycles are complete.
+- Pros: zero Production risk now; already proven.
+- Cons: does not provide an integration path.
+- Decision: required immediate state.
 
-## Next Mode
+### Retarget PR #25 to `integration`
 
-`VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW`
+- Pros: enables controlled merge and stable Preview branch.
+- Cons: unsafe until `integration` exists and all Vercel scopes prove
+  Preview-only.
+- Decision: preferred after manual setup and verification.
 
-## Custom Domain DNS and SSL
+### Keep `main` as Production with release windows
 
-- Domain: `victoriosa.click`.
-- Vercel linked project: `victoriosa-marketplace`.
-- Apex: PASS, `76.76.21.21`.
-- WWW: PASS, project-specific `cname.vercel-dns-016.com`.
-- HTTPS apex and WWW: PASS, HTTP `200`, HSTS, `Server: Vercel`.
-- TLS apex: PASS, Let's Encrypt certificate through `2026-08-31`.
-- `openssl`: CHECK_NOT_AVAILABLE on this Windows host.
-- Public URL helper: IMPLEMENTED.
-- Supabase Auth custom-domain URL allowlist: APPLIED_AND_SMOKE_VERIFIED.
+- Pros: minimal branch changes.
+- Cons: every merge remains a Production trigger; high operator-error risk.
+- Decision: rejected while `NO-GO_PRODUCTION` is active.
 
-## Custom Domain Auth Smoke
+### Disable Vercel auto-deploy entirely
 
-- Signup redirects apex and WWW: PASS.
-- Recovery redirects apex and WWW: PASS.
-- Signup OTP confirmation: PASS.
-- Reset-password recovery OTP, update and login: PASS.
-- Callback without code apex and WWW: PASS_FAIL_CLOSED.
-- Browser login, account and logout apex and WWW: PASS.
-- Customer Studio rejection: PASS.
-- Temporary residue after cleanup: ZERO.
+- Pros: strongest immediate deployment stop.
+- Cons: also disables useful Preview automation and requires manual deployment
+  discipline.
+- Decision: emergency fallback, not preferred steady state.
 
-## OAuth Consent Information URL
+### Separate `production` from `main`
 
-- Public informational route: `https://victoriosa.click/oauth/consent`.
-- Build route: PASS.
-- Google OAuth public login route: STILL_INACTIVE.
-- This route is ready to register manually in the external OAuth
-  consent-screen configuration.
+- Pros: explicit release boundary and compatible with Preview-based review.
+- Cons: requires synchronized configuration across every Vercel project.
+- Decision: preferred Production boundary.
 
-## Supplier Intelligence Engine
+### Branch protection only
 
-- Supplier-agnostic deterministic core: IMPLEMENTED.
-- Pricing, risk, brand fit, viral potential and scoring: IMPLEMENTED.
-- Mock and manual providers: IMPLEMENTED.
-- Admin candidate queue filters and sorting: IMPLEMENTED.
-- Review audit events and safe settings migration: APPLIED_TO_AUTHORIZED_STAGING.
-- Automatic publication: DISABLED.
-- CJ live integration: NOT_EXECUTED.
+- Pros: prevents accidental GitHub merges.
+- Cons: does not stop an authorized merge from triggering Vercel Production.
+- Decision: mandatory defense in depth, insufficient alone.
 
-## Supplier Intelligence Engine Verification
+## GO Conditions For PR #25
 
-- `npm run ci`: PASS, 48 tests.
-- `npm run test:rls:static`: PASS, 21 public tables.
-- `npm run build`: PASS, 52 pages plus Middleware.
-- Authorized staging migration:
-  `victoriosa_supplier_agnostic_autopilot_core` LISTED_REMOTELY.
-- New table RLS metadata: PASS for `autopilot_review_events` and
-  `autopilot_settings`.
-- New table anonymous grants: PASS, zero grants.
-- Strict Autopilot helper: PASS, only `admin` and `marketplace_admin`.
-- Local anonymous route smoke: PASS for public storefront and private owner
-  redirects.
-- `npm run staging:check` and `npm run rls:smoke`:
-  PASS with secure in-memory mapping from ignored local staging values.
+PR #25 may be retargeted to `integration` and marked ready only when:
 
-## Authenticated Autopilot Staging Smoke
+- `integration` exists and is protected;
+- every connected Vercel project is inventoried;
+- every project uses `production` as its Production Branch or is disconnected;
+- one test push to `integration` creates Preview deployments only;
+- GitHub records zero Production deployments for the test SHA;
+- required remote CI exists and passes;
+- PR checks are green and merge state is clean;
+- `.env.local` remains ignored and untracked;
+- `PRODUCTION_STATUS=NO-GO_PRODUCTION` remains unchanged.
 
-- Masked customer: `victoriosa.customer.***@example.invalid`.
-- Masked admin: `victoriosa.admin.***@example.invalid`.
-- Anonymous internal Autopilot read: BLOCKED.
-- Customer login, account, profile and settings: PASS.
-- Customer Autopilot read, insert and role escalation: BLOCKED.
-- Customer private browser routes: redirected away from Studio.
-- Admin Studio, candidates, runs, settings and imports routes: PASS.
-- Owner alias `/owner/autopilot`: PASS, redirects admin to private Studio.
-- Mock discovery Server Action UI: PASS.
-- Manual provider Server Action UI: PASS.
-- Review reject, approve and `imported_draft` events: PASS.
-- Draft visibility in anonymous catalog: ZERO.
-- Public storefront Admin or Autopilot discovery: ZERO.
-- Temporary staging residue after cleanup: ZERO users, drafts and candidates.
-- Bug fixed: optional empty form values normalize to `undefined` before Zod.
+## NO-GO Conditions
 
-## Private Admin Separation Preview
+- any Vercel project or scope remains unidentified;
+- `main` or `integration` remains a Production Branch anywhere;
+- a test push creates any Production deployment;
+- branch protection or required CI is missing;
+- PR checks fail or remain pending;
+- a secret, RLS relaxation, payment or automatic publication risk appears.
 
-- URL: `https://victoriosa-marketplace-70wtw9qlb-akuma424-projects.vercel.app`
-- Deployment: `dpl_HWwdqJqrHj2v2agtBXQ2UKW9aXWR`
-- `target=preview`, `Ready`, protected anonymous HTTP `401`.
-- Authenticated protected Preview browser smoke:
-  CHECK_NOT_RUN_BLOCKED_EXTERNAL_CREDENTIALS.
+## Safety
 
-## Controlled Release Review
+- Production touched: `NO`
+- Productive deploy executed: `NO`
+- Vercel modified: `NO`
+- GitHub branch or PR base modified: `NO`
+- PR #25 draft preserved: `YES`
+- Secrets exposed: `NO`
+- Products published: `NO`
+- Official brand representation asserted: `NO`
 
-- Mode: `VICTORIOSA_CUSTOM_DOMAIN_CONTROLLED_RELEASE_REVIEW`.
-- Branch: `codex/victoriosa-domain-ssl-dns-rescue`.
-- Legal public routes implemented locally: `/oauth/consent`, `/privacy`,
-  `/terms`.
-- Local route smoke: PASS, all three routes HTTP `200` on `localhost:3101`.
-- Public custom domain route status: home apex and WWW HTTP `200`; `/account`,
-  `/admin` and `/owner/autopilot` redirect to login; the new informational
-  routes return HTTP `404` on the current public deployment until a separately
-  approved release is performed.
-- Public/private surface audit: PASS, admin and Autopilot links remain inside
-  private/admin surfaces.
-- `npm run ci`: PASS, 50 tests and 55 built routes plus Middleware.
-- `npm run staging:check`: PASS, secure in-memory mapping from ignored local
-  staging values.
-- `npm run rls:smoke`: PASS, anonymous catalog boundary and 9 internal
-  Autopilot tables verified with zero visible rows.
-- `git diff --check`: PASS.
-- GitHub PR status: no open PR detected; GitHub API PR creation remains blocked
-  by collaborator permissions, so use the manual PR URL.
-- Manual PR URL:
-  `https://github.com/trabajosrapidosuy-commits/Victoriosa-marketplace/pull/new/codex/victoriosa-domain-ssl-dns-rescue`.
-- Production action: NOT_EXECUTED.
+## Decision
 
-## Human PR Review And Release Decision
+`GO_STRATEGY_DOCUMENTED`
 
-- Mode: `VICTORIOSA_HUMAN_PR_REVIEW_AND_RELEASE_DECISION`.
-- Current commit reviewed: `05f883c feat(legal): add Victoriosa release review pages`.
-- Worktree at cycle start: CLEAN.
-- PR creation through GitHub API: NOT_RETRIED due known collaborator
-  permission blocker.
-- `/oauth/consent`: PASS, links Home, Privacy and Terms and keeps external
-  login inactive.
-- `/privacy`: PASS for technical release review; requires human/legal wording
-  review before public release.
-- `/terms`: PASS for technical release review; requires human/legal wording
-  review before public release.
-- Release checklist: PASS, requires explicit human GO before Production deploy
-  or promotion.
-- Decision required: Option A keep NO-GO and do not publish yet; Option B
-  authorize a separate controlled release runbook.
-- Production action: NOT_EXECUTED.
+Operational release remains:
+
+`NO-GO_BLOCKED_PRODUCTION_RISK`
+
+## Google OAuth PKCE First-Attempt Fix
+
+Date: 2026-06-07
+
+- Reported behavior: the first Google login returned
+  `PKCE code verifier not found in storage`; a second click succeeded.
+- Root cause: OAuth started in a server route while the browser completed the
+  callback, and configured site URLs could switch the Preview hostname.
+- Fix: Google OAuth now starts with the Supabase browser client and uses
+  `window.location.origin` for the callback. Callback redirects also preserve
+  the request origin, middleware does not refresh the session before the code
+  exchange, and raw provider errors are not exposed.
+- Local result: focused auth tests, full test suite, lint, typecheck, build,
+  secret scan, production guard and static RLS checks pass.
+- Browser smoke: login renders one client-side Google button and handles an
+  unauthorized localhost callback with a generic visible error.
+- Vercel Preview for commit `be8e5c2`: `PASS`, recorded by GitHub as
+  `production_environment=false`.
+- Pending evidence: first-attempt Google authentication with a fresh account
+  selection on the new Preview URL.
+- Production remains untouched and blocked:
+  `PRODUCTION_STATUS=NO-GO_PRODUCTION`.
+
+Decision: `GO_USER_FIRST_ATTEMPT_SMOKE_REQUIRED`
+
+Next safe mode: `VICTORIOSA_SUPABASE_MISSING_REMOTE_MIGRATIONS_SAFE_RECONSTRUCTION`
 
 ## NEXT_CODEX_PROMPT
 
 Repository: `C:\victoriosa-autopilot-admin-control-center`
 
-Branch: `codex/victoriosa-git-upload-repair`
+Suggested branch: `codex/victoriosa-autopilot-staging-enable`
 
-Mode: `VICTORIOSA_MANUAL_VERCEL_SCOPE_AUDIT_PREP`
+Mode: `VICTORIOSA_AUTOPILOT_STAGING_AUTHENTICATED_ADMIN_SMOKE`
 
-Objective: prepare a read-only inventory worksheet for every Vercel scope and
-project connected to this repository, then record human-verified Production
-Branch settings without modifying Vercel, GitHub branches or PR #25.
+Objective: complete the authenticated staging smoke for the applied and seeded
+Autopilot surface without changing production or publishing products.
 
-Rules:
+Context:
 
-- Keep PR #25 draft.
-- Do not merge or retarget.
-- Do not create Production deployments.
-- Do not modify Vercel or Production environment variables.
-- Never print secrets.
+- Authorized staging ref: `ngliugfcwydnfbpalkpb`.
+- All nine canonical migrations are applied remotely.
+- Anonymous RLS smoke passes for all 13 internal Autopilot tables.
+- Eight K-beauty candidates exist in review-only state.
+- One staging admin profile exists.
+- Two consecutive cycles could not run an authenticated browser smoke because
+  the integrated browser and a secure reusable admin session were unavailable.
 
-Checks:
+Safety:
 
-See `docs/autonomous-cycles/CYCLE_VICTORIOSA_AGENT_SYSTEM_BOOTSTRAP.md`.
+- Keep `PRODUCTION_STATUS=NO-GO_PRODUCTION`.
+- No production, deploy, payment, publication, seed, schema mutation,
+  destructive SQL, secret output, client service role, or RLS relaxation.
+- Preserve unrelated `tsconfig.json` and `.vscode` changes.
 
-Integration preview smoke repeated after confirming the Vercel Production
-Branch is expected to remain `production`. Production remains
-`NO-GO_PRODUCTION`.
+Tasks:
+
+1. Revalidate worktree, target and production gates.
+2. Use an existing secure staging admin session; never request credentials in
+   chat or create a new admin automatically.
+3. Smoke `/admin/autopilot`, candidate list, one candidate detail, review queue,
+   drafts and runs.
+4. Verify a non-admin or unauthenticated user cannot access admin routes.
+5. Do not approve, reject, import or mutate records unless a separate explicit
+   staging authorization is present.
+6. Run the mandatory local checks and update Director documentation.
+
+GO: authenticated admin pages render seeded review-only data with no SSR or
+Supabase errors, and access guards remain enforced.
+
+NO-GO: missing secure admin session, browser access unavailable, authorization
+boundary failure, security regression or production risk.
 
 ## Integration Preview-Only Smoke Repeat
 

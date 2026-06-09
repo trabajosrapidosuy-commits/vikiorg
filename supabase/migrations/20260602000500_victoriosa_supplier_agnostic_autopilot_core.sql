@@ -62,6 +62,8 @@ insert into public.autopilot_settings(id) values (true) on conflict (id) do noth
 alter table public.autopilot_review_events enable row level security;
 alter table public.autopilot_settings enable row level security;
 
+drop policy if exists "autopilot review events strict admin all" on public.autopilot_review_events;
+drop policy if exists "autopilot settings strict admin all" on public.autopilot_settings;
 create policy "autopilot review events strict admin all" on public.autopilot_review_events
   for all using (public.is_autopilot_admin()) with check (public.is_autopilot_admin());
 create policy "autopilot settings strict admin all" on public.autopilot_settings

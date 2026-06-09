@@ -65,6 +65,10 @@ const internalTables = [
   "autopilot_marketing_opt_ins",
   "autopilot_review_events",
   "autopilot_settings",
+  "autopilot_research_runs",
+  "autopilot_brand_candidates",
+  "autopilot_supplier_contacts",
+  "autopilot_import_requirements",
 ];
 for (const table of internalTables) await assertInternalTableHidden(table);
 

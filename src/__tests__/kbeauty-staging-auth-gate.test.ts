@@ -25,6 +25,10 @@ describe("kbeauty staging auth gate", () => {
 
     expect(readiness).toContain("AUTHORIZED_STAGING_TARGET");
     expect(readiness).toContain("AUTHORIZED_STAGING_TARGET=true is required before any write readiness check.");
+    expect(readiness).toContain("Required persistence tables are not fully ready.");
+    expect(readiness).not.toContain(
+      'mode === "write" && Object.values(tableStatus).some((state) => state !== "READY")',
+    );
     expect(seed).toContain("AUTHORIZED_STAGING_TARGET");
     expect(seed).toContain("Refusing to write because AUTHORIZED_STAGING_TARGET=true is required for this phase.");
   });
